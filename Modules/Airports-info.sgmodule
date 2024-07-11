@@ -3,7 +3,7 @@
 #!system=ios
 #!author=@Rabbit-Spec
 #!category=機場流量信息
-#!arguments=NAME_1:第一個機場的名字,URL_1:編碼後的機場訂閱,RESET-Day_1:重置日期,ICON_1:externaldrive.fill.badge.icloud,COLOR_1:#FFB6C1,NAME_2:#第二個機場的名字,URL_2:編碼後的機場訂閱,RESET-Day_2:重置日期,ICON_2:internaldrive.fill,COLOR_2:#87CEFA,NAME_3:#第三個機場的名字,URL_3:編碼後的機場訂閱,RESET-Day_3:重置日期,ICON_3:externaldrive.connected.to.line.below.fill,COLOR_3:#E980AB,NAME_4:#第四個機場的名字,URL_4:編碼後的機場訂閱,RESET-Day_4:重置日期,ICON_4:externaldrive.fill,COLOR_4:#BDDC9D
+#!arguments=NAME_1:第一個機場的名字,URL_1:編碼後的機場訂閱,RESET-Day_1:重置日期,ICON_1:externaldrive.fill.badge.icloud,COLOR_1:#FFA500,NAME_2:#第二個機場的名字,URL_2:編碼後的機場訂閱,RESET-Day_2:重置日期,ICON_2:internaldrive.fill,COLOR_2:#87CEFA,NAME_3:#第三個機場的名字,URL_3:編碼後的機場訂閱,RESET-Day_3:重置日期,ICON_3:externaldrive.connected.to.line.below.fill,COLOR_3:#E980AB,NAME_4:#第四個機場的名字,URL_4:編碼後的機場訂閱,RESET-Day_4:重置日期,ICON_4:externaldrive.fill,COLOR_4:#BDDC9D
 #!arguments-desc=[參數設置]\n\n⓵ NAME: 寫你機場的名字,默認開啓單訂閱。\n\n⓶ URL: 編碼後的機場訂閱。\n\n⓷ RESET_DAY: 流量每月重置的日期,如26號就寫26,不設置則不顯示流量重置日,僅顯示到期日期。\n\n⓸ ICON: 自定義面板圖標,需為有效的SFSymbolName,如不設置則默認。\n\n⓹ COLOR: 自定義圖標顏色,需為顏色的HEX編碼。
 # 更新日期：2024.07.08
 # 版本：4.6
