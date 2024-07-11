@@ -1,0 +1,32 @@
+#!name=airports
+#!desc=顯示機場剩餘流量信息以及套餐到期日期
+#!system=ios
+#!author=zwjtano
+#!arguments=NAME_1:第一個機場的名字,URL_1:編碼後的機場訂閱,RESET-Day_1:重置日期,ICON_1:第一個機場的圖標,NAME_2:#第二個機場的名字,URL_2:編碼後的機場訂閱,RESET-Day_2:重置日期,ICON_2:第二個機場的圖標,NAME_3:#第三個機場的名字,URL_3:編碼後的機場訂閱,RESET-Day_3:重置日期,ICON_3:第三個機場的圖標
+#!arguments-desc=[參數設置]\n\n⓵ NAME: 寫你機場的名字,默認開啓單訂閱。\n\n⓶ URL: 編碼後的機場訂閱。\n\n⓷ RESET_DAY: 流量每月重置的日期,如26號就寫26,不設置則不顯示流量重置日,僅顯示到期日期。\n\n⓸ ICON: 圖標名稱，用於自定義面板圖標。
+# 更新日期：2024.07.04
+# 版本：4.3
+
+[Panel]
+{{{NAME_1}}}=script-name={{{NAME_1}}},update-interval=3600
+{{{NAME_2}}}=script-name={{{NAME_2}}},update-interval=3600
+{{{NAME_3}}}=script-name={{{NAME_3}}},update-interval=3600
+
+[Script]
+{{{NAME_1}}}=type=generic,timeout=10,script-path=https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Module/Panel/Sub-info/Moore/Sub-info.js,script-update-interval=0,argument=url={{{URL_1}}}&reset_day={{{RESET-Day_1}}}&title={{{NAME_1}}}&icon={{{ICON_1}}}&color={{{COLOR_1}}}
+{{{NAME_2}}}=type=generic,timeout=10,script-path=https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Module/Panel/Sub-info/Moore/Sub-info.js,script-update-interval=0,argument=url={{{URL_2}}}&reset_day={{{RESET-Day_2}}}&title={{{NAME_2}}}&icon={{{ICON_2}}}&color={{{COLOR_2}}}
+{{{NAME_3}}}=type=generic,timeout=10,script-path=https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Module/Panel/Sub-info/Moore/Sub-info.js,script-update-interval=0,argument=url={{{URL_3}}}&reset_day={{{RESET-Day_3}}}&title={{{NAME_3}}}&icon={{{ICON_3}}}&color={{{COLOR_3}}}
+
+function randomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+// Set colors to random colors
+const COLOR_1 = randomColor();
+const COLOR_2 = randomColor();
+const COLOR_3 = randomColor();
