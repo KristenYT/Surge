@@ -84,13 +84,13 @@ function formatDisneyPlusResult(status, region) {
     case STATUS_COMING:
       return `Disney+： 即將登陸~ ${region.toUpperCase()}  |`;
     case STATUS_AVAILABLE:
-      return `Disney+： \u2611${region.toUpperCase()}  |`;
+      return `Disney+：\u2611${region.toUpperCase()}  |`;
     case STATUS_NOT_AVAILABLE:
-      return `Disney+： \u2612  |`;
+      return `Disney+：\u2612  |`;
     case STATUS_TIMEOUT:
-      return `Disney+： N/A  |`;
+      return `Disney+：N/A  |`;
     default:
-      return `Disney+： 错误  |`;
+      return `Disney+：错误  |`;
   }
 }
 
