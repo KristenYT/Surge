@@ -190,7 +190,7 @@ async function check_netflix() {
       if (code === 'Not Found') {
         return inner_check(80018499);
       }
-      netflix_check_result += '\u2611' + code.toUpperCase() + ' |';
+      netflix_check_result += '\u2611' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .then((code) => {
@@ -198,7 +198,7 @@ async function check_netflix() {
         return Promise.reject('Not Available');
       }
 
-      netflix_check_result += '⚠' + code.toUpperCase() + ' |';
+      netflix_check_result += '⚠' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .catch((error) => {
@@ -206,10 +206,10 @@ async function check_netflix() {
         return;
       }
       if (error === 'Not Available') {
-        netflix_check_result += '\u2612 |';
+        netflix_check_result += '\u2612';
         return;
       }
-      netflix_check_result += 'N/A |';
+      netflix_check_result += 'N/A';
     });
 
   return netflix_check_result;
@@ -231,59 +231,84 @@ async function testDisneyPlus() {
       // 支持解鎖
       return { region, status: STATUS_AVAILABLE };
     }
+
   } catch (error) {
-    console.log("error: " + error);
+    console.log("error:" + error);
+
+    // 不支持解鎖
     if (error === 'Not Available') {
-      // 不支持解鎖
+      console.log("不支持");
       return { status: STATUS_NOT_AVAILABLE };
     }
-    // 检测超时
-    return { status: STATUS_TIMEOUT };
-  }
 
+    // 檢測超時
+    if (error === 'Timeout') {
+      return { status: STATUS_TIMEOUT };
+    }
+
+    return { status: STATUS_ERROR };
+  }
 }
 
 function getLocationInfo() {
   return new Promise((resolve, reject) => {
     let opts = {
       url: 'https://disney.api.edge.bamgrid.com/graph/v1/device/graphql',
-      headers: REQUEST_HEADERS,
-      opts: { 'timeout': 7000 },
+      headers: {
+        'Accept-Language': 'en',
+        Authorization: 'ZGlzbmV5JmJyb3dzZXImMS4wLjA.Cu56AgSfBTDag5NiRA81oLHkDZfu5L3CKadnefEAY84',
+        'Content-Type': 'application/json',
+        'User-Agent': UA,
+      },
       body: JSON.stringify({
-        query: 'mutation($input: PlaybackDeviceMutationInput!) {playbackDevice(input: $input) {client {accessToken policy cookie expiration}}}',
+        query: 'mutation registerDevice($input: RegisterDeviceInput!) { registerDevice(registerDevice: $input) { grant { grantType assertion } } }',
         variables: {
           input: {
-            playbackDevice: {
-              deviceFamily: 'browser',
-              applicationVersion: '1.0.0',
-              deviceProfile: 'macosx',
-              location: {
-                country: '',
-                latitude: '',
-                longitude: '',
-                source: 'client'
-              }
-            }
-          }
-        }
-      })
+            applicationRuntime: 'chrome',
+            attributes: {
+              browserName: 'chrome',
+              browserVersion: '94.0.4606',
+              manufacturer: 'apple',
+              model: null,
+              operatingSystem: 'macintosh',
+              operatingSystemVersion: '10.15.7',
+              osDeviceIds: [],
+            },
+            deviceFamily: 'browser',
+            deviceLanguage: 'en',
+            deviceProfile: 'macosx',
+          },
+        },
+      }),
     };
+
     $httpClient.post(opts, function (error, response, data) {
       if (error) {
         reject('Error');
         return;
       }
+
       if (response.status !== 200) {
-        reject('Error');
+        console.log('getLocationInfo: ' + data);
+        reject('Not Available');
         return;
       }
+
       data = JSON.parse(data);
-      if (data && data.errors) {
-        reject(data.errors);
+      if (data?.errors) {
+        console.log('getLocationInfo: ' + data);
+        reject('Not Available');
         return;
       }
-      let { countryCode, inSupportedLocation } = data?.extensions?.playbackDevice || {};
-      resolve({ countryCode, inSupportedLocation });
+
+      let {
+        token: { accessToken },
+        session: {
+          inSupportedLocation,
+          location: { countryCode },
+        },
+      } = data?.extensions?.sdk;
+      resolve({ inSupportedLocation, countryCode, accessToken });
     });
   });
 }
@@ -292,54 +317,31 @@ function testHomePage() {
   return new Promise((resolve, reject) => {
     let opts = {
       url: 'https://www.disneyplus.com/',
-      headers: REQUEST_HEADERS,
-      opts: { 'timeout': 7000 }
+      headers: {
+        'Accept-Language': 'en',
+        'User-Agent': UA,
+      },
     };
-    $httpClient.get(opts, function (err, resp) {
-      if (err !== null) {
+
+    $httpClient.get(opts, function (error, response, data) {
+      if (error) {
         reject('Error');
         return;
       }
-
-      if (resp.status === 403) {
+      if (response.status !== 200 || data.indexOf('Sorry, Disney+ is not available in your region.') !== -1) {
         reject('Not Available');
         return;
       }
 
-      if (resp.status === 200 && resp.body.includes('unavailable')) {
-        reject('Not Available');
-        return;
-      }
-
-      let match = resp.body.match(/Region: ([A-Za-z]{2})[\s\S]*?CNBL: ([12])/);
+      let match = data.match(/Region: ([A-Za-z]{2})[\s\S]*?CNBL: ([12])/);
       if (!match) {
-        resolve({ region: "", cnbl: "" });
+        resolve({ region: '', cnbl: '' });
         return;
       }
 
       let region = match[1];
       let cnbl = match[2];
       resolve({ region, cnbl });
-    });
-  });
-}
-
-function getTraceData() {
-  return new Promise((resolve, reject) => {
-    let option = {
-      url: 'http://www.cloudflare.com/cdn-cgi/trace',
-    };
-    $httpClient.get(option, function (error, response, data) {
-      if (error !== null || response.status !== 200) {
-        reject('Error');
-        return;
-      }
-      let result = {};
-      data.split('\n').forEach((line) => {
-        let parts = line.split('=');
-        result[parts[0]] = parts[1];
-      });
-      resolve(result);
     });
   });
 }
