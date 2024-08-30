@@ -229,4 +229,143 @@ async function testDisneyPlus() {
       return { region, status: STATUS_COMING };
     } else {
       // 支持解鎖
-      return { region
+      return { region, status: STATUS_AVAILABLE };
+    }
+  } catch (error) {
+    console.log("error: " + error);
+    if (error === 'Not Available') {
+      // 不支持解鎖
+      return { status: STATUS_NOT_AVAILABLE };
+    }
+    // 检测超时
+    return { status: STATUS_TIMEOUT };
+  }
+
+}
+
+function getLocationInfo() {
+  return new Promise((resolve, reject) => {
+    let opts = {
+      url: 'https://disney.api.edge.bamgrid.com/graph/v1/device/graphql',
+      headers: REQUEST_HEADERS,
+      opts: { 'timeout': 7000 },
+      body: JSON.stringify({
+        query: 'mutation($input: PlaybackDeviceMutationInput!) {playbackDevice(input: $input) {client {accessToken policy cookie expiration}}}',
+        variables: {
+          input: {
+            playbackDevice: {
+              deviceFamily: 'browser',
+              applicationVersion: '1.0.0',
+              deviceProfile: 'macosx',
+              location: {
+                country: '',
+                latitude: '',
+                longitude: '',
+                source: 'client'
+              }
+            }
+          }
+        }
+      })
+    };
+    $httpClient.post(opts, function (error, response, data) {
+      if (error) {
+        reject('Error');
+        return;
+      }
+      if (response.status !== 200) {
+        reject('Error');
+        return;
+      }
+      data = JSON.parse(data);
+      if (data && data.errors) {
+        reject(data.errors);
+        return;
+      }
+      let { countryCode, inSupportedLocation } = data?.extensions?.playbackDevice || {};
+      resolve({ countryCode, inSupportedLocation });
+    });
+  });
+}
+
+function testHomePage() {
+  return new Promise((resolve, reject) => {
+    let opts = {
+      url: 'https://www.disneyplus.com/',
+      headers: REQUEST_HEADERS,
+      opts: { 'timeout': 7000 }
+    };
+    $httpClient.get(opts, function (err, resp) {
+      if (err !== null) {
+        reject('Error');
+        return;
+      }
+
+      if (resp.status === 403) {
+        reject('Not Available');
+        return;
+      }
+
+      if (resp.status === 200 && resp.body.includes('unavailable')) {
+        reject('Not Available');
+        return;
+      }
+
+      let match = resp.body.match(/Region: ([A-Za-z]{2})[\s\S]*?CNBL: ([12])/);
+      if (!match) {
+        resolve({ region: "", cnbl: "" });
+        return;
+      }
+
+      let region = match[1];
+      let cnbl = match[2];
+      resolve({ region, cnbl });
+    });
+  });
+}
+
+function getTraceData() {
+  return new Promise((resolve, reject) => {
+    let option = {
+      url: 'http://www.cloudflare.com/cdn-cgi/trace',
+    };
+    $httpClient.get(option, function (error, response, data) {
+      if (error !== null || response.status !== 200) {
+        reject('Error');
+        return;
+      }
+      let result = {};
+      data.split('\n').forEach((line) => {
+        let parts = line.split('=');
+        result[parts[0]] = parts[1];
+      });
+      resolve(result);
+    });
+  });
+}
+
+function timeout(delay = 5000) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject('Timeout');
+    }, delay);
+  });
+}
+
+async function getTraceData() {
+  return new Promise((resolve, reject) => {
+    $httpClient.get("http://chat.openai.com/cdn-cgi/trace", function(error, response, data) {
+      if (error) {
+        reject(error);
+        return;
+      }
+      let lines = data.split("\n");
+      let cf = lines.reduce((acc, line) => {
+        let [key, value] = line.split("=");
+        acc[key] = value;
+        return acc;
+      }, {});
+      resolve(cf);
+    });
+  });
+}
