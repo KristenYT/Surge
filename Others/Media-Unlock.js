@@ -10,7 +10,7 @@ Surge配置参考注释
 策略面板 = script-name=解鎖檢測,update-interval=7200
 
 [Script]
-解鎖檢測 = type=generic,timeout=30,script-path=https://raw.githubusercontent.com/githubdulong/Script/master/Stream-All.js,script-update-interval=0,argument=title=解锁检测&icon=headphones.circle&color=#FF2121
+解鎖檢測 = type=generic,timeout=120,script-path=https://raw.githubusercontent.com/KristenYT/Surge/main/Others/Media-Unlock.js,script-update-interval=0,argument=title=解锁检测&icon=headphones.circle&color=#FF2121
 
 ----------------------------------------
 
