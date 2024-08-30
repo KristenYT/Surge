@@ -1,7 +1,7 @@
 #!name=解鎖檢測
 #!desc=Netflix, Disney+, YouTube, ChatGPT Unlock
 #!author=@githubdulong
-#!category=Third Party Module
+#!category=Panel
 #!arguments=UPDATE_INTERVAL:7200,TITLE:解鎖檢測,ICON:eye.slash.circle.fill,COLOR:#82AE46
 #!arguments-desc=[參數設置]\n1. UPDATE_INTERVAL: 自定義面板的刷新間隔時間,單位為秒,默認每7200秒刷新一次;\n2. TITLE: 自定義面板標題,默認為"解鎖檢測";\n3. ICON: 自定義面板圖標,默認為"eye.slash.circle.fill";\n4. COLOR: 自定義圖標顏色,默認為"#82AE46";\n\n[模塊描述]\n▎本模塊用於檢測Netflix,Disney+,YouTubePremium,ChatGPT的解鎖狀態查詢;\n▎四種狀態顯示"☑"表示支持解鎖狀態,"️️️⚠"表示Netflix僅支持解鎖自制劇,"☒"表示不支持解鎖狀態,"ɴ/ᴀ"表示檢測超時或異常;\n▎地區代碼縮寫表示已解鎖地區;
 
