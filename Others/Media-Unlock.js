@@ -82,7 +82,7 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `Disney+： 即將登陸~ ${region.toUpperCase()}  |`;
+      return `Disney+：即將登陸~ ${region.toUpperCase()}  |`;
     case STATUS_AVAILABLE:
       return `Disney+：\u2611${region.toUpperCase()}  |`;
     case STATUS_NOT_AVAILABLE:
