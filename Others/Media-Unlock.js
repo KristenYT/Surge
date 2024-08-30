@@ -58,7 +58,7 @@ let args = getArgs();
   let content = `${youtubeResult} ${netflixResult} ${disney_result}`;
   
   let traceData = await getTraceData();
-  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "G: \u2611" : "G: \u2612";
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
   content += ` ${gptSupportStatus}${traceData.loc}`;
 
@@ -82,15 +82,15 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `D: 即將登陸~ ${region.toUpperCase()} |`;
+      return `Disney+: 即將登陸~ ${region.toUpperCase()} |`;
     case STATUS_AVAILABLE:
-      return `D: \u2611${region.toUpperCase()} |`;
+      return `Disney+: \u2611${region.toUpperCase()} |`;
     case STATUS_NOT_AVAILABLE:
-      return `D: \u2612 |`;
+      return `Disney+: \u2612 |`;
     case STATUS_TIMEOUT:
-      return `D: N/A |`;
+      return `Disney+: N/A |`;
     default:
-      return `D: 错误 |`;
+      return `Disney+: 错误 |`;
   }
 }
 
@@ -229,145 +229,4 @@ async function testDisneyPlus() {
       return { region, status: STATUS_COMING };
     } else {
       // 支持解鎖
-      return { region, status: STATUS_AVAILABLE };
-    }
-
-  } catch (error) {
-    console.log("error:" + error);
-
-    // 不支持解鎖
-    if (error === 'Not Available') {
-      console.log("不支持");
-      return { status: STATUS_NOT_AVAILABLE };
-    }
-
-    // 檢測超時
-    if (error === 'Timeout') {
-      return { status: STATUS_TIMEOUT };
-    }
-
-    return { status: STATUS_ERROR };
-  }
-}
-
-function getLocationInfo() {
-  return new Promise((resolve, reject) => {
-    let opts = {
-      url: 'https://disney.api.edge.bamgrid.com/graph/v1/device/graphql',
-      headers: {
-        'Accept-Language': 'en',
-        Authorization: 'ZGlzbmV5JmJyb3dzZXImMS4wLjA.Cu56AgSfBTDag5NiRA81oLHkDZfu5L3CKadnefEAY84',
-        'Content-Type': 'application/json',
-        'User-Agent': UA,
-      },
-      body: JSON.stringify({
-        query: 'mutation registerDevice($input: RegisterDeviceInput!) { registerDevice(registerDevice: $input) { grant { grantType assertion } } }',
-        variables: {
-          input: {
-            applicationRuntime: 'chrome',
-            attributes: {
-              browserName: 'chrome',
-              browserVersion: '94.0.4606',
-              manufacturer: 'apple',
-              model: null,
-              operatingSystem: 'macintosh',
-              operatingSystemVersion: '10.15.7',
-              osDeviceIds: [],
-            },
-            deviceFamily: 'browser',
-            deviceLanguage: 'en',
-            deviceProfile: 'macosx',
-          },
-        },
-      }),
-    };
-
-    $httpClient.post(opts, function (error, response, data) {
-      if (error) {
-        reject('Error');
-        return;
-      }
-
-      if (response.status !== 200) {
-        console.log('getLocationInfo: ' + data);
-        reject('Not Available');
-        return;
-      }
-
-      data = JSON.parse(data);
-      if (data?.errors) {
-        console.log('getLocationInfo: ' + data);
-        reject('Not Available');
-        return;
-      }
-
-      let {
-        token: { accessToken },
-        session: {
-          inSupportedLocation,
-          location: { countryCode },
-        },
-      } = data?.extensions?.sdk;
-      resolve({ inSupportedLocation, countryCode, accessToken });
-    });
-  });
-}
-
-function testHomePage() {
-  return new Promise((resolve, reject) => {
-    let opts = {
-      url: 'https://www.disneyplus.com/',
-      headers: {
-        'Accept-Language': 'en',
-        'User-Agent': UA,
-      },
-    };
-
-    $httpClient.get(opts, function (error, response, data) {
-      if (error) {
-        reject('Error');
-        return;
-      }
-      if (response.status !== 200 || data.indexOf('Sorry, Disney+ is not available in your region.') !== -1) {
-        reject('Not Available');
-        return;
-      }
-
-      let match = data.match(/Region: ([A-Za-z]{2})[\s\S]*?CNBL: ([12])/);
-      if (!match) {
-        resolve({ region: '', cnbl: '' });
-        return;
-      }
-
-      let region = match[1];
-      let cnbl = match[2];
-      resolve({ region, cnbl });
-    });
-  });
-}
-
-function timeout(delay = 5000) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject('Timeout');
-    }, delay);
-  });
-}
-
-async function getTraceData() {
-  return new Promise((resolve, reject) => {
-    $httpClient.get("http://chat.openai.com/cdn-cgi/trace", function(error, response, data) {
-      if (error) {
-        reject(error);
-        return;
-      }
-      let lines = data.split("\n");
-      let cf = lines.reduce((acc, line) => {
-        let [key, value] = line.split("=");
-        acc[key] = value;
-        return acc;
-      }, {});
-      resolve(cf);
-    });
-  });
-}
+      return { region
