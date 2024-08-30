@@ -2,6 +2,7 @@
 #!desc=快速測試下行速率與延遲
 #!category=Panel
 #!author=@cc63
+
 [Panel]
 Speed = script-name=Speed,update-interval=-1
 
