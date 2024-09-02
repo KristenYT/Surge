@@ -56,9 +56,9 @@ let args = getArgs();
  
   let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
-  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? `ChatGPT: \u2611 + code.toUpperCase() + ' |'` : `ChatGPT: \u2611 + code.toUpperCase() + ' |'`;
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
  
- let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc} ${disney_result}`;
+  let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc} ${disney_result}`;
 
   
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
