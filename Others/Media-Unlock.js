@@ -55,13 +55,12 @@ let args = getArgs();
   let youtubeResult = await check_youtube_premium();
  
   let disney_result = formatDisneyPlusResult(status, region);
-  let content = `${gptSupportStatus} ${netflixResult} ${youtubeResult} ${disney_result}`;
-  
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
-  content += ` ${traceData.loc}`;
+  let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc} ${disney_result}`;
 
+  
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
 
