@@ -58,7 +58,7 @@ let args = getArgs();
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
  
-  let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(7)} ${disney_result}`;
+  let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(3)} ${disney_result}`;
   
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
@@ -80,7 +80,7 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return`| Disney: 即將登陸~ ${region.toUpperCase()} `;
+      return `| Disney: 即將登陸~ ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
       return `| Disney: \u2611${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
@@ -130,13 +130,13 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2612 |';
+        youtube_check_result += '\u2612  |';
       } else {
-        youtube_check_result += "\u2611" + code.toUpperCase() + ' |';
+        youtube_check_result += "\u2611" + code.toUpperCase() + '  |';
       }
     })
     .catch(() => {
-      youtube_check_result += 'N/A |';
+      youtube_check_result += 'N/A  |';
     });
 
   return youtube_check_result;
