@@ -56,12 +56,12 @@ let args = getArgs();
  
   let disney_result = formatDisneyPlusResult(status, region);
   let content = `${youtubeResult} ${netflixResult} ${disney_result}`;
-
- let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "GccPT: \u2611" : "GccPT: \u2612";
+  
+  let traceData = await getTraceData();
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
   content += ` ${gptSupportStatus}${traceData.loc}`;
-  let traceData = await getTraceData();
-  
+
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
 
@@ -69,6 +69,15 @@ let args = getArgs();
 
   $done(panel_result);
 })();
+
+function getArgs() {
+  return Object.fromEntries(
+    $argument
+      .split("&")
+      .map((item) => item.split("="))
+      .map(([k, v]) => [k, decodeURIComponent(v)])
+  );
+}
 
 function formatDisneyPlusResult(status, region) {
   switch (status) {
@@ -215,24 +224,6 @@ async function check_netflix() {
   return netflix_check_result;
 }
 
-async function getTraceData() {
-  return new Promise((resolve, reject) => {
-    $httpClient.get("http://chat.openai.com/cdn-cgi/trace", function(error, response, data) {
-      if (error) {
-        reject(error);
-        return;
-      }
-      let lines = data.split("\n");
-      let cf = lines.reduce((acc, line) => {
-        let [key, value] = line.split("=");
-        acc[key] = value;
-        return acc;
-      }, {});
-      resolve(cf);
-    });
-  });
-}
-
 async function testDisneyPlus() {
   try {
     let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)]);
@@ -372,3 +363,20 @@ function timeout(delay = 5000) {
   });
 }
 
+async function getTraceData() {
+  return new Promise((resolve, reject) => {
+    $httpClient.get("http://chat.openai.com/cdn-cgi/trace", function(error, response, data) {
+      if (error) {
+        reject(error);
+        return;
+      }
+      let lines = data.split("\n");
+      let cf = lines.reduce((acc, line) => {
+        let [key, value] = line.split("=");
+        acc[key] = value;
+        return acc;
+      }, {});
+      resolve(cf);
+    });
+  });
+}
