@@ -51,9 +51,9 @@ let args = getArgs();
   };
 
   let [{ region, status }] = await Promise.all([testDisneyPlus()]);
-  let youtubeResult = await check_youtube_premium();
   let netflixResult = await check_netflix();
-
+  let youtubeResult = await check_youtube_premium();
+ 
   let disney_result = formatDisneyPlusResult(status, region);
   let content = `${youtubeResult} ${netflixResult} ${disney_result}`;
   
