@@ -70,15 +70,6 @@ let args = getArgs();
   $done(panel_result);
 })();
 
-function getArgs() {
-  return Object.fromEntries(
-    $argument
-      .split("&")
-      .map((item) => item.split("="))
-      .map(([k, v]) => [k, decodeURIComponent(v)])
-  );
-}
-
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
@@ -91,7 +82,7 @@ function formatDisneyPlusResult(status, region) {
       return `Disney+: N/A  |`;
     default:
       return `Disney+: 错误  |`;
-  }
+  );
 }
 
 function getArgs() {
@@ -100,7 +91,7 @@ function getArgs() {
       .split("&")
       .map((item) => item.split("="))
       .map(([k, v]) => [k, decodeURIComponent(v)])
-  );
+  }
 }
 
 async function check_youtube_premium() {
