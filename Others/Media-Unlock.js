@@ -88,7 +88,7 @@ function flagEmoji(countryCode) {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return`| Disney: 即將登陸~ ${flagEmoji(region)}${region.toUpperCase()} `;
+      return `| Disney: 即將登陸~ ${flagEmoji(region)}${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
       return `| Disney: \u2611${flagEmoji(region)}${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
