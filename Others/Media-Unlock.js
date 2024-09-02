@@ -56,12 +56,12 @@ let args = getArgs();
  
   let disney_result = formatDisneyPlusResult(status, region);
   let content = `${youtubeResult} ${netflixResult} ${disney_result}`;
-  
-  let traceData = await getTraceData();
-  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "GPT: \u2611" : "GPT: \u2612";
+
+ let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "GccPT: \u2611" : "GccPT: \u2612";
 
   content += ` ${gptSupportStatus}${traceData.loc}`;
-
+  let traceData = await getTraceData();
+  
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
 
@@ -69,15 +69,6 @@ let args = getArgs();
 
   $done(panel_result);
 })();
-
-function getArgs() {
-  return Object.fromEntries(
-    $argument
-      .split("&")
-      .map((item) => item.split("="))
-      .map(([k, v]) => [k, decodeURIComponent(v)])
-  );
-}
 
 function formatDisneyPlusResult(status, region) {
   switch (status) {
@@ -92,6 +83,15 @@ function formatDisneyPlusResult(status, region) {
     default:
       return `Disney+: 错误  |`;
   }
+}
+
+function getArgs() {
+  return Object.fromEntries(
+    $argument
+      .split("&")
+      .map((item) => item.split("="))
+      .map(([k, v]) => [k, decodeURIComponent(v)])
+  );
 }
 
 async function check_youtube_premium() {
