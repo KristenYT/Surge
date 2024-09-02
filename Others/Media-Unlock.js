@@ -56,7 +56,7 @@ let args = getArgs();
  
   let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
-  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611 |" : "ChatGPT: \u2612 |";
 
   let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc} ${disney_result}`;
 
@@ -131,13 +131,13 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2612';
+        youtube_check_result += '\u2612 |';
       } else {
-        youtube_check_result += "\u2611" + code.toUpperCase() ;
+        youtube_check_result += "\u2611" + code.toUpperCase() + ' |';
       }
     })
     .catch(() => {
-      youtube_check_result += 'N/A';
+      youtube_check_result += 'N/A |';
     });
 
   return youtube_check_result;
@@ -189,7 +189,7 @@ async function check_netflix() {
       if (code === 'Not Found') {
         return inner_check(80018499);
       }
-      netflix_check_result += '\u2611' + code.toUpperCase() + ' |';
+      netflix_check_result += '\u2611' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .then((code) => {
@@ -197,7 +197,7 @@ async function check_netflix() {
         return Promise.reject('Not Available');
       }
 
-      netflix_check_result += '⚠' + code.toUpperCase() + ' |';
+      netflix_check_result += '⚠' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .catch((error) => {
@@ -205,10 +205,10 @@ async function check_netflix() {
         return;
       }
       if (error === 'Not Available') {
-        netflix_check_result += '\u2612 |';
+        netflix_check_result += '\u2612';
         return;
       }
-      netflix_check_result += 'N/A |';
+      netflix_check_result += 'N/A';
     });
 
   return netflix_check_result;
