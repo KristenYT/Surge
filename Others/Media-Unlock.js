@@ -56,9 +56,9 @@ let args = getArgs();
  
   let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
-  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611 |" : "ChatGPT: \u2612 |";
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? `ChatGPT: \u2611 ${traceData.loc} |` : `ChatGPT: \u2612 ${traceData.loc} |`;
 
-  let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc} ${disney_result}`;
+ let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc} ${disney_result}`;
 
   
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
@@ -81,15 +81,15 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `Disney: 即將登陸~ ${region.toUpperCase()} |`;
+      return `Disney: 即將登陸~ ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `Disney: \u2611${region.toUpperCase()} |`;
+      return `Disney: \u2611${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `Disney: \u2612 |`;
+      return `Disney: \u2612`;
     case STATUS_TIMEOUT:
-      return `Disney: N/A |`;
+      return `Disney: N/A `;
     default:
-      return `Disney: 错误 |`;
+      return `Disney: 错误 `;
   }
 }
 
