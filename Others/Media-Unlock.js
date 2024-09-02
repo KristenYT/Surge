@@ -55,7 +55,10 @@ let args = getArgs();
   let youtubeResult = await check_youtube_premium();
  
   let disney_result = formatDisneyPlusResult(status, region);
-  let content = `${youtubeResult} ${netflixResult} ${disney_result}`;
+  let content = `${youtubeResult} ; let traceData = await getTraceData();
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
+
+  content += ` ${gptSupportStatus}${traceData.loc}`;${netflixResult} ${disney_result}`;
   
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
