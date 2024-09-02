@@ -215,6 +215,24 @@ async function check_netflix() {
   return netflix_check_result;
 }
 
+async function getTraceData() {
+  return new Promise((resolve, reject) => {
+    $httpClient.get("http://chat.openai.com/cdn-cgi/trace", function(error, response, data) {
+      if (error) {
+        reject(error);
+        return;
+      }
+      let lines = data.split("\n");
+      let cf = lines.reduce((acc, line) => {
+        let [key, value] = line.split("=");
+        acc[key] = value;
+        return acc;
+      }, {});
+      resolve(cf);
+    });
+  });
+}
+
 async function testDisneyPlus() {
   try {
     let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)]);
@@ -354,20 +372,3 @@ function timeout(delay = 5000) {
   });
 }
 
-async function getTraceData() {
-  return new Promise((resolve, reject) => {
-    $httpClient.get("http://chat.openai.com/cdn-cgi/trace", function(error, response, data) {
-      if (error) {
-        reject(error);
-        return;
-      }
-      let lines = data.split("\n");
-      let cf = lines.reduce((acc, line) => {
-        let [key, value] = line.split("=");
-        acc[key] = value;
-        return acc;
-      }, {});
-      resolve(cf);
-    });
-  });
-}
