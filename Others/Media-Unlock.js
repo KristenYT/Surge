@@ -1,18 +1,25 @@
 /*
-脚本参考 @Helge_0x00 ,＠githubdulong
-修改日期：2024.08.30
+
+脚本参考 @Helge_0x00 
+修改日期：2024.08.21
 Surge配置参考注释
-----------------------------------------
+ 
+ ----------------------------------------
+ 
 [Panel]
-策略面板 = script-name=解鎖檢測,update-interval=7200
+策略面板 = script-name=解锁检测,update-interval=7200
+
 [Script]
-解鎖檢測 = type=generic,timeout=120,script-path=https://raw.githubusercontent.com/KristenYT/Surge/main/Others/Media-Unlock.js,script-update-interval=0,argument=title=解锁检测&icon=headphones.circle&color=#FF2121
+解锁检测 = type=generic,timeout=30,script-path=https://raw.githubusercontent.com/githubdulong/Script/master/Stream-All.js,script-update-interval=0,argument=title=解锁检测&icon=headphones.circle&color=#FF2121
+
 ----------------------------------------
-支持使用腳本使用 argument 參數自定義配置，如：argument=title=解鎖檢測&icon=headphones.circle&color=#FF2121，具體參數如下所示，
-* title: 面板標題
-* icon: SFSymbols 圖標
-* color：圖標顏色
-*/
+
+支持使用脚本使用 argument 参数自定义配置，如：argument=title=解锁检测&icon=headphones.circle&color=#FF2121，具体参数如下所示，
+ * title: 面板标题
+ * icon: SFSymbols 图标
+ * color：图标颜色
+ 
+ */
 
 const STATUS_COMING = 2;
 const STATUS_AVAILABLE = 1;
@@ -37,26 +44,23 @@ let args = getArgs();
   minutes = minutes > 9 ? minutes : "0" + minutes;
 
   let panel_result = {
-    title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
+    title: `${args.title} | ${hour}:${minutes}` || `解锁检测 | ${hour}:${minutes}`,
     content: '',
     icon: args.icon || "eye.slash.circle.fill",
     "icon-color": args.color || "#ffb621",
   };
 
-  // Parallelize API calls to improve speed
-  let [disney, netflix, youtube, traceData] = await Promise.all([
-    testDisneyPlus(),
-    check_netflix(),
-    check_youtube_premium(),
-    getTraceData()
-  ]);
+  let [{ region, status }] = await Promise.all([testDisneyPlus()]);
+  let youtubeResult = await check_youtube_premium();
+  let netflixResult = await check_netflix();
 
-  let disney_result = formatDisneyPlusResult(disney.status, disney.region);
-  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
-
+  let disney_result = formatDisneyPlusResult(status, region);
   let content = `${youtube} ${netflix}\n${gptSupportStatus}${traceData.loc.padEnd(3)}${disney_result} `;
   
-  let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
+  let traceData = await getTraceData();
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
+
+  let log = `${hour}:${minutes}.${now.getMilliseconds()} 解锁检测完成：${content}`;
   console.log(log);
 
   panel_result['content'] = content;
@@ -76,15 +80,15 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `| Disney: 即將登陸~ ${region.toUpperCase()} `;
+      return `D: 即将登陆~ ${region.toUpperCase()} |`;
     case STATUS_AVAILABLE:
-      return `| Disney: \u2611${region.toUpperCase()} `;
+      return `D: \u2611${region.toUpperCase()} |`;
     case STATUS_NOT_AVAILABLE:
-      return `| Disney: \u2612${region.toUpperCase()} `; // 顯示國家代碼
+      return `D: \u2612 |`;
     case STATUS_TIMEOUT:
-      return `| Disney: N/A   `;
+      return `D: N/A |`;
     default:
-      return `| Disney: 錯誤   `;
+      return `D: 错误 |`;
   }
 }
 
@@ -121,18 +125,18 @@ async function check_youtube_premium() {
     });
   };
 
-  let youtube_check_result = 'YouTube: ';
+  let youtube_check_result = 'Y: ';
 
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2612' + traceData.loc.toUpperCase()+ '  |';
+        youtube_check_result += '\u2612 |';
       } else {
-        youtube_check_result += "\u2611" + code.toUpperCase()+ '  |';
+        youtube_check_result += "\u2611" + code.toUpperCase() + ' |';
       }
     })
     .catch(() => {
-      youtube_check_result += ' N/A   |';
+      youtube_check_result += 'N/A |';
     });
 
   return youtube_check_result;
@@ -177,14 +181,14 @@ async function check_netflix() {
     });
   };
 
-  let netflix_check_result = 'Netflix: ';
+  let netflix_check_result = 'N: ';
 
   await inner_check(81280792)
     .then((code) => {
       if (code === 'Not Found') {
         return inner_check(80018499);
       }
-      netflix_check_result += '\u2611' + code.toUpperCase() ;
+      netflix_check_result += '\u2611' + code.toUpperCase() + ' |';
       return Promise.reject('BreakSignal');
     })
     .then((code) => {
@@ -192,7 +196,7 @@ async function check_netflix() {
         return Promise.reject('Not Available');
       }
 
-      netflix_check_result += '⚠' + code.toUpperCase() ;
+      netflix_check_result += '⚠' + code.toUpperCase() + ' |';
       return Promise.reject('BreakSignal');
     })
     .catch((error) => {
@@ -200,10 +204,10 @@ async function check_netflix() {
         return;
       }
       if (error === 'Not Available') {
-        netflix_check_result += '\u2612' + traceData.loc.toUpperCase() ;
+        netflix_check_result += '\u2612 |';
         return;
       }
-      netflix_check_result += ' N/A';
+      netflix_check_result += 'N/A |';
     });
 
   return netflix_check_result;
@@ -365,6 +369,3 @@ async function getTraceData() {
     });
   });
 }
-
-
-  
