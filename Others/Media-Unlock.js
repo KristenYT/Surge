@@ -211,27 +211,33 @@ async function check_netflix() {
 
 async function testDisneyPlus() {
   try {
+    // 同时测试主页和位置信息，加上超时控制
     let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)]);
-    console.log(`homepage: region=${region}, cnbl=${cnbl}`);
+    console.log(`Homepage check: region=${region}, cnbl=${cnbl}`);
+    
     let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(7000)]);
-    console.log(`getLocationInfo: countryCode=${countryCode}, inSupportedLocation=${inSupportedLocation}`);
+    console.log(`Location info: countryCode=${countryCode}, inSupportedLocation=${inSupportedLocation}`);
 
-    region = countryCode ?? region;
-    console.log("region:" + region);
-    // 即將登陸
+    // 如果成功获取到国家代码则使用，否则使用首页返回的region
+    region = countryCode || region;
+
+    if (!region) {
+      // 如果無法獲取地區，顯示不支持
+      return { region: "N/A", status: STATUS_NOT_AVAILABLE };
+    }
+
+    // 判斷是否在支持解鎖的地區
     if (inSupportedLocation === false || inSupportedLocation === 'false') {
-      return { region, status: STATUS_COMING };
+      return { region, status: STATUS_COMING }; // 即將登陸
     } else {
-      // 支持解鎖
-      return { region, status: STATUS_AVAILABLE };
+      return { region, status: STATUS_AVAILABLE }; // 支持解鎖
     }
 
   } catch (error) {
-    console.log("error:" + error);
+    console.log("Error in Disney+ detection:", error);
 
     // 不支持解鎖
     if (error === 'Not Available') {
-      console.log("不支持");
       return { status: STATUS_NOT_AVAILABLE };
     }
 
@@ -240,6 +246,7 @@ async function testDisneyPlus() {
       return { status: STATUS_TIMEOUT };
     }
 
+    // 其他錯誤
     return { status: STATUS_ERROR };
   }
 }
