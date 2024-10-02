@@ -211,24 +211,34 @@ async function check_netflix() {
 
 async function testDisneyPlus() {
   try {
+    // 對主頁和地區信息進行並行檢測，並加上超時控制
     let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)]);
     let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(7000)]);
+    
+    // 如果獲取到國家代碼則使用，否則保留之前的region
     region = countryCode ?? region;
-    // 即將登陸
+
+    // 檢測返回狀態
     if (inSupportedLocation === false || inSupportedLocation === 'false') {
       return { region, status: STATUS_COMING };
-    } else {
-      // 支持解鎖
+    } else if (region) {
       return { region, status: STATUS_AVAILABLE };
+    } else {
+      return { status: STATUS_NOT_AVAILABLE };
     }
   } catch (error) {
+    console.log("Error during Disney+ check:", error);
+
+    // 根據錯誤類型返回相應的狀態
     if (error === 'Not Available') {
       return { status: STATUS_NOT_AVAILABLE };
     }
+
     if (error === 'Timeout') {
       return { status: STATUS_TIMEOUT };
     }
-    return { status: STATUS_ERROR };
+
+    return { status: STATUS_ERROR }; // 捕獲所有其他錯誤並返回錯誤狀態
   }
 }
 
