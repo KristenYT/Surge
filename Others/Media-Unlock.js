@@ -211,14 +211,14 @@ async function check_netflix() {
 
 async function testDisneyPlus() {
   try {
-    // 並行測試首頁和位置信息
+    // 並行測試首頁和位置信息，加上超時控制
     let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)]);
     console.log(`Homepage check: region=${region}, cnbl=${cnbl}`);
     
     let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(7000)]);
     console.log(`Location info: countryCode=${countryCode}, inSupportedLocation=${inSupportedLocation}`);
 
-    // 優先使用 countryCode，如果不可用則使用 region
+    // 優先使用 countryCode，如果 countryCode 不存在則使用 region
     region = countryCode || region;
 
     // 如果 region 為空，顯示不支持
@@ -227,7 +227,7 @@ async function testDisneyPlus() {
       return { region: "N/A", status: STATUS_NOT_AVAILABLE };
     }
 
-    // 檢查是否支持解鎖
+    // 根據 inSupportedLocation 判斷是否即將登錄或已支持
     if (inSupportedLocation === false || inSupportedLocation === 'false') {
       return { region, status: STATUS_COMING }; // 即將登錄
     } else {
@@ -237,7 +237,7 @@ async function testDisneyPlus() {
   } catch (error) {
     console.log("Error in Disney+ detection:", error);
 
-    // 根據錯誤類型進行判斷
+    // 根據不同錯誤類型進行判斷
     if (error === 'Not Available') {
       return { status: STATUS_NOT_AVAILABLE };
     }
@@ -248,6 +248,99 @@ async function testDisneyPlus() {
 
     return { status: STATUS_ERROR }; // 捕捉所有其他錯誤
   }
+}
+
+function testHomePage() {
+  return new Promise((resolve, reject) => {
+    let opts = {
+      url: 'https://www.disneyplus.com/',
+      headers: {
+        'Accept-Language': 'en',
+        'User-Agent': UA,
+      },
+    };
+
+    $httpClient.get(opts, function (error, response, data) {
+      if (error) {
+        reject('Error');
+        return;
+      }
+      if (response.status !== 200 || data.includes('Sorry, Disney+ is not available in your region.')) {
+        reject('Not Available');
+        return;
+      }
+
+      let match = data.match(/Region: ([A-Za-z]{2})[\s\S]*?CNBL: ([12])/);
+      if (!match) {
+        resolve({ region: '', cnbl: '' });
+        return;
+      }
+
+      let region = match[1];
+      let cnbl = match[2];
+      resolve({ region, cnbl });
+    });
+  });
+}
+
+function getLocationInfo() {
+  return new Promise((resolve, reject) => {
+    let opts = {
+      url: 'https://disney.api.edge.bamgrid.com/graph/v1/device/graphql',
+      headers: {
+        'Accept-Language': 'en',
+        Authorization: 'ZGlzbmV5JmJyb3dzZXImMS4wLjA.Cu56AgSfBTDag5NiRA81oLHkDZfu5L3CKadnefEAY84',
+        'Content-Type': 'application/json',
+        'User-Agent': UA,
+      },
+      body: JSON.stringify({
+        query: 'mutation registerDevice($input: RegisterDeviceInput!) { registerDevice(registerDevice: $input) { grant { grantType assertion } } }',
+        variables: {
+          input: {
+            applicationRuntime: 'chrome',
+            attributes: {
+              browserName: 'chrome',
+              browserVersion: '94.0.4606',
+              manufacturer: 'apple',
+              model: null,
+              operatingSystem: 'macintosh',
+              operatingSystemVersion: '10.15.7',
+              osDeviceIds: [],
+            },
+            deviceFamily: 'browser',
+            deviceLanguage: 'en',
+            deviceProfile: 'macosx',
+          },
+        },
+      }),
+    };
+
+    $httpClient.post(opts, function (error, response, data) {
+      if (error) {
+        reject('Error');
+        return;
+      }
+
+      if (response.status !== 200) {
+        reject('Not Available');
+        return;
+      }
+
+      data = JSON.parse(data);
+      if (data?.errors) {
+        reject('Not Available');
+        return;
+      }
+
+      let {
+        session: {
+          inSupportedLocation,
+          location: { countryCode },
+        },
+      } = data?.extensions?.sdk;
+      resolve({ inSupportedLocation, countryCode });
+    });
+  });
 }
 
 function timeout(delay = 5000) {
