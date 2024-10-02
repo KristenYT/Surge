@@ -211,24 +211,25 @@ async function check_netflix() {
 
 async function testDisneyPlus() {
   try {
-    // 同时测试主页和位置信息，加上超时控制
+    // 並行測試首頁和位置信息
     let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)]);
     console.log(`Homepage check: region=${region}, cnbl=${cnbl}`);
     
     let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(7000)]);
     console.log(`Location info: countryCode=${countryCode}, inSupportedLocation=${inSupportedLocation}`);
 
-    // 如果成功获取到国家代码则使用，否则使用首页返回的region
+    // 優先使用 countryCode，如果不可用則使用 region
     region = countryCode || region;
 
+    // 如果 region 為空，顯示不支持
     if (!region) {
-      // 如果無法獲取地區，顯示不支持
+      console.log("Region is not available");
       return { region: "N/A", status: STATUS_NOT_AVAILABLE };
     }
 
-    // 判斷是否在支持解鎖的地區
+    // 檢查是否支持解鎖
     if (inSupportedLocation === false || inSupportedLocation === 'false') {
-      return { region, status: STATUS_COMING }; // 即將登陸
+      return { region, status: STATUS_COMING }; // 即將登錄
     } else {
       return { region, status: STATUS_AVAILABLE }; // 支持解鎖
     }
@@ -236,18 +237,16 @@ async function testDisneyPlus() {
   } catch (error) {
     console.log("Error in Disney+ detection:", error);
 
-    // 不支持解鎖
+    // 根據錯誤類型進行判斷
     if (error === 'Not Available') {
       return { status: STATUS_NOT_AVAILABLE };
     }
 
-    // 檢測超時
     if (error === 'Timeout') {
       return { status: STATUS_TIMEOUT };
     }
 
-    // 其他錯誤
-    return { status: STATUS_ERROR };
+    return { status: STATUS_ERROR }; // 捕捉所有其他錯誤
   }
 }
 
