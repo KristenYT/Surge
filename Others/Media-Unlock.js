@@ -59,7 +59,7 @@ let args = getArgs();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
  
-  let content = ` ${netflixResult} ${youtubeResult}\n ${disney_result} ${gptSupportStatus}${traceData.loc}`;
+  let content = ` ${netflixResult} ${youtubeResult}\n ${disney_result} ${gptSupportStatus} `;
   
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
@@ -85,11 +85,11 @@ function formatDisneyPlusResult(status, region) {
     case STATUS_AVAILABLE:
       return `Disney: \u2611${region.toUpperCase()} |`;
     case STATUS_NOT_AVAILABLE:
-      return `Disney: \u2612 |`; // 確保「|」位置一致
+      return `Disney: \u2612   |`; // 確保「|」位置一致
     case STATUS_TIMEOUT:
-      return `Disney: N/A |`;
+      return `Disney: N/A  |`;
     default:
-      return `Disney: 錯誤 |`;
+      return `Disney: 錯誤  |`;
   }
 }
 
@@ -206,10 +206,10 @@ async function check_netflix() {
         return;
       }
       if (error === 'Not Available') {
-        netflix_check_result += '\u2612 |';
+        netflix_check_result += '\u2612   |';
         return;
       }
-      netflix_check_result += 'N/A  |';
+      netflix_check_result += 'N/A    |';
     });
 
   return netflix_check_result;
