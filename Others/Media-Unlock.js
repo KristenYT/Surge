@@ -80,15 +80,15 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `D: 即将登陆~ ${region.toUpperCase()} |`;
+      return `| Disney: 即将登陆~ ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `D: \u2611${region.toUpperCase()} |`;
+      return `| Disney: \u2611${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `D: \u2612 |`;
+      return `| Disney: \u2612`;
     case STATUS_TIMEOUT:
-      return `D: N/A |`;
+      return `| Disney: N/A `;
     default:
-      return `D: 错误 |`;
+      return `| Disney: 错误 `;
   }
 }
 
@@ -130,13 +130,13 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2612' + traceData.loc.toUpperCase()+ '  |';
+        youtube_check_result += '\u2612 |';
       } else {
-        youtube_check_result += "\u2611" + code.toUpperCase()+ '  |';
+        youtube_check_result += "\u2611" + code.toUpperCase() + ' |';
       }
     })
     .catch(() => {
-      youtube_check_result += ' N/A   |';
+      youtube_check_result += 'N/A   |';
     });
 
   return youtube_check_result;
@@ -204,10 +204,10 @@ async function check_netflix() {
         return;
       }
       if (error === 'Not Available') {
-        netflix_check_result += '\u2612' + traceData.loc.toUpperCase() ;
+        netflix_check_result += '\u2612 ';
         return;
       }
-      netflix_check_result += ' N/A';
+      netflix_check_result += 'N/A';
     });
 
   return netflix_check_result;
