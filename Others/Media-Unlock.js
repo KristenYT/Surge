@@ -1,5 +1,4 @@
 /*
-
 脚本参考 @Helge_0x00 
 修改日期：2024.08.21
 Surge配置参考注释
@@ -7,17 +6,17 @@ Surge配置参考注释
  ----------------------------------------
  
 [Panel]
-策略面板 = script-name=解锁检测,update-interval=7200
+策略面板 = script-name=解鎖檢測,update-interval=7200
 
 [Script]
-解锁检测 = type=generic,timeout=30,script-path=https://raw.githubusercontent.com/githubdulong/Script/master/Stream-All.js,script-update-interval=0,argument=title=解锁检测&icon=headphones.circle&color=#FF2121
+解鎖檢測 = type=generic,timeout=30,script-path=https://raw.githubusercontent.com/githubdulong/Script/master/Stream-All.js,script-update-interval=0,argument=title=解鎖檢測&icon=headphones.circle&color=#FF2121
 
 ----------------------------------------
 
-支持使用脚本使用 argument 参数自定义配置，如：argument=title=解锁检测&icon=headphones.circle&color=#FF2121，具体参数如下所示，
- * title: 面板标题
- * icon: SFSymbols 图标
- * color：图标颜色
+支持使用脚本使用 argument 參數自定義配置，如：argument=title=解鎖檢測&icon=headphones.circle&color=#FF2121，具體參數如下所示，
+ * title: 面板標題
+ * icon: SFSymbols 圖標
+ * color：圖標顏色
  
  */
 
@@ -80,7 +79,7 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `| Disney: Coming~ ${region.toUpperCase()} `;
+      return `| Disney: Soon~ ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
       return `| Disney: \u2611${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
@@ -88,7 +87,7 @@ function formatDisneyPlusResult(status, region) {
     case STATUS_TIMEOUT:
       return `| Disney: N/A `;
     default:
-      return `| Disney: 错误 `;
+      return `| Disney: 錯誤 `;
   }
 }
 
@@ -222,24 +221,24 @@ async function testDisneyPlus() {
 
     region = countryCode ?? region;
     console.log("region:" + region);
-    // 即将登陆
+    // 即將登陸Soon
     if (inSupportedLocation === false || inSupportedLocation === 'false') {
       return { region, status: STATUS_COMING };
     } else {
-      // 支持解锁
+      // 支持解鎖
       return { region, status: STATUS_AVAILABLE };
     }
 
   } catch (error) {
     console.log("error:" + error);
 
-    // 不支持解锁
+    // 不支持解鎖
     if (error === 'Not Available') {
       console.log("不支持");
       return { status: STATUS_NOT_AVAILABLE };
     }
 
-    // 检测超时
+    // 檢測超時
     if (error === 'Timeout') {
       return { status: STATUS_TIMEOUT };
     }
