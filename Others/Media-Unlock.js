@@ -87,9 +87,9 @@ function formatDisneyPlusResult(status, region) {
     case STATUS_NOT_AVAILABLE:
       return `Disney: \u2612${region.toUpperCase()} |`; // 顯示國家代碼
     case STATUS_TIMEOUT:
-      return `Disney: N/A |`;
+      return `Disney: N/A   |`;
     default:
-      return `Disney: 錯誤 |`;
+      return `Disney: 錯誤   |`;
   }
 }
 
@@ -190,7 +190,7 @@ async function check_netflix() {
       if (code === 'Not Found') {
         return inner_check(80018499);
       }
-      netflix_check_result += ' \u2611' + code.toUpperCase() + ' |';
+      netflix_check_result += '\u2611' + code.toUpperCase() + ' |';
       return Promise.reject('BreakSignal');
     })
     .then((code) => {
@@ -198,7 +198,7 @@ async function check_netflix() {
         return Promise.reject('Not Available');
       }
 
-      netflix_check_result += ' ⚠' + code.toUpperCase() + ' |';
+      netflix_check_result += '⚠' + code.toUpperCase() + ' |';
       return Promise.reject('BreakSignal');
     })
     .catch((error) => {
@@ -206,10 +206,10 @@ async function check_netflix() {
         return;
       }
       if (error === 'Not Available') {
-        netflix_check_result += ' \u2612' + traceData.loc.toUpperCase() + ' |';
+        netflix_check_result += '\u2612' + traceData.loc.toUpperCase() + ' |';
         return;
       }
-      netflix_check_result += ' N/A |';
+      netflix_check_result += 'N/A   |';
     });
 
   return netflix_check_result;
