@@ -19,7 +19,6 @@ Surge配置参考注释
  * color：圖標顏色
  
  */
-
 const STATUS_COMING = 2;
 const STATUS_AVAILABLE = 1;
 const STATUS_NOT_AVAILABLE = 0;
@@ -36,36 +35,49 @@ const WARP_FEATURES = ["plus", "on"];
 let args = getArgs();
 
 (async () => {
-let now = new Date();
-let hour = now.getHours();
-let minutes = now.getMinutes();
-hour = hour > 9 ? hour : "0" + hour;
-minutes = minutes > 9 ? minutes : "0" + minutes;
+  let now = new Date();
+  let hour = now.getHours();
+  let minutes = now.getMinutes();
+  hour = hour > 9 ? hour : "0" + hour;
+  minutes = minutes > 9 ? minutes : "0" + minutes;
 
-let panel_result = {
-  title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
-  content: '',
-  icon: args.icon || "eye.slash.circle.fill",
-  "icon-color": args.color || "#ffb621",
-};
+  let panel_result = {
+    title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
+    content: '',
+    icon: args.icon || "eye.slash.circle.fill",
+    "icon-color": args.color || "#ffb621",
+  };
 
-let [{ region, status }] = await Promise.all([testDisneyPlus()]);
-let netflixResult = await check_netflix();
-let youtubeResult = await check_youtube_premium();
+  let [{ region, status }] = await Promise.all([testDisneyPlus()]);
+  let netflixResult = await check_netflix();
+  let youtubeResult = await check_youtube_premium();
 
-let disney_result = formatDisneyPlusResult(status, region);
-let traceData = await getTraceData();
-let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
+  let disney_result = formatDisneyPlusResult(status, region);
+  let traceData = await getTraceData();
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
-let content = `<span style="font-family: monospace;">${youtubeResult} | ${netflixResult}\n${gptSupportStatus} | ${disney_result} </span>`;
+  // Updated content section with HTML and inline styles
+  let content = `
+    <div style="display: flex; justify-content: center;">
+      <div>${youtubeResult}</div>
+      <span style="margin: 0 5px; background-color: lightgray;">|</span>
+      <div>${netflixResult}</div>
+    </div>
+    <div style="display: flex; justify-content: center;">
+      <div>${gptSupportStatus}</div>
+      <span style="margin: 0 5px; background-color: lightgray;">|</span>
+      <div>${disney_result}</div>
+    </div>
+  `;
 
-let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
-console.log(log);
+  let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
+  console.log(log);
 
-panel_result['content'] = content;
+  panel_result['content'] = content;
 
-$done(panel_result);
+  $done(panel_result);
 })();
+
 
 function getArgs() {
   return Object.fromEntries(
