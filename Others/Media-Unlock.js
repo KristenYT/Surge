@@ -58,7 +58,7 @@ let disney_result = formatDisneyPlusResult(status, region);
 let traceData = await getTraceData();
 let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
-let content = `${youtubeResult.padEnd(2)} ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(3)}${disney_result} `;
+let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(3)}${disney_result} `;
 
 let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
 console.log(log);
@@ -130,13 +130,13 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2009\u2612       |';
+        youtube_check_result += '\u2009\u2612       \u2009|';
       } else {
-        youtube_check_result += "\u2009\u2611" + code.toUpperCase() + ' |';
+        youtube_check_result += "\u2009\u2611" + code.toUpperCase() + ' \u2009|';
       }
     })
     .catch(() => {
-      youtube_check_result += 'N/A   |';
+      youtube_check_result += 'N/A   \u2009|';
     });
 
   return youtube_check_result;
