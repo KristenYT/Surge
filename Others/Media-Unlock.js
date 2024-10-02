@@ -88,7 +88,7 @@ function formatDisneyPlusResult(status, region) {
     case STATUS_TIMEOUT:
       return `Disney: N/A   `;
     default:
-      return `Disney: 错误 `;
+      return `Disney: 错误   `;
   }
 }
 
@@ -188,7 +188,7 @@ async function check_netflix() {
       if (code === 'Not Found') {
         return inner_check(80018499);
       }
-      netflix_check_result += '\u2611' + code.toUpperCase()+ '     |' ;
+      netflix_check_result += '\u2611' + code.toUpperCase() +'   |' ;
       return Promise.reject('BreakSignal');
     })
     .then((code) => {
