@@ -80,15 +80,15 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `D: 即将登陆~ ${region.toUpperCase()} |`;
+      return `| Disney: 即將登陸~ ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `D: \u2611${region.toUpperCase()} |`;
+      return `| Disney: \u2611${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `D: \u2612 |`;
+      return `| Disney: \u2612${region.toUpperCase()} `; // 顯示國家代碼
     case STATUS_TIMEOUT:
-      return `D: N/A |`;
+      return `| Disney: N/A   `;
     default:
-      return `D: 错误 |`;
+      return `| Disney: 錯誤   `;
   }
 }
 
