@@ -59,7 +59,7 @@ let args = getArgs();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
  
-  let content = `${youtubeResult}  ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(4)}${disney_result} `;
+  let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(3)}${disney_result} `;
   
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
@@ -132,9 +132,9 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2612' + traceData.loc.toUpperCase()+ ' |';
+        youtube_check_result += '\u2612' + traceData.loc.toUpperCase()+ '  |';
       } else {
-        youtube_check_result += "\u2611" + code.toUpperCase()+ ' |';
+        youtube_check_result += "\u2611" + code.toUpperCase()+ '  |';
       }
     })
     .catch(() => {
