@@ -196,7 +196,7 @@ async function check_netflix() {
         return Promise.reject('Not Available');
       }
 
-      netflix_check_result += '⚠' + code.toUpperCase() + '       |';
+      netflix_check_result += '⚠' + code.toUpperCase() + ' |';
       return Promise.reject('BreakSignal');
     })
     .catch((error) => {
