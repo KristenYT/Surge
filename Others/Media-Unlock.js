@@ -1,25 +1,18 @@
 /*
-
 脚本参考 @Helge_0x00 ,＠githubdulong
 修改日期：2024.08.30
 Surge配置参考注释
- 
- ----------------------------------------
- 
+----------------------------------------
 [Panel]
 策略面板 = script-name=解鎖檢測,update-interval=7200
-
 [Script]
 解鎖檢測 = type=generic,timeout=120,script-path=https://raw.githubusercontent.com/KristenYT/Surge/main/Others/Media-Unlock.js,script-update-interval=0,argument=title=解锁检测&icon=headphones.circle&color=#FF2121
-
 ----------------------------------------
-
 支持使用腳本使用 argument 參數自定義配置，如：argument=title=解鎖檢測&icon=headphones.circle&color=#FF2121，具體參數如下所示，
- * title: 面板標題
- * icon: SFSymbols 圖標
- * color：圖標顏色
- 
- */
+* title: 面板標題
+* icon: SFSymbols 圖標
+* color：圖標顏色
+*/
 
 const STATUS_COMING = 2;
 const STATUS_AVAILABLE = 1;
@@ -50,22 +43,24 @@ let args = getArgs();
     "icon-color": args.color || "#ffb621",
   };
 
-  let [{ region, status }] = await Promise.all([testDisneyPlus()]);
-  let netflixResult = await check_netflix();
-  let youtubeResult = await check_youtube_premium();
- 
-  let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
+
+  // 1. 並行執行檢測
+  let [{ region, status }, netflixResult, youtubeResult] = await Promise.all([
+    testDisneyPlus(),
+    check_netflix(),
+    check_youtube_premium()
+  ]);
+
+  let disney_result = formatDisneyPlusResult(status, region);
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
- 
   let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(3)}${disney_result} `;
-  
+
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
 
   panel_result['content'] = content;
-
   $done(panel_result);
 })();
 
@@ -87,12 +82,11 @@ function formatDisneyPlusResult(status, region) {
     case STATUS_NOT_AVAILABLE:
       return `| Disney: \u2612${region.toUpperCase()} `; // 顯示國家代碼
     case STATUS_TIMEOUT:
-      return `| Disney: N/A   `;
+      return `| Disney: N/A `;
     default:
-      return `| Disney: 錯誤   `;
+      return `| Disney: 錯誤 `;
   }
 }
-
 
 async function check_youtube_premium() {
   let inner_check = () => {
@@ -122,28 +116,28 @@ async function check_youtube_premium() {
         } else {
           region = 'US';
         }
+
         resolve(region);
       });
     });
   };
 
   let youtube_check_result = 'YouTube: ';
-
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2612' + traceData.loc.toUpperCase()+ '  |';
+        youtube_check_result += '\u2612' + traceData.loc.toUpperCase()+ ' |';
       } else {
-        youtube_check_result += "\u2611" + code.toUpperCase()+ '  |';
+        youtube_check_result += "\u2611" + code.toUpperCase()+ ' |';
       }
     })
     .catch(() => {
-      youtube_check_result += 'N/A   |';
+      youtube_check_result += 'N/A |';
     });
-
   return youtube_check_result;
 }
 
+// 2. 縮短超時時間
 async function check_netflix() {
   let inner_check = (filmId) => {
     return new Promise((resolve, reject) => {
@@ -184,69 +178,33 @@ async function check_netflix() {
   };
 
   let netflix_check_result = 'Netflix: ';
-
-  await inner_check(81280792)
+  // 3. 優化Netflix檢測
+  await inner_check(80018499)
     .then((code) => {
-      if (code === 'Not Found') {
-        return inner_check(80018499);
-      }
-      netflix_check_result += '\u2611' + code.toUpperCase() ;
-      return Promise.reject('BreakSignal');
-    })
-    .then((code) => {
-      if (code === 'Not Found') {
-        return Promise.reject('Not Available');
-      }
-
-      netflix_check_result += '⚠' + code.toUpperCase() ;
-      return Promise.reject('BreakSignal');
+      netflix_check_result += '\u2611' + code.toUpperCase();
     })
     .catch((error) => {
-      if (error === 'BreakSignal') {
-        return;
-      }
       if (error === 'Not Available') {
-        netflix_check_result += '\u2612' + traceData.loc.toUpperCase() ;
-        return;
+        netflix_check_result += '\u2612' + traceData.loc.toUpperCase();
+      } else {
+        netflix_check_result += 'N/A ';
       }
-      netflix_check_result += 'N/A ';
     });
-
   return netflix_check_result;
 }
 
+// 4. 簡化Disney+檢測
 async function testDisneyPlus() {
   try {
-    let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)]);
-    console.log(`homepage: region=${region}, cnbl=${cnbl}`);
-    let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(7000)]);
-    console.log(`getLocationInfo: countryCode=${countryCode}, inSupportedLocation=${inSupportedLocation}`);
-
-    region = countryCode ?? region;
-    console.log("region:" + region);
-    // 即將登陸
+    let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(3000)]);
     if (inSupportedLocation === false || inSupportedLocation === 'false') {
-      return { region, status: STATUS_COMING };
+      return { region: countryCode, status: STATUS_COMING };
     } else {
-      // 支持解鎖
-      return { region, status: STATUS_AVAILABLE };
+      return { region: countryCode, status: STATUS_AVAILABLE };
     }
-
   } catch (error) {
     console.log("error:" + error);
-
-    // 不支持解鎖
-    if (error === 'Not Available') {
-      console.log("不支持");
-      return { status: STATUS_NOT_AVAILABLE };
-    }
-
-    // 檢測超時
-    if (error === 'Timeout') {
-      return { status: STATUS_TIMEOUT };
-    }
-
-    return { status: STATUS_ERROR };
+    return { status: error === 'Timeout' ? STATUS_TIMEOUT : STATUS_NOT_AVAILABLE };
   }
 }
 
@@ -313,39 +271,6 @@ function getLocationInfo() {
   });
 }
 
-function testHomePage() {
-  return new Promise((resolve, reject) => {
-    let opts = {
-      url: 'https://www.disneyplus.com/',
-      headers: {
-        'Accept-Language': 'en',
-        'User-Agent': UA,
-      },
-    };
-
-    $httpClient.get(opts, function (error, response, data) {
-      if (error) {
-        reject('Error');
-        return;
-      }
-      if (response.status !== 200 || data.indexOf('Sorry, Disney+ is not available in your region.') !== -1) {
-        reject('Not Available');
-        return;
-      }
-
-      let match = data.match(/Region: ([A-Za-z]{2})[\s\S]*?CNBL: ([12])/);
-      if (!match) {
-        resolve({ region: '', cnbl: '' });
-        return;
-      }
-
-      let region = match[1];
-      let cnbl = match[2];
-      resolve({ region, cnbl });
-    });
-  });
-}
-
 function timeout(delay = 5000) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -361,6 +286,7 @@ async function getTraceData() {
         reject(error);
         return;
       }
+
       let lines = data.split("\n");
       let cf = lines.reduce((acc, line) => {
         let [key, value] = line.split("=");
