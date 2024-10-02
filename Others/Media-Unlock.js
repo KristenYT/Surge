@@ -132,7 +132,7 @@ async function check_youtube_premium() {
       }
     })
     .catch(() => {
-      youtube_check_result += 'N/A   |';
+      youtube_check_result += ' N/A   |';
     });
 
   return youtube_check_result;
@@ -203,7 +203,7 @@ async function check_netflix() {
         netflix_check_result += '\u2612' + traceData.loc.toUpperCase() ;
         return;
       }
-      netflix_check_result += 'N/A ';
+      netflix_check_result += ' N/A';
     });
 
   return netflix_check_result;
