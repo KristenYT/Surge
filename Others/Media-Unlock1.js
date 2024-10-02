@@ -57,13 +57,12 @@ let disney_result = formatDisneyPlusResult(status, region);
 let traceData = await getTraceData();
 let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
-
+let content = `<span style="font-family: monospace;">${youtubeResult} | ${netflixResult}\n${gptSupportStatus} | ${disney_result} </span>`;
 
 let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
 console.log(log);
 
-// 假設使用固定寬度字體的CSS樣式
-panel_result['content'] = `<span style="font-family: monospace;">${youtubeResult} | ${netflixResult}\n${gptSupportStatus} | ${disney_result} </span>`;
+panel_result['content'] = content;
 
 $done(panel_result);
 })();
