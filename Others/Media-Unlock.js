@@ -59,7 +59,7 @@ let args = getArgs();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
  
-  let content = ` ${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(2)} ${disney_result} `;
+  let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(2)}  ${disney_result} `;
   
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
@@ -81,15 +81,15 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `|Disney: 即將登陸~ ${region.toUpperCase()} |`;
+      return `|Disney: 即將登陸~ ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `|Disney: \u2611${region.toUpperCase()} |`;
+      return `|Disney: \u2611${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `|Disney: \u2612${region.toUpperCase()} |`; // 顯示國家代碼
+      return `|Disney: \u2612${region.toUpperCase()} `; // 顯示國家代碼
     case STATUS_TIMEOUT:
-      return `|Disney: N/A   |`;
+      return `|Disney: N/A   `;
     default:
-      return `|Disney: 錯誤   |`;
+      return `|Disney: 錯誤   `;
   }
 }
 
@@ -132,13 +132,13 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += ' \u2612' + traceData.loc.toUpperCase()+ ' |';
+        youtube_check_result += '\u2612' + traceData.loc.toUpperCase()+ ' |';
       } else {
-        youtube_check_result += " \u2611" + code.toUpperCase()+ ' |';
+        youtube_check_result += "\u2611" + code.toUpperCase()+ ' |';
       }
     })
     .catch(() => {
-      youtube_check_result += ' N/A   |';
+      youtube_check_result += 'N/A   |';
     });
 
   return youtube_check_result;
