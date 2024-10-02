@@ -211,76 +211,37 @@ async function check_netflix() {
 
 async function testDisneyPlus() {
   try {
-    // 並行測試首頁和位置信息，加上超時控制
     let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)]);
-    console.log(`Homepage check: region=${region}, cnbl=${cnbl}`);
-    
+    console.log(`homepage: region=${region}, cnbl=${cnbl}`);
     let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(7000)]);
-    console.log(`Location info: countryCode=${countryCode}, inSupportedLocation=${inSupportedLocation}`);
+    console.log(`getLocationInfo: countryCode=${countryCode}, inSupportedLocation=${inSupportedLocation}`);
 
-    // 優先使用 countryCode，如果 countryCode 不存在則使用 region
-    region = countryCode || region;
-
-    // 如果 region 為空，顯示不支持
-    if (!region) {
-      console.log("Region is not available");
-      return { region: "N/A", status: STATUS_NOT_AVAILABLE };
-    }
-
-    // 根據 inSupportedLocation 判斷是否即將登錄或已支持
+    region = countryCode ?? region;
+    console.log("region:" + region);
+    // 即将登陆
     if (inSupportedLocation === false || inSupportedLocation === 'false') {
-      return { region, status: STATUS_COMING }; // 即將登錄
+      return { region, status: STATUS_COMING };
     } else {
-      return { region, status: STATUS_AVAILABLE }; // 支持解鎖
+      // 支持解锁
+      return { region, status: STATUS_AVAILABLE };
     }
 
   } catch (error) {
-    console.log("Error in Disney+ detection:", error);
+    console.log("error:" + error);
 
-    // 根據不同錯誤類型進行判斷
+    // 不支持解锁
     if (error === 'Not Available') {
+      console.log("不支持");
       return { status: STATUS_NOT_AVAILABLE };
     }
 
+    // 检测超时
     if (error === 'Timeout') {
       return { status: STATUS_TIMEOUT };
     }
 
-    return { status: STATUS_ERROR }; // 捕捉所有其他錯誤
+    return { status: STATUS_ERROR };
   }
-}
-
-function testHomePage() {
-  return new Promise((resolve, reject) => {
-    let opts = {
-      url: 'https://www.disneyplus.com/',
-      headers: {
-        'Accept-Language': 'en',
-        'User-Agent': UA,
-      },
-    };
-
-    $httpClient.get(opts, function (error, response, data) {
-      if (error) {
-        reject('Error');
-        return;
-      }
-      if (response.status !== 200 || data.includes('Sorry, Disney+ is not available in your region.')) {
-        reject('Not Available');
-        return;
-      }
-
-      let match = data.match(/Region: ([A-Za-z]{2})[\s\S]*?CNBL: ([12])/);
-      if (!match) {
-        resolve({ region: '', cnbl: '' });
-        return;
-      }
-
-      let region = match[1];
-      let cnbl = match[2];
-      resolve({ region, cnbl });
-    });
-  });
 }
 
 function getLocationInfo() {
@@ -322,23 +283,59 @@ function getLocationInfo() {
       }
 
       if (response.status !== 200) {
+        console.log('getLocationInfo: ' + data);
         reject('Not Available');
         return;
       }
 
       data = JSON.parse(data);
       if (data?.errors) {
+        console.log('getLocationInfo: ' + data);
         reject('Not Available');
         return;
       }
 
       let {
+        token: { accessToken },
         session: {
           inSupportedLocation,
           location: { countryCode },
         },
       } = data?.extensions?.sdk;
-      resolve({ inSupportedLocation, countryCode });
+      resolve({ inSupportedLocation, countryCode, accessToken });
+    });
+  });
+}
+
+function testHomePage() {
+  return new Promise((resolve, reject) => {
+    let opts = {
+      url: 'https://www.disneyplus.com/',
+      headers: {
+        'Accept-Language': 'en',
+        'User-Agent': UA,
+      },
+    };
+
+    $httpClient.get(opts, function (error, response, data) {
+      if (error) {
+        reject('Error');
+        return;
+      }
+      if (response.status !== 200 || data.indexOf('Sorry, Disney+ is not available in your region.') !== -1) {
+        reject('Not Available');
+        return;
+      }
+
+      let match = data.match(/Region: ([A-Za-z]{2})[\s\S]*?CNBL: ([12])/);
+      if (!match) {
+        resolve({ region: '', cnbl: '' });
+        return;
+      }
+
+      let region = match[1];
+      let cnbl = match[2];
+      resolve({ region, cnbl });
     });
   });
 }
@@ -368,3 +365,6 @@ async function getTraceData() {
     });
   });
 }
+
+
+  
