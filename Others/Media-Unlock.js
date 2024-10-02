@@ -84,7 +84,7 @@ function formatDisneyPlusResult(status, region) {
     case STATUS_AVAILABLE:
       return `Disney: \u2611${region.toUpperCase()} |`;
     case STATUS_NOT_AVAILABLE:
-      return `Disney: \u2612      |`;
+      return `Disney: \u2612  |`;
     case STATUS_TIMEOUT:
       return `Disney: N/A  |`;
     default:
