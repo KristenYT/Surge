@@ -135,7 +135,7 @@ async function check_youtube_premium() {
       }
     })
     .catch(() => {
-      youtube_check_result += 'N/A   |';
+      youtube_check_result += ' N/A   |';
     });
 
   return youtube_check_result;
