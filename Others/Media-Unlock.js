@@ -43,24 +43,24 @@ let args = getArgs();
     "icon-color": args.color || "#ffb621",
   };
 
-  let traceData = await getTraceData();
-
-  // 1. 並行執行檢測
-  let [{ region, status }, netflixResult, youtubeResult] = await Promise.all([
+  // Parallelize API calls to improve speed
+  let [disney, netflix, youtube, traceData] = await Promise.all([
     testDisneyPlus(),
     check_netflix(),
-    check_youtube_premium()
+    check_youtube_premium(),
+    getTraceData()
   ]);
 
-  let disney_result = formatDisneyPlusResult(status, region);
+  let disney_result = formatDisneyPlusResult(disney.status, disney.region);
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
-  let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(3)}${disney_result} `;
-
+  let content = `${youtube} ${netflix}\n${gptSupportStatus}${traceData.loc.padEnd(3)}${disney_result} `;
+  
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
 
   panel_result['content'] = content;
+
   $done(panel_result);
 })();
 
@@ -82,9 +82,9 @@ function formatDisneyPlusResult(status, region) {
     case STATUS_NOT_AVAILABLE:
       return `| Disney: \u2612${region.toUpperCase()} `; // 顯示國家代碼
     case STATUS_TIMEOUT:
-      return `| Disney: N/A `;
+      return `| Disney: N/A   `;
     default:
-      return `| Disney: 錯誤 `;
+      return `| Disney: 錯誤   `;
   }
 }
 
@@ -116,28 +116,28 @@ async function check_youtube_premium() {
         } else {
           region = 'US';
         }
-
         resolve(region);
       });
     });
   };
 
   let youtube_check_result = 'YouTube: ';
+
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2612' + traceData.loc.toUpperCase()+ ' |';
+        youtube_check_result += '\u2612' + traceData.loc.toUpperCase()+ '  |';
       } else {
-        youtube_check_result += "\u2611" + code.toUpperCase()+ ' |';
+        youtube_check_result += "\u2611" + code.toUpperCase()+ '  |';
       }
     })
     .catch(() => {
-      youtube_check_result += 'N/A |';
+      youtube_check_result += 'N/A   |';
     });
+
   return youtube_check_result;
 }
 
-// 2. 縮短超時時間
 async function check_netflix() {
   let inner_check = (filmId) => {
     return new Promise((resolve, reject) => {
@@ -178,97 +178,58 @@ async function check_netflix() {
   };
 
   let netflix_check_result = 'Netflix: ';
-  // 3. 優化Netflix檢測
-  await inner_check(80018499)
+
+  await inner_check(81280792)
     .then((code) => {
-      netflix_check_result += '\u2611' + code.toUpperCase();
+      if (code === 'Not Found') {
+        return inner_check(80018499);
+      }
+      netflix_check_result += '\u2611' + code.toUpperCase() ;
+      return Promise.reject('BreakSignal');
+    })
+    .then((code) => {
+      if (code === 'Not Found') {
+        return Promise.reject('Not Available');
+      }
+
+      netflix_check_result += '⚠' + code.toUpperCase() ;
+      return Promise.reject('BreakSignal');
     })
     .catch((error) => {
-      if (error === 'Not Available') {
-        netflix_check_result += '\u2612' + traceData.loc.toUpperCase();
-      } else {
-        netflix_check_result += 'N/A ';
+      if (error === 'BreakSignal') {
+        return;
       }
+      if (error === 'Not Available') {
+        netflix_check_result += '\u2612' + traceData.loc.toUpperCase() ;
+        return;
+      }
+      netflix_check_result += 'N/A ';
     });
+
   return netflix_check_result;
 }
 
-// 4. 簡化Disney+檢測
 async function testDisneyPlus() {
   try {
-    let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(3000)]);
+    let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)]);
+    let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(7000)]);
+    region = countryCode ?? region;
+    // 即將登陸
     if (inSupportedLocation === false || inSupportedLocation === 'false') {
-      return { region: countryCode, status: STATUS_COMING };
+      return { region, status: STATUS_COMING };
     } else {
-      return { region: countryCode, status: STATUS_AVAILABLE };
+      // 支持解鎖
+      return { region, status: STATUS_AVAILABLE };
     }
   } catch (error) {
-    console.log("error:" + error);
-    return { status: error === 'Timeout' ? STATUS_TIMEOUT : STATUS_NOT_AVAILABLE };
+    if (error === 'Not Available') {
+      return { status: STATUS_NOT_AVAILABLE };
+    }
+    if (error === 'Timeout') {
+      return { status: STATUS_TIMEOUT };
+    }
+    return { status: STATUS_ERROR };
   }
-}
-
-function getLocationInfo() {
-  return new Promise((resolve, reject) => {
-    let opts = {
-      url: 'https://disney.api.edge.bamgrid.com/graph/v1/device/graphql',
-      headers: {
-        'Accept-Language': 'en',
-        Authorization: 'ZGlzbmV5JmJyb3dzZXImMS4wLjA.Cu56AgSfBTDag5NiRA81oLHkDZfu5L3CKadnefEAY84',
-        'Content-Type': 'application/json',
-        'User-Agent': UA,
-      },
-      body: JSON.stringify({
-        query: 'mutation registerDevice($input: RegisterDeviceInput!) { registerDevice(registerDevice: $input) { grant { grantType assertion } } }',
-        variables: {
-          input: {
-            applicationRuntime: 'chrome',
-            attributes: {
-              browserName: 'chrome',
-              browserVersion: '94.0.4606',
-              manufacturer: 'apple',
-              model: null,
-              operatingSystem: 'macintosh',
-              operatingSystemVersion: '10.15.7',
-              osDeviceIds: [],
-            },
-            deviceFamily: 'browser',
-            deviceLanguage: 'en',
-            deviceProfile: 'macosx',
-          },
-        },
-      }),
-    };
-
-    $httpClient.post(opts, function (error, response, data) {
-      if (error) {
-        reject('Error');
-        return;
-      }
-
-      if (response.status !== 200) {
-        console.log('getLocationInfo: ' + data);
-        reject('Not Available');
-        return;
-      }
-
-      data = JSON.parse(data);
-      if (data?.errors) {
-        console.log('getLocationInfo: ' + data);
-        reject('Not Available');
-        return;
-      }
-
-      let {
-        token: { accessToken },
-        session: {
-          inSupportedLocation,
-          location: { countryCode },
-        },
-      } = data?.extensions?.sdk;
-      resolve({ inSupportedLocation, countryCode, accessToken });
-    });
-  });
 }
 
 function timeout(delay = 5000) {
@@ -286,7 +247,6 @@ async function getTraceData() {
         reject(error);
         return;
       }
-
       let lines = data.split("\n");
       let cf = lines.reduce((acc, line) => {
         let [key, value] = line.split("=");
