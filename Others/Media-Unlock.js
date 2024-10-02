@@ -59,7 +59,7 @@ let args = getArgs();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
  
-  let content = ` ${netflixResult} ${youtubeResult}\n ${disney_result} ${gptSupportStatus}${traceData.loc.padEnd(2) `;
+  let content = ` ${netflixResult} ${youtubeResult}\n ${disney_result} ${gptSupportStatus}${traceData.loc.padEnd(2)}`;
   
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
