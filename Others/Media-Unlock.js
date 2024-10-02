@@ -57,6 +57,7 @@ let args = getArgs();
   let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
+
  
   let content = ` ${netflixResult} ${youtubeResult}\n ${disney_result} ${gptSupportStatus}${traceData.loc}`;
   
@@ -84,13 +85,14 @@ function formatDisneyPlusResult(status, region) {
     case STATUS_AVAILABLE:
       return `Disney: \u2611${region.toUpperCase()} |`;
     case STATUS_NOT_AVAILABLE:
-      return `Disney: \u2612  |`;
+      return `Disney: \u2612 |`; // 確保「|」位置一致
     case STATUS_TIMEOUT:
-      return `Disney: N/A  |`;
+      return `Disney: N/A |`;
     default:
-      return `Disney: 錯誤  |`;
+      return `Disney: 錯誤 |`;
   }
 }
+
 
 async function check_youtube_premium() {
   let inner_check = () => {
