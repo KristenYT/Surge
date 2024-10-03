@@ -9,4 +9,4 @@
 Panel = script-name=解鎖檢測,update-interval={{{UPDATE_INTERVAL}}}
 
 [Script]
-解鎖檢測 = type=generic,timeout=120,script-path=https://raw.githubusercontent.com/KristenYT/Surge/main/Others/test.js,script-update-interval=0,argument=title={{{TITLE}}}&icon={{{ICON}}}&color={{{COLOR}}}
+解鎖檢測 = type=generic,timeout=120,script-path=https://raw.githubusercontent.com/KristenYT/Surge/main/Others/Media-Unlock.js,script-update-interval=0,argument=title={{{TITLE}}}&icon={{{ICON}}}&color={{{COLOR}}}
