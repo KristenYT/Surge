@@ -131,7 +131,7 @@ async function check_youtube_premium() {
       if (code === 'Not Available') {
         youtube_check_result += '\u2612';
       } else {
-        youtube_check_result += "\u2611" + code.toUpperCase()';
+        youtube_check_result += "\u2009\u2611" + code.toUpperCase() + ' \u2009';
       }
     })
     .catch(() => {
