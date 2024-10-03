@@ -1,6 +1,6 @@
 /*
-脚本参考 @Helge_0x00 
-修改日期：2024.08.21
+脚本参考 @Helge_0x00 ,githubdulong
+修改日期：2024.10.03
 Surge配置参考注释
  
  ----------------------------------------
@@ -36,35 +36,36 @@ const WARP_FEATURES = ["plus", "on"];
 let args = getArgs();
 
 (async () => {
-let now = new Date();
-let hour = now.getHours();
-let minutes = now.getMinutes();
-hour = hour > 9 ? hour : "0" + hour;
-minutes = minutes > 9 ? minutes : "0" + minutes;
+  let now = new Date();
+  let hour = now.getHours();
+  let minutes = now.getMinutes();
+  hour = hour > 9 ? hour : "0" + hour;
+  minutes = minutes > 9 ? minutes : "0" + minutes;
 
-let panel_result = {
-  title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
-  content: '',
-  icon: args.icon || "eye.slash.circle.fill",
-  "icon-color": args.color || "#ffb621",
-};
+  let [{ region, status }] = await Promise.all([testDisneyPlus()]);
+  let netflixResult = await check_netflix();
+  let youtubeResult = await check_youtube_premium();
 
-let [{ region, status }] = await Promise.all([testDisneyPlus()]);
-let netflixResult = await check_netflix();
-let youtubeResult = await check_youtube_premium();
+  let disney_result = formatDisneyPlusResult(status, region);
+  let traceData = await getTraceData();
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
-let disney_result = formatDisneyPlusResult(status, region);
-let traceData = await getTraceData();
-let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
+  let content = [
+    `${youtubeResult} \t|  ${netflixResult}`,
+    `${gptSupportStatus}${traceData.loc.padEnd(3)} \t|  ${disney_result}`,
+  ];
 
-let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(3)}${disney_result} `;
+  let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
+  console.log(log);
 
-let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
-console.log(log);
+  let panel_result = {
+    title: `${args.title} | ${hour}:${minutes}`,
+    content: content.join("\n"),
+    icon: args.icon || "eye.slash.circle.fill",
+    "icon-color": args.color || "#ffb621",
+  };
 
-panel_result['content'] = content;
-
-$done(panel_result);
+  $done(panel_result);
 })();
 
 function getArgs() {
@@ -79,15 +80,15 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `| Disney: Soon~ ${region.toUpperCase()} `;
+      return `Disney: Soon~ ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `| Disney: \u2611${region.toUpperCase()} `;
+      return `Disney: \u2611${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `| Disney: \u2612`;
+      return `Disney: \u2612`;
     case STATUS_TIMEOUT:
-      return `| Disney: N/A `;
+      return `Disney: N/A `;
     default:
-      return `| Disney: 錯誤 `;
+      return `Disney: 錯誤 `;
   }
 }
 
@@ -129,13 +130,13 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2009\u2612      \u2009|';
+        youtube_check_result += '\u2612';
       } else {
-        youtube_check_result += "\u2009\u2611" + code.toUpperCase() + ' \u2009|';
+        youtube_check_result += "\u2009\u2611" + code.toUpperCase() + ' \u2009';
       }
     })
     .catch(() => {
-      youtube_check_result += ' N/A   |';
+      youtube_check_result += ' N/A';
     });
 
   return youtube_check_result;
@@ -187,7 +188,7 @@ async function check_netflix() {
       if (code === 'Not Found') {
         return inner_check(80018499);
       }
-      netflix_check_result += '\u2611' + code.toUpperCase() ;
+      netflix_check_result += '\u2009\u2611' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .then((code) => {
@@ -195,7 +196,7 @@ async function check_netflix() {
         return Promise.reject('Not Available');
       }
 
-      netflix_check_result += '⚠' + code.toUpperCase() ;
+      netflix_check_result += '\u2009⚠' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .catch((error) => {
@@ -203,10 +204,10 @@ async function check_netflix() {
         return;
       }
       if (error === 'Not Available') {
-        netflix_check_result += '\u2612 ';
+        netflix_check_result += '\u2009\u2612 ';
         return;
       }
-      netflix_check_result += 'N/A';
+      netflix_check_result += '\u2009N/A';
     });
 
   return netflix_check_result;
