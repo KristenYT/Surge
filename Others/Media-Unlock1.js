@@ -43,8 +43,8 @@ hour = hour > 9 ? hour : "0" + hour;
 minutes = minutes > 9 ? minutes : "0" + minutes;
 
 let panel_result = {
-  title: `${args.title} | ${hour}:${minutes}`,
-  content: content.join("\n"),
+  title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
+  content: '',
   icon: args.icon || "eye.slash.circle.fill",
   "icon-color": args.color || "#ffb621",
 };
@@ -57,10 +57,7 @@ let disney_result = formatDisneyPlusResult(status, region);
 let traceData = await getTraceData();
 let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
-let content = [
-  `${youtubeResult} \t| ${netflixResult}`,
-  `${gptSupportStatus}${traceData.loc.padEnd(3)} \t| ${disney_result}`,
-];
+let content = `${youtubeResult} ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(3)}${disney_result} `;
 
 let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
 console.log(log);
@@ -82,15 +79,15 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `Disney: Soon~ ${region.toUpperCase()} `;
+      return `| Disney: Soon~ ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `Disney: \u2611${region.toUpperCase()} `;
+      return `| Disney: \u2611${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `Disney: \u2612`;
+      return `| Disney: \u2612`;
     case STATUS_TIMEOUT:
-      return `Disney: N/A `;
+      return `| Disney: N/A `;
     default:
-      return `Disney: 錯誤 `;
+      return `| Disney: 錯誤 `;
   }
 }
 
@@ -132,13 +129,13 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2009\u2612 ';
+        youtube_check_result += '\u2009\u2612      \u2009|';
       } else {
-        youtube_check_result += "\u2009\u2611" + code.toUpperCase() ';
+        youtube_check_result += "\u2009\u2611" + code.toUpperCase() + ' \u2009|';
       }
     })
     .catch(() => {
-      youtube_check_result += ' N/A  ';
+      youtube_check_result += ' N/A   |';
     });
 
   return youtube_check_result;
