@@ -36,38 +36,36 @@ const WARP_FEATURES = ["plus", "on"];
 let args = getArgs();
 
 (async () => {
-let now = new Date();
-let hour = now.getHours();
-let minutes = now.getMinutes();
-hour = hour > 9 ? hour : "0" + hour;
-minutes = minutes > 9 ? minutes : "0" + minutes;
+  let now = new Date();
+  let hour = now.getHours();
+  let minutes = now.getMinutes();
+  hour = hour > 9 ? hour : "0" + hour;
+  minutes = minutes > 9 ? minutes : "0" + minutes;
 
-let panel_result = {
-  title: `${args.title} | ${hour}:${minutes}`,
-  content: content.join("\n"),
-  icon: args.icon || "eye.slash.circle.fill",
-  "icon-color": args.color || "#ffb621",
-};
+  let [{ region, status }] = await Promise.all([testDisneyPlus()]);
+  let netflixResult = await check_netflix();
+  let youtubeResult = await check_youtube_premium();
 
-let [{ region, status }] = await Promise.all([testDisneyPlus()]);
-let netflixResult = await check_netflix();
-let youtubeResult = await check_youtube_premium();
+  let disney_result = formatDisneyPlusResult(status, region);
+  let traceData = await getTraceData();
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
-let disney_result = formatDisneyPlusResult(status, region);
-let traceData = await getTraceData();
-let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
+  let content = [
+    `${youtubeResult} \t| ${netflixResult}`,
+    `${gptSupportStatus}${traceData.loc.padEnd(3)} \t| ${disney_result}`,
+  ];
 
-let content = [
-  `${youtubeResult} \t| ${netflixResult}`,
-  `${gptSupportStatus}${traceData.loc.padEnd(3)} \t| ${disney_result}`,
-];
+  let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
+  console.log(log);
 
-let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
-console.log(log);
+  let panel_result = {
+    title: `${args.title} | ${hour}:${minutes}`,
+    content: content.join("\n"),
+    icon: args.icon || "eye.slash.circle.fill",
+    "icon-color": args.color || "#ffb621",
+  };
 
-panel_result['content'] = content;
-
-$done(panel_result);
+  $done(panel_result);
 })();
 
 function getArgs() {
