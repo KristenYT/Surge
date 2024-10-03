@@ -81,9 +81,9 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `Soon~ ${region.toUpperCase()} `;
+      return `Soon~  ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `\u2611${region.toUpperCase()} `;
+      return `\u2611 ${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
       return `\u2612`;
     case STATUS_TIMEOUT:
@@ -131,9 +131,9 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2612';
+        youtube_check_result += '\u2612 ';
       } else {
-        youtube_check_result += "\u2009\u2611" + code.toUpperCase() + ' \u2009';
+        youtube_check_result += "\u2009\u2611 " + code.toUpperCase() + ' \u2009';
       }
     })
     .catch(() => {
@@ -189,7 +189,7 @@ async function check_netflix() {
       if (code === 'Not Found') {
         return inner_check(80018499);
       }
-      netflix_check_result += '\u2009\u2611' + code.toUpperCase() ;
+      netflix_check_result += '\u2009\u2611 ' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .then((code) => {
@@ -197,7 +197,7 @@ async function check_netflix() {
         return Promise.reject('Not Available');
       }
 
-      netflix_check_result += '\u2009⚠' + code.toUpperCase() ;
+      netflix_check_result += '\u2009⚠ ' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .catch((error) => {
