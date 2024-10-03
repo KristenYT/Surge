@@ -50,9 +50,10 @@ let args = getArgs();
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
+  // 去掉不必要的空格和 tab
   let content = [
-    `${youtubeResult}\t|${netflixResult}`,
-    `${gptSupportStatus}${traceData.loc}\t|${disney_result}`,
+    `YouTube: ${youtubeResult} | Netflix: ${netflixResult}`,
+    `${gptSupportStatus} ${traceData.loc} | Disney: ${disney_result}`,
   ];
 
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
