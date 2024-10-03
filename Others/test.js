@@ -52,8 +52,8 @@ let args = getArgs();
 
   // 去掉不必要的空格和 tab
   let content = [
-    `YouTube: ${youtubeResult} | Netflix: ${netflixResult}`,
-    `${gptSupportStatus} ${traceData.loc} | Disney: ${disney_result}`,
+    `${youtubeResult} | ${netflixResult}`,
+    `${gptSupportStatus} ${traceData.loc} | ${disney_result}`,
   ];
 
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
