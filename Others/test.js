@@ -51,7 +51,7 @@ let args = getArgs();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
   let content = [
-    `${youtubeResult}\t| ${netflixResult}`,
+    `${youtubeResult} \t|${netflixResult}`,
     `${gptSupportStatus}${traceData.loc}\t| ${disney_result}`,
   ];
 
