@@ -43,8 +43,8 @@ hour = hour > 9 ? hour : "0" + hour;
 minutes = minutes > 9 ? minutes : "0" + minutes;
 
 let panel_result = {
-  title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
-  content: '',
+  title: `${args.title} | ${hour}:${minutes}`,
+  content: content.join("\n"),
   icon: args.icon || "eye.slash.circle.fill",
   "icon-color": args.color || "#ffb621",
 };
