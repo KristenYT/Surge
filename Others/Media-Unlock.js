@@ -51,8 +51,8 @@ let args = getArgs();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
   let content = [
-    `${youtubeResult} \t|   ${netflixResult}`,
-    `${gptSupportStatus} ${traceData.loc.padEnd(3)} \t|   ${disney_result}`,
+    `${youtubeResult}\t|   ${netflixResult}`,
+    `${gptSupportStatus} ${traceData.loc.padEnd(3)}\t|   ${disney_result}`,
   ];
 
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
@@ -80,15 +80,15 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `\u2009Disney: Soon~  ${region.toUpperCase()} `;
+      return `Disney: Soon~  ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `\u2009Disney: \u2611 ${region.toUpperCase()} `;
+      return `Disney: \u2611 ${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `\u2009Disney: \u2612`;
+      return `Disney: \u2612`;
     case STATUS_TIMEOUT:
-      return `\u2009Disney: N/A `;
+      return `Disney: N/A `;
     default:
-      return `\u2009Disney: 錯誤 `;
+      return `Disney: 錯誤 `;
   }
 }
 
@@ -181,7 +181,7 @@ async function check_netflix() {
     });
   };
 
-  let netflix_check_result = '\u2009Netflix: ';
+  let netflix_check_result = 'Netflix: ';
 
   await inner_check(81280792)
     .then((code) => {
