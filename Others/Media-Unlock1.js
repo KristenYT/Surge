@@ -19,6 +19,7 @@ Surge配置参考注释
  * color：圖標顏色
  
  */
+
 const STATUS_COMING = 2;
 const STATUS_AVAILABLE = 1;
 const STATUS_NOT_AVAILABLE = 0;
@@ -35,49 +36,36 @@ const WARP_FEATURES = ["plus", "on"];
 let args = getArgs();
 
 (async () => {
-  let now = new Date();
-  let hour = now.getHours();
-  let minutes = now.getMinutes();
-  hour = hour > 9 ? hour : "0" + hour;
-  minutes = minutes > 9 ? minutes : "0" + minutes;
+let now = new Date();
+let hour = now.getHours();
+let minutes = now.getMinutes();
+hour = hour > 9 ? hour : "0" + hour;
+minutes = minutes > 9 ? minutes : "0" + minutes;
 
-  let panel_result = {
-    title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
-    content: '',
-    icon: args.icon || "eye.slash.circle.fill",
-    "icon-color": args.color || "#ffb621",
-  };
+let panel_result = {
+  title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
+  content: '',
+  icon: args.icon || "eye.slash.circle.fill",
+  "icon-color": args.color || "#ffb621",
+};
 
-  let [{ region, status }] = await Promise.all([testDisneyPlus()]);
-  let netflixResult = await check_netflix();
-  let youtubeResult = await check_youtube_premium();
+let [{ region, status }] = await Promise.all([testDisneyPlus()]);
+let netflixResult = await check_netflix();
+let youtubeResult = await check_youtube_premium();
 
-  let disney_result = formatDisneyPlusResult(status, region);
-  let traceData = await getTraceData();
-  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
+let disney_result = formatDisneyPlusResult(status, region);
+let traceData = await getTraceData();
+let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? "ChatGPT: \u2611" : "ChatGPT: \u2612";
 
-  // Updated content section with HTML and inline styles
-  let content = `
-    <div style="display: flex; justify-content: center;">
-      <div>${youtubeResult}</div>
-      <span style="margin: 0 5px; background-color: lightgray;">|</span>
-      <div>${netflixResult}</div>
-    </div>
-    <div style="display: flex; justify-content: center;">
-      <div>${gptSupportStatus}</div>
-      <span style="margin: 0 5px; background-color: lightgray;">|</span>
-      <div>${disney_result}</div>
-    </div>
-  `;
+let content = `${youtubeResult} | ${netflixResult}\n${gptSupportStatus}${traceData.loc.padEnd(3)} | ${disney_result} `;
 
-  let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
-  console.log(log);
+let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
+console.log(log);
 
-  panel_result['content'] = content;
+panel_result['content'] = content;
 
-  $done(panel_result);
+$done(panel_result);
 })();
-
 
 function getArgs() {
   return Object.fromEntries(
@@ -91,15 +79,15 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `| Disney: Soon~ ${region.toUpperCase()} `;
+      return `Disney: Soon~ ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `| Disney: \u2611${region.toUpperCase()} `;
+      return `Disney: \u2611${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `| Disney: \u2612`;
+      return `Disney: \u2612`;
     case STATUS_TIMEOUT:
-      return `| Disney: N/A `;
+      return `Disney: N/A `;
     default:
-      return `| Disney: 錯誤 `;
+      return `Disney: 錯誤 `;
   }
 }
 
@@ -141,13 +129,13 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2009\u2612      \u2009|';
+        youtube_check_result += '\u2009\u2612 ';
       } else {
-        youtube_check_result += "\u2009\u2611" + code.toUpperCase() + ' \u2009|';
+        youtube_check_result += "\u2009\u2611" + code.toUpperCase() ';
       }
     })
     .catch(() => {
-      youtube_check_result += ' N/A   |';
+      youtube_check_result += ' N/A  ';
     });
 
   return youtube_check_result;
