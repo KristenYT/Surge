@@ -52,8 +52,8 @@ let args = getArgs();
 
   // 使用 \t 並調整字串長度來對齊
   let content = [
-    `YouTube: ${youtubeResult}\t| Netflix: ${netflixResult}`,
-    `ChatGPT: ${gptSupportStatus}${traceData.loc}\t| Disney: ${disney_result}`
+    `${youtubeResult}\t| ${netflixResult}`,
+    `${gptSupportStatus}${traceData.loc}\t| Disney: ${disney_result}`
   ];
 
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
