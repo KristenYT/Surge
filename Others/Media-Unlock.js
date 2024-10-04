@@ -132,7 +132,7 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2009\u2612  \u2009';
+        youtube_check_result += '\u2009\u2612     \u2009';
       } else {
         youtube_check_result += "\u2009\u2611 " + code.toUpperCase() + '';
       }
