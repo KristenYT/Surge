@@ -88,7 +88,7 @@ function formatDisneyPlusResult(status, region) {
     case STATUS_NOT_AVAILABLE:
       return `Disney: \u2612`;
     case STATUS_TIMEOUT:
-      return `Disney:  N/A `;
+      return `Disney: N/A `;
     default:
       return `Disney: 錯誤 `;
   }
@@ -209,7 +209,7 @@ async function check_netflix() {
         netflix_check_result += '\u2009\u2612';
         return;
       }
-      netflix_check_result += ' \u2009N/A';
+      netflix_check_result += '\u2009N/A';
     });
 
   return netflix_check_result;
