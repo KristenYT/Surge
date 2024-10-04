@@ -1,5 +1,5 @@
 /*
-脚本参考 @Helge_0x00 ,githubdulong
+脚本参考 @Helge_0x00 ,@githubdulong
 修改日期：2024.10.03
 Surge配置参考注释
  
@@ -88,7 +88,7 @@ function formatDisneyPlusResult(status, region) {
     case STATUS_NOT_AVAILABLE:
       return `Disney: \u2612`;
     case STATUS_TIMEOUT:
-      return `Disney: N/A `;
+      return `Disney:  N/A `;
     default:
       return `Disney: 錯誤 `;
   }
@@ -132,7 +132,7 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2009\u2612     \u2009';
+        youtube_check_result += '\u2009\u2612    ';
       } else {
         youtube_check_result += "\u2009\u2611 " + code.toUpperCase() + '';
       }
