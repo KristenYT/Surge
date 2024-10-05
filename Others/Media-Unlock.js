@@ -50,7 +50,7 @@ let args = getArgs();
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) 
   ? `ChatGPT: \u2611 ${traceData.loc}` 
-  : traceData.loc === undefined ? `ChatGPT:    N/A      \u2009` : `ChatGPT: \u2612 ${traceData.loc}`;
+  : traceData.loc === undefined ? `ChatGPT:\u2009   N/A      \u2009` : `ChatGPT: \u2612 ${traceData.loc}`;
 
 
   let content = [
