@@ -1,3 +1,8 @@
+/*
+脚本修改自 @CyWr110 , @githubdulong
+修改日期：2024.10.10
+ ----------------------------------------
+ */
 const REQUEST_HEADERS = { 
     'User-Agent':
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
@@ -19,7 +24,7 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
 
 ;(async () => {
     let panel_result = {
-        title: '流媒体解锁检测',
+        title: '解鎖檢測',
         content: '',
         icon: 'play.tv.fill',
         'icon-color': '#FF2D55',
@@ -42,8 +47,11 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
         result.push(disney_result)
 
         // 将结果整合成面板内容
-        let content = result.join('\n')
-        panel_result['content'] = content
+        let youtube_netflix = [result[1], result[2]].join(' \u2009\t|  ')
+        let chatgpt_disney = [result[0], result[3]].join(' \u2009\t|  ')
+        
+        // 更新面板内容
+        panel_result['content'] = youtube_netflix + '\n' + chatgpt_disney
     })
     .finally(() => {
         $done(panel_result)
@@ -97,7 +105,7 @@ async function check_chatgpt() {
         }
     })
         .catch((error) => {
-        check_result += '  N/A '
+        check_result += ' \u2009\u2009N/A '
     })
 
     return check_result
@@ -204,7 +212,7 @@ async function check_netflix() {
         if (code === 'Not Found') {
             return inner_check(80018499)
         }
-        netflix_check_result += '\u2611\u2009 ' + code
+        netflix_check_result += '\u2611\u2009' + code
         return Promise.reject('BreakSignal')
     })
         .then((code) => {
