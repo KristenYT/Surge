@@ -95,7 +95,7 @@ async function check_chatgpt() {
                 } else {
                     region = 'US'
                 }
-                resolve(region) // 返回区域信息，不再包含国旗
+                resolve(region) 
             })
         })
     }
@@ -146,7 +146,7 @@ async function check_youtube_premium() {
                 } else {
                     region = 'US'
                 }
-                resolve(region) // 只返回区域代码
+                resolve(region) 
             })
         })
     }
@@ -202,7 +202,7 @@ async function check_netflix() {
                     if (region != null) {
                         region = region.toUpperCase()
                     }
-                    resolve(region) // 只返回区域代码
+                    resolve(region) 
                     return
                 }
 
