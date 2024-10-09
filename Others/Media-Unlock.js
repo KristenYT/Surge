@@ -1,3 +1,8 @@
+/*
+脚本修改自 @CyWr110
+修改日期：2024.10.08
+ ----------------------------------------
+ */
 const REQUEST_HEADERS = { 
     'User-Agent':
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
@@ -42,8 +47,8 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
         result.push(disney_result)
 
         // 将结果整合成面板内容
-        let youtube_netflix = [result[1], result[2]].join('  \t|  ')
-        let chatgpt_disney = [result[0], result[3]].join('  \t|  ')
+        let youtube_netflix = [result[1], result[2]].join(' \u2009\t|  ')
+        let chatgpt_disney = [result[0], result[3]].join(' \u2009\t|  ')
         
         // 更新面板内容
         panel_result['content'] = youtube_netflix + '\n' + chatgpt_disney
