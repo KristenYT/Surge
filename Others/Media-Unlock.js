@@ -1,4 +1,4 @@
-3/*
+/*
 脚本参考 @Helge_0x00 ,@githubdulong
 修改日期：2024.10.08
 Surge配置参考注释
@@ -51,7 +51,7 @@ let args = getArgs();
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
     ? `ChatGPT\u2009➟ \u2611\u2009${traceData.loc}`
-    : `ChatGPT\u2009➟ \u2612\u2009    `;
+    : `ChatGPT\u2009➟ \u2612\u2009${       || '  N/A '}`;
 
   let content = [
     `${youtubeResult}\u2009\t|  ${netflixResult}`,
