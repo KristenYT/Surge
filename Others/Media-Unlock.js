@@ -66,39 +66,37 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
 
 // 检测 ChatGPT
 async function check_chatgpt() {
-    let inner_check = () => {
-        return new Promise((resolve, reject) => {
-            let option = {
-                url: 'http://chat.openai.com/cdn-cgi/trace',
-                headers: REQUEST_HEADERS,
-            }
-            $httpClient.get(option, function(error, response, data) {
-                if (error != null || response.status !== 200) {
-                    reject('Error')
-                    return
-                }
+  let inner_check = () => {
+    return new Promise((resolve, reject) => {
+      let option = {
+        url: 'http://chat.openai.com/cdn-cgi/trace',
+        headers: REQUEST_HEADERS,
+      }
+      $httpClient.get(option, function(error, response, data) {
+        if (error != null || response.status !== 200) {
+          reject('Error')
+          return
+        }
 
-                if (data.indexOf('ChatGPT is not available in your country') !== -1) {
-                    resolve('Not Available')
-                    return
-                }
+        let lines = data.split("\n");
+        let cf = lines.reduce((acc, line) => {
+          let [key, value] = line.split("=");
+          acc[key] = value;
+          return acc;
+        }, {});
 
-                let country = data.split('\n').reduce((acc, line) => {
-                    let [key, value] = line.split('=')
-                    acc[key] = value
-                    return acc
-                }, {})
-
-                let result = country.loc
-                if (result != null && result.length === 2) {
-                    region = result
-                } else {
-                    region = 'US'
-                }
-                resolve(region) 
-            })
-        })
-    }
+        let country_code = cf.loc;
+        let restricted_countries = ['HK', 'RU', 'CN', 'KP', 'CU', 'IR', 'SY'];
+        if (restricted_countries.includes(country_code)) {
+          resolve('Not Available')
+        } else {
+          resolve('Available')
+        }
+      })
+    })
+  }
+  return inner_check();
+}
 
     let check_result = 'ChatGPT\u2009➟ '
 
