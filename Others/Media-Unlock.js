@@ -50,8 +50,8 @@ let args = getArgs();
   let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
-    ? `ChatGPT: \u2611 ${traceData.loc}`
-    : `ChatGPT: \u2612 ${traceData.loc || 'N/A'}`;
+    ? `ChatGPT➟ \u2611 ${traceData.loc}`
+    : `ChatGPT➟ \u2612 ${traceData.loc || 'N/A'}`;
 
   let content = [
     `${youtubeResult}\t|  ${netflixResult}`,
@@ -90,15 +90,15 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `Disney: Soon~  ${region.toUpperCase()} `;
+      return `Disney➟ Soon~  ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `Disney: \u2611 ${region.toUpperCase()} `;
+      return `Disney➟ \u2611 ${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `Disney: \u2612`;
+      return `Disney➟ \u2612`;
     case STATUS_TIMEOUT:
-      return `Disney: N/A `;
+      return `Disney➟ N/A `;
     default:
-      return `Disney: 錯誤 `;
+      return `Disney➟ 錯誤 `;
   }
 }
 
@@ -135,7 +135,7 @@ async function check_youtube_premium() {
     });
   };
 
-  let youtube_check_result = 'YouTube: ';
+  let youtube_check_result = 'YouTube➟ ';
 
   await inner_check()
     .then((code) => {
@@ -191,7 +191,7 @@ async function check_netflix() {
     });
   };
 
-  let netflix_check_result = 'Netflix: ';
+  let netflix_check_result = 'Netflix➟ ';
 
   await inner_check(81280792)
     .then((code) => {
