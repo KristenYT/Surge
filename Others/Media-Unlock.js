@@ -37,14 +37,6 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
         "icon-color": args.color || "#FF2D55",
     }
     
-function getArgs() {
-  return Object.fromEntries(
-    $argument
-      .split("&")
-      .map((item) => item.split("="))
-      .map(([k, v]) => [k, decodeURIComponent(v)])
-  );
-}
     
     // 同時檢測多個服務
     let [{ region, status }] = await Promise.all([testDisneyPlus()])
@@ -73,6 +65,15 @@ function getArgs() {
         $done(panel_result)
     })
 })()
+
+function getArgs() {
+  return Object.fromEntries(
+    $argument
+      .split("&")
+      .map((item) => item.split("="))
+      .map(([k, v]) => [k, decodeURIComponent(v)])
+  );
+}
 
 // 檢測 ChatGPT
 async function check_chatgpt() {
