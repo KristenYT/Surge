@@ -51,7 +51,7 @@ let args = getArgs();
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
     ? `ChatGPT\u2009➟ \u2611\u2009${traceData.loc}`
-    : `ChatGPT\u2009➟ \u2612\u2009${traceData.loc || 'N/A'}`;
+    : `ChatGPT\u2009➟ \u2612\u2009${traceData.loc}`;
 
   let content = [
     `${youtubeResult}\u2009\t|  ${netflixResult}`,
