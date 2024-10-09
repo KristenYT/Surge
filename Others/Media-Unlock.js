@@ -9,39 +9,42 @@ const REQUEST_HEADERS = {
     'Accept-Language': 'en',
 }
 
-// 即将登陆
+// 即將登陸
 const STATUS_COMING = 2
-// 支持解锁
+// 支持解鎖
 const STATUS_AVAILABLE = 1
-// 不支持解锁
+// 不支持解鎖
 const STATUS_NOT_AVAILABLE = 0
-// 检测超时
+// 檢測超時
 const STATUS_TIMEOUT = -1
-// 检测异常
+// 檢測異常
 const STATUS_ERROR = -2
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
 
-;(async () => {
+;(async (args) => {
     let now = new Date();
     let hour = now.getHours();
     let minutes = now.getMinutes();
     hour = hour > 9 ? hour : "0" + hour;
     minutes = minutes > 9 ? minutes : "0" + minutes;
 
-    let args = {
-        title: "解鎖檢測",
-        icon: "play.tv.fill",
-        color: "#FF2D55",
-};
     let panel_result = {
-        title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
+        title: `${args.title} | ${hour}:${minutes}`,
         content: '',
-        icon: args.icon || "play.tv.fill",
-        "icon-color": args.color || "#FF2D55",
+        icon: args.icon,
+        "icon-color": args.color,
     }
     
-    // 同时检测多个服务
+    // ... (其他代碼保持不變)
+})({
+    title: "解鎖檢測",
+    icon: "play.tv.fill",
+    color: "#FF2D55",
+})
+
+    
+    // 同時檢測多個服務
     let [{ region, status }] = await Promise.all([testDisneyPlus()])
     await Promise.all([check_chatgpt(), check_youtube_premium(), check_netflix()])
         .then((result) => {
@@ -57,11 +60,11 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
         }
         result.push(disney_result)
 
-        // 将结果整合成面板内容
+        // 將結果整合成面板內容
         let youtube_netflix = [result[1], result[2]].join(' \t|  ')
         let chatgpt_disney = [result[0], result[3]].join(' \t|  ')
         
-        // 更新面板内容
+        // 更新面板內容
         panel_result['content'] = youtube_netflix + '\n' + chatgpt_disney
     })
     .finally(() => {
@@ -69,7 +72,7 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
     })
 })()
 
-// 检测 ChatGPT
+// 檢測 ChatGPT
 async function check_chatgpt() {
   let inner_check = () => {
     return new Promise((resolve, reject) => {
@@ -118,7 +121,7 @@ async function check_chatgpt() {
   return check_result
 }
 
-// 检测 YouTube Premium
+// 檢測 YouTube Premium
 async function check_youtube_premium() {
     let inner_check = () => {
         return new Promise((resolve, reject) => {
@@ -169,7 +172,7 @@ async function check_youtube_premium() {
     return youtube_check_result
 }
 
-// 检测 Netflix
+// 檢測 Netflix
 async function check_netflix() {
     let inner_check = (filmId) => {
         return new Promise((resolve, reject) => {
@@ -244,7 +247,7 @@ async function check_netflix() {
     return netflix_check_result
 }
 
-// 检测 Disney+
+// 檢測 Disney+
 async function testDisneyPlus() {
     try {
         let {region, cnbl} = await Promise.race([testHomePage(), timeout(7000)])
