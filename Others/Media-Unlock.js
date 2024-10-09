@@ -54,8 +54,8 @@ let args = getArgs();
     : `ChatGPT\u2009➟ \u2612 ${traceData.loc || 'N/A'}`;
 
   let content = [
-    `${youtubeResult}\u2009\t| ${netflixResult}`,
-    `${gptSupportStatus}\u2009\t| ${disney_result}`,
+    `${youtubeResult}\u2009\t|  ${netflixResult}`,
+    `${gptSupportStatus}\u2009\t|  ${disney_result}`,
   ];
 
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
