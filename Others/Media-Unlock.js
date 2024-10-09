@@ -1,7 +1,23 @@
 /*
 脚本参考 @Helge_0x00 ,@githubdulong
-修改日期：2024.10.08
+修改日期：2024.10.03
+Surge配置参考注释
+ 
  ----------------------------------------
+ 
+[Panel]
+策略面板 = script-name=解鎖檢測,update-interval=7200
+
+[Script]
+解鎖檢測 = type=generic,timeout=30,script-path=https://raw.githubusercontent.com/githubdulong/Script/master/Stream-All.js,script-update-interval=0,argument=title=解鎖檢測&icon=headphones.circle&color=#FF2121
+
+----------------------------------------
+
+支持使用脚本使用 argument 參數自定義配置，如：argument=title=解鎖檢測&icon=headphones.circle&color=#FF2121，具體參數如下所示，
+ * title: 面板標題
+ * icon: SFSymbols 圖標
+ * color：圖標顏色
+ 
  */
 
 const STATUS_COMING = 2;
@@ -14,70 +30,75 @@ const REQUEST_HEADERS = {
   'User-Agent': UA,
   'Accept-Language': 'en',
 };
-const SUPPORTED_LOCATIONS = ["T1","XX","AL","DZ","AD","AO","AG","AR","AM","AU","AT","AZ","BS","BD","BB","BE","BZ","BJ","BT","BA","BW","BR","BG","BF","CV","CA","CL","CO","KM","CR","HR","CY","DK","DJ","DM","DO","EC","SV","EE","FJ","FI","FR","GA","GM","GE","DE","GH","GR","GD","GT","GN","GW","GY","HT","HN","HU","IS","IN","ID","IQ","IE","IL","IT","JM","JP","JO","KZ","KE","KI","KW","KG","LV","LB","LS","LR","LI","LT","LU","MG","MW","MY","MV","ML","MT","MH","MR","MU","MX","MC","MN","ME","MA","MZ","MM","NA","NR","NP","NL","NZ","NI","NE","NG","MK","NO","OM","PK","PW","PA","PG","PE","PH","PL","PT","QA","RO","RW","KN","LC","VC","WS","SM","ST","SN","RS","SC","SL","SG","SK","SI","SB","ZA","ES","LK","SR","SE","CH","TH","TG","TO","TT","TN","TR","TV","UG","AE","US","UY","VU","ZM","BO","BN","CG","CZ","VA","FM","MD","PS","KR","TW","TZ","TL","GB"];
+const SUPPORTED_LOCATIONS = ["T1","XX","AL","DZ","AD","AO","AG","AR","AM","AU","AT","AZ","BS","BD","BB","BE","BZ","BJ","BT","BA","BW","BR","BG","BF","CV","CA","CL","CO","KM","CR","HR","CY","DK","DJ","DM","DO","EC","SV","EE","FJ","FI","FR","GA","GM","GE","DE","GH","GR","GD","GT","GN","GW","GY","HT","HN","HU","IS","IN","ID","IQ","IE","IL","IT","JM","JP,\u2009","JO","KZ","KE","KI","KW","KG","LV","LB","LS","LR","LI","LT","LU","MG","MW","MY","MV","ML","MT","MH","MR","MU","MX","MC","MN","ME","MA","MZ","MM","NA","NR","NP","NL","NZ","NI","NE","NG","MK","NO","OM","PK","PW","PA","PG","PE","PH","PL","PT","QA","RO","RW","KN","LC","VC","WS","SM","ST","SN","RS","SC","SL","SG","SK","SI","SB","ZA","ES","LK","SR","SE","CH","TH","TG","TO","TT","TN","TR","TV","UG","AE","US","UY","VU","ZM","BO","BN","CG","CZ","VA","FM","MD","PS","KR","TW","TZ","TL","GB"];
+const WARP_FEATURES = ["plus", "on"];
 
-// Fetch media unlock status
+let args = getArgs();
+
 (async () => {
-  try {
-    let now = new Date();
-    let hour = now.getHours();
-    let minutes = now.getMinutes();
-    hour = hour > 9 ? hour : "0" + hour;
-    minutes = minutes > 9 ? minutes : "0" + minutes;
+  let now = new Date();
+  let hour = now.getHours();
+  let minutes = now.getMinutes();
+  hour = hour > 9 ? hour : "0" + hour;
+  minutes = minutes > 9 ? minutes : "0" + minutes;
 
-    // Fetch media unlock statuses (no IP fetching)
-    let [{ region, status }] = await Promise.all([testDisneyPlus()]);
-    let netflixResult = await check_netflix();
-    let youtubeResult = await check_youtube_premium();
+  let [{ region, status }] = await Promise.all([testDisneyPlus()]);
+  let netflixResult = await check_netflix();
+  let youtubeResult = await check_youtube_premium();
 
-    let disney_result = formatDisneyPlusResult(status, region);
-    let traceData = await getTraceData();
-    let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
-      ? `ChatGPT\u2009➟ \u2611\u2009${traceData.loc}`
-      : `ChatGPT\u2009➟ \u2612\u2009${traceData.loc}`;
+  let disney_result = formatDisneyPlusResult(status, region);
+  let traceData = await getTraceData();
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) 
+  ? `ChatGPT: ✅ ${traceData.loc}` 
+  : traceData.loc === undefined ? `ChatGPT: N/A` : `ChatGPT: ❌ ${traceData.loc}`;
 
 
-    let content = [
-      `${youtubeResult} \t| ${netflixResult}`, // Media unlock statuses
-      `${gptSupportStatus} \t| ${disney_result}` // ChatGPT and Disney results
-    ];
+  let content = [
+    `${youtubeResult}\t|  ${netflixResult}`,
+    `${gptSupportStatus}\t|  ${disney_result}`,
+  ];
 
-    // Use $notification.post to push the detection results
-    $notification.post(
-      `网络、流媒体检测 ${hour}:${minutes}`, // Title
-      "", // Subtitle (optional)
-      content.join("\n") // Notification body
-    );
+  let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
+  console.log(log);
 
-    // Panel display results
-    let panel_result = {
-      title: `${args.title} | ${hour}:${minutes}`,
-      content: content.join("\n"),
-      icon: args.icon || "eye.slash.circle.fill",
-      "icon-color": args.color || "#ffb621",
-    };
+  // 發送通知
+  $notification.post(
+    `解锁检测结果 ${hour}:${minutes}`, // 標題
+    "", // 副標題（可選）
+    content.join("\n") // 通知內容
+  );
 
-    console.log(`${hour}:${minutes} 解锁检测完成：${content.join("\n")}`);
-    $done(panel_result);
-  } catch (error) {
-    $notification.post("解锁检测失败", "", error.toString());
-    $done();
-  }
+  let panel_result = {
+    title: `${args.title} | ${hour}:${minutes}`,
+    content: content.join("\n"),
+    icon: args.icon || "eye.slash.circle.fill",
+    "icon-color": args.color || "#ffb621",
+  };
+
+  $done(panel_result);
 })();
 
+function getArgs() {
+  return Object.fromEntries(
+    $argument
+      .split("&")
+      .map((item) => item.split("="))
+      .map(([k, v]) => [k, decodeURIComponent(v)])
+  );
+}
 
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `Disney\u2009➟ Soon~ ${region.toUpperCase()} `;
+      return `Disney: Soon~  ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `Disney\u2009➟ \u2611\u2009${region.toUpperCase()} `;
+      return `Disney: ✅ ${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `Disney\u2009➟ \u2612`;
+      return `Disney: ❌`;
     case STATUS_TIMEOUT:
-      return `Disney\u2009➟ N/A `;
+      return `Disney: N/A `;
     default:
-      return `Disney\u2009➟ 錯誤 `;
+      return `Disney: 錯誤 `;
   }
 }
 
@@ -114,18 +135,18 @@ async function check_youtube_premium() {
     });
   };
 
-  let youtube_check_result = 'YouTube ➟ ';
+  let youtube_check_result = 'YouTube: ';
 
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2612     \u2009';
+        youtube_check_result += '❌';
       } else {
-        youtube_check_result += "\u2611\u2009" + code.toUpperCase() + '';
+        youtube_check_result += "✅ " + code.toUpperCase();
       }
     })
     .catch(() => {
-      youtube_check_result += '  N/A ';
+      youtube_check_result += ' N/A ';
     });
 
   return youtube_check_result;
@@ -170,14 +191,14 @@ async function check_netflix() {
     });
   };
 
-  let netflix_check_result = 'Netflix ➟ ';
+  let netflix_check_result = 'Netflix: ';
 
   await inner_check(81280792)
     .then((code) => {
       if (code === 'Not Found') {
         return inner_check(80018499);
       }
-      netflix_check_result += '\u2611\u2009' + code.toUpperCase() ;
+      netflix_check_result += '✅ ' + code.toUpperCase();
       return Promise.reject('BreakSignal');
     })
     .then((code) => {
@@ -185,7 +206,7 @@ async function check_netflix() {
         return Promise.reject('Not Available');
       }
 
-      netflix_check_result += '⚠\u2009' + code.toUpperCase() ;
+      netflix_check_result += '⚠ ' + code.toUpperCase();
       return Promise.reject('BreakSignal');
     })
     .catch((error) => {
@@ -193,10 +214,10 @@ async function check_netflix() {
         return;
       }
       if (error === 'Not Available') {
-        netflix_check_result += '\u2612';
+        netflix_check_result += '❌';
         return;
       }
-      netflix_check_result += 'N/A';
+      netflix_check_result += ' N/A';
     });
 
   return netflix_check_result;
@@ -205,30 +226,21 @@ async function check_netflix() {
 async function testDisneyPlus() {
   try {
     let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)]);
-    console.log(`homepage: region=${region}, cnbl=${cnbl}`);
     let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(7000)]);
-    console.log(`getLocationInfo: countryCode=${countryCode}, inSupportedLocation=${inSupportedLocation}`);
 
     region = countryCode ?? region;
-    console.log("region:" + region);
-    // 即將登陸Soon
+
     if (inSupportedLocation === false || inSupportedLocation === 'false') {
       return { region, status: STATUS_COMING };
     } else {
-      // 支持解鎖
       return { region, status: STATUS_AVAILABLE };
     }
 
   } catch (error) {
-    console.log("error:" + error);
-
-    // 不支持解鎖
     if (error === 'Not Available') {
-      console.log("不支持");
       return { status: STATUS_NOT_AVAILABLE };
     }
 
-    // 檢測超時
     if (error === 'Timeout') {
       return { status: STATUS_TIMEOUT };
     }
@@ -276,14 +288,6 @@ function getLocationInfo() {
       }
 
       if (response.status !== 200) {
-        console.log('getLocationInfo: ' + data);
-        reject('Not Available');
-        return;
-      }
-
-      data = JSON.parse(data);
-      if (data?.errors) {
-        console.log('getLocationInfo: ' + data);
         reject('Not Available');
         return;
       }
@@ -294,7 +298,7 @@ function getLocationInfo() {
           inSupportedLocation,
           location: { countryCode },
         },
-      } = data?.extensions?.sdk;
+      } = JSON.parse(data)?.extensions?.sdk;
       resolve({ inSupportedLocation, countryCode, accessToken });
     });
   });
