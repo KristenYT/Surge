@@ -207,7 +207,7 @@ async function check_netflix() {
         if (code === 'Not Found') {
             return inner_check(80018499)
         }
-        netflix_check_result += '\u2611\u2009 ' + code
+        netflix_check_result += '\u2611\u2009' + code
         return Promise.reject('BreakSignal')
     })
         .then((code) => {
