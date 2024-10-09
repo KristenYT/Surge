@@ -23,8 +23,14 @@ const STATUS_ERROR = -2
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
 
 ;(async () => {
+    let now = new Date();
+    let hour = now.getHours();
+    let minutes = now.getMinutes();
+    hour = hour > 9 ? hour : "0" + hour;
+    minutes = minutes > 9 ? minutes : "0" + minutes;
+
     let panel_result = {
-        title: '解鎖檢測',
+        title: `解鎖檢測 | ${hour}:${minutes}`,
         content: '',
         icon: 'play.tv.fill',
         'icon-color': '#FF2D55',
@@ -47,8 +53,8 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
         result.push(disney_result)
 
         // 将结果整合成面板内容
-        let youtube_netflix = [result[1], result[2]].join(' \u2009\t|  ')
-        let chatgpt_disney = [result[0], result[3]].join(' \u2009\t|  ')
+        let youtube_netflix = [result[1], result[2]].join(' \t|  ')
+        let chatgpt_disney = [result[0], result[3]].join(' \t|  ')
         
         // 更新面板内容
         panel_result['content'] = youtube_netflix + '\n' + chatgpt_disney
@@ -89,7 +95,7 @@ async function check_chatgpt() {
                 } else {
                     region = 'US'
                 }
-                resolve(region) // 返回区域信息，不再包含国旗
+                resolve(region) 
             })
         })
     }
@@ -140,7 +146,7 @@ async function check_youtube_premium() {
                 } else {
                     region = 'US'
                 }
-                resolve(region) // 只返回区域代码
+                resolve(region) 
             })
         })
     }
@@ -196,7 +202,7 @@ async function check_netflix() {
                     if (region != null) {
                         region = region.toUpperCase()
                     }
-                    resolve(region) // 只返回区域代码
+                    resolve(region) 
                     return
                 }
 
