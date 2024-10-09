@@ -30,9 +30,9 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
     minutes = minutes > 9 ? minutes : "0" + minutes;
 
     let args = {
-    title: "流媒体解锁检测",
-    icon: "play.tv.fill",
-    color: "#FF2D55",
+        title: "解鎖檢測",
+        icon: "play.tv.fill",
+        color: "#FF2D55",
 };
     let panel_result = {
         title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
