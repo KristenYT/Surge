@@ -53,8 +53,8 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
         result.push(disney_result)
 
         // 将结果整合成面板内容
-        let youtube_netflix = [result[1], result[2]].join(' \u2009\t|  ')
-        let chatgpt_disney = [result[0], result[3]].join(' \u2009\t|  ')
+        let youtube_netflix = [result[1], result[2]].join(' \t|  ')
+        let chatgpt_disney = [result[0], result[3]].join(' \t|  ')
         
         // 更新面板内容
         panel_result['content'] = youtube_netflix + '\n' + chatgpt_disney
@@ -107,7 +107,7 @@ async function check_chatgpt() {
         if (code === 'Not Available') {
             check_result += '\u2612\u2009'
         } else {
-            check_result += '\u2611\u2009' + code.toUpperCase()
+            check_result += '\u2611\u2009\u2009' + code.toUpperCase()
         }
     })
         .catch((error) => {
@@ -158,7 +158,7 @@ async function check_youtube_premium() {
         if (code === 'Not Available') {
             youtube_check_result += '\u2612     \u2009'
         } else {
-            youtube_check_result += '\u2611\u2009' + code
+            youtube_check_result += '\u2611\u2009\u2009' + code
         }
     })
         .catch((error) => {
