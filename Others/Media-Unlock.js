@@ -49,9 +49,9 @@ let args = getArgs();
 
   let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
-  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
-    ? `ChatGPT\u2009➟ \u2611\u2009${traceData.loc}`
-    : `ChatGPT\u2009➟ \u2612\u2009${traceData.loc || 'N/A'}`;
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) 
+  ? `ChatGPT\u2009➟ \u2611\u2009${traceData.loc}` 
+  : traceData.loc === undefined ? `ChatGPT\u2009➟   N/A ` : `ChatGPT\u2009➟ \u2612`;
 
   let content = [
     `${youtubeResult}\u2009\t|  ${netflixResult}`,
