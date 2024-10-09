@@ -32,16 +32,12 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
     let panel_result = {
         title: `${args.title} | ${hour}:${minutes}`,
         content: '',
-        icon: args.icon,
-        "icon-color": args.color,
+        icon: args.icon || "play.tv.fill",
+        "icon-color": args.color || "#FF2D55",
     }
     
     // ... (其他代碼保持不變)
-})({
-    title: "解鎖檢測",
-    icon: "play.tv.fill",
-    color: "#FF2D55",
-})
+})($argument)
 
     
     // 同時檢測多個服務
