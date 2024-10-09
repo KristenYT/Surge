@@ -1,6 +1,6 @@
 /*
-脚本参考 @Helge_0x00 
-修改日期：2024.08.21
+脚本参考 @Helge_0x00 ,@githubdulong
+修改日期：2024.10.03
 Surge配置参考注释
  
  ----------------------------------------
@@ -35,7 +35,8 @@ const WARP_FEATURES = ["plus", "on"];
 
 let args = getArgs();
 
-(async () => {
+
+  (async () => {
   let now = new Date();
   let hour = now.getHours();
   let minutes = now.getMinutes();
@@ -48,16 +49,24 @@ let args = getArgs();
 
   let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
-  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) ? " \u2611" : " \u2612";
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
+    ? `ChatGPT\u2009➟ ✅ ${traceData.loc}`
+    : `ChatGPT\u2009➟ ❌ ${traceData.loc || 'N/A'}`;
 
-  // Adjust spacing with tabs for alignment
   let content = [
-    `YouTube: ${youtubeResult}\t| Netflix: ${netflixResult}`,
-    `ChatGPT: ${gptSupportStatus} ${traceData.loc}\t| Disney: ${disney_result}`
+    `${youtubeResult}\t|  ${netflixResult}`,
+    `${gptSupportStatus}\t|  ${disney_result}`,
   ];
 
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
+
+  // Send a notification with the detection results
+  $notification.post(
+    `解鎖檢測結果 ${hour}:${minutes}`, // Title
+    "", // Subtitle (optional)
+    content.join("\n") // Notification body
+  );
 
   let panel_result = {
     title: `${args.title} | ${hour}:${minutes}`,
@@ -81,15 +90,15 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `Soon~  ${region.toUpperCase()} `;
+      return `Disney\u2009➟ Soon~  ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `\u2611 ${region.toUpperCase()} `;
+      return `Disney\u2009➟ ✅ ${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `\u2612`;
+      return `Disney\u2009➟ ❌`;
     case STATUS_TIMEOUT:
-      return `N/A `;
+      return `Disney\u2009➟ N/A `;
     default:
-      return `錯誤 `;
+      return `Disney\u2009➟ 錯誤 `;
   }
 }
 
@@ -126,18 +135,18 @@ async function check_youtube_premium() {
     });
   };
 
-  let youtube_check_result = '';
+  let youtube_check_result = 'YouTube ➟ ';
 
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '\u2612 ';
+        youtube_check_result += '❌     \u2009';
       } else {
-        youtube_check_result += "\u2009\u2611 " + code.toUpperCase() + ' \u2009';
+        youtube_check_result += "✅ " + code.toUpperCase() + '';
       }
     })
     .catch(() => {
-      youtube_check_result += ' N/A';
+      youtube_check_result += '  N/A ';
     });
 
   return youtube_check_result;
@@ -182,14 +191,14 @@ async function check_netflix() {
     });
   };
 
-  let netflix_check_result = '';
+  let netflix_check_result = 'Netflix ➟ ';
 
   await inner_check(81280792)
     .then((code) => {
       if (code === 'Not Found') {
         return inner_check(80018499);
       }
-      netflix_check_result += '\u2009\u2611 ' + code.toUpperCase() ;
+      netflix_check_result += '✅ ' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .then((code) => {
@@ -197,7 +206,7 @@ async function check_netflix() {
         return Promise.reject('Not Available');
       }
 
-      netflix_check_result += '\u2009⚠ ' + code.toUpperCase() ;
+      netflix_check_result += '⚠ ' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .catch((error) => {
@@ -205,10 +214,10 @@ async function check_netflix() {
         return;
       }
       if (error === 'Not Available') {
-        netflix_check_result += '\u2009\u2612 ';
+        netflix_check_result += '❌';
         return;
       }
-      netflix_check_result += '\u2009N/A';
+      netflix_check_result += 'N/A';
     });
 
   return netflix_check_result;
