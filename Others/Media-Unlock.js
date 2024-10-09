@@ -387,4 +387,3 @@ function getIcon(code, icons) {
     }
     return code
 }
-})($argument)
