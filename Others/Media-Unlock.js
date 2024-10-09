@@ -1,6 +1,6 @@
 /*
 脚本参考 @Helge_0x00 ,@githubdulong
-修改日期：2024.10.03
+修改日期：2024.10.08
 Surge配置参考注释
  
  ----------------------------------------
@@ -54,8 +54,8 @@ let args = getArgs();
     : `ChatGPT\u2009➟ \u2612 ${traceData.loc || 'N/A'}`;
 
   let content = [
-    `${youtubeResult}\t|  ${netflixResult}`,
-    `${gptSupportStatus}\t|  ${disney_result}`,
+    `${youtubeResult} \t|  ${netflixResult}`,
+    `${gptSupportStatus} \t|  ${disney_result}`,
   ];
 
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
