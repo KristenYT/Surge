@@ -30,10 +30,10 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
     minutes = minutes > 9 ? minutes : "0" + minutes;
 
     let panel_result = {
-        title: `解鎖檢測 | ${hour}:${minutes}`,
+        title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
         content: '',
-        icon: 'play.tv.fill',
-        'icon-color': '#FF2D55',
+        icon: args.icon || "play.tv.fill",
+        "icon-color": args.color || "#FF2D55",
     }
     
     // 同时检测多个服务
