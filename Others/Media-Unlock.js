@@ -62,15 +62,6 @@ let args = getArgs();
   $done(panel_result);
 })();
 
-function getArgs() {
-  return Object.fromEntries(
-    $argument
-      .split("&")
-      .map((item) => item.split("="))
-      .map(([k, v]) => [k, decodeURIComponent(v)])
-  );
-}
-
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
