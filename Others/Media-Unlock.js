@@ -29,7 +29,7 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
     hour = hour > 9 ? hour : "0" + hour;
     minutes = minutes > 9 ? minutes : "0" + minutes;
 
-let args = {
+    let args = {
     title: "流媒体解锁检测",
     icon: "play.tv.fill",
     color: "#FF2D55",
