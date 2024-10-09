@@ -34,8 +34,8 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
         disney_result = 'Disney\u2009➟ N/A '
     }
 
-    // 整合结果为面板内容
-    let content = `${youtube_check_result}\u2009\t|  ${netflix_check_result}\n${chatgpt_result}\u2009\t|  ${disney_result}`
+    // 整合结果为面板内容，上下分两行，左右用 | 分隔
+    let content = `${youtube_check_result} | ${netflix_check_result}\n${check_result} | ${disney_result}`
     panel_result['content'] = content
 
     // 完成后输出结果
@@ -180,6 +180,7 @@ async function testDisneyPlus() {
         return {status: STATUS_NOT_AVAILABLE}
     }
 }
+
     } catch (error) {
         if (error === 'Not Available') {
             return {status: STATUS_NOT_AVAILABLE}
