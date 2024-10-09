@@ -50,8 +50,8 @@ let args = getArgs();
   let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
-    ? `ChatGPT: ✅ ${traceData.loc}`
-    : `ChatGPT: ❌ ${traceData.loc || 'N/A'}`;
+    ? `ChatGPT: \u2611 ${traceData.loc}`
+    : `ChatGPT: \u2612 ${traceData.loc || 'N/A'}`;
 
   let content = [
     `${youtubeResult}\t|  ${netflixResult}`,
