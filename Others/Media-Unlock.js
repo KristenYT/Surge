@@ -107,7 +107,7 @@ async function check_chatgpt() {
         if (code === 'Not Available') {
             check_result += '\u2612\u2009'
         } else {
-            check_result += '\u2611\u2009\u2009' + code.toUpperCase()
+            check_result += '\u2611\u2009' + code.toUpperCase()
         }
     })
         .catch((error) => {
@@ -158,7 +158,7 @@ async function check_youtube_premium() {
         if (code === 'Not Available') {
             youtube_check_result += '\u2612     \u2009'
         } else {
-            youtube_check_result += '\u2611\u2009\u2009' + code
+            youtube_check_result += '\u2611\u2009' + code
         }
     })
         .catch((error) => {
