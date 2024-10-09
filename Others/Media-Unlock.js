@@ -35,9 +35,6 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
         icon: args.icon || "play.tv.fill",
         "icon-color": args.color || "#FF2D55",
     }
-    
-    // ... (其他代碼保持不變)
-})($argument)
 
     
     // 同時檢測多個服務
@@ -389,3 +386,4 @@ function getIcon(code, icons) {
     }
     return code
 }
+})($argument)
