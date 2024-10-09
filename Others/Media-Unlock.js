@@ -22,8 +22,7 @@ const STATUS_ERROR = -2
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
 
-    let args = getArgs();
-;(async (args) => {
+;(async () => {
     let now = new Date();
     let hour = now.getHours();
     let minutes = now.getMinutes();
@@ -31,10 +30,10 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
     minutes = minutes > 9 ? minutes : "0" + minutes;
 
     let panel_result = {
-        title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
+        title: `解鎖檢測 | ${hour}:${minutes}`,
         content: '',
-        icon: args.icon || "play.tv.fill",
-        "icon-color": args.color || "#FF2D55",
+        icon: 'play.tv.fill',
+        'icon-color': '#FF2D55',
     }
     
     
@@ -55,8 +54,8 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
         result.push(disney_result)
 
         // 將結果整合成面板內容
-        let youtube_netflix = [result[1], result[2]].join(' \t|  ')
-        let chatgpt_disney = [result[0], result[3]].join(' \t|  ')
+        let youtube_netflix = [result[1], result[2]].join(' \t| \u2009')
+        let chatgpt_disney = [result[0], result[3]].join(' \t| \u2009')
         
         // 更新面板內容
         panel_result['content'] = youtube_netflix + '\n' + chatgpt_disney
@@ -66,14 +65,6 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
     })
 })()
 
-function getArgs() {
-  return Object.fromEntries(
-    $argument
-      .split("&")
-      .map((item) => item.split("="))
-      .map(([k, v]) => [k, decodeURIComponent(v)])
-  );
-}
 
 // 檢測 ChatGPT
 async function check_chatgpt() {
