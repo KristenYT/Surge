@@ -35,7 +35,8 @@ const WARP_FEATURES = ["plus", "on"];
 
 let args = getArgs();
 
-(async () => {
+
+  (async () => {
   let now = new Date();
   let hour = now.getHours();
   let minutes = now.getMinutes();
@@ -48,10 +49,9 @@ let args = getArgs();
 
   let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
-  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) 
-  ? `ChatGPT: \u2611 ${traceData.loc}` 
-  : traceData.loc === undefined ? `ChatGPT:\u2009   N/A` : `ChatGPT: \u2612 ${traceData.loc}`;
-
+  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
+    ? `ChatGPT: ✅ ${traceData.loc}`
+    : `ChatGPT: ❌ ${traceData.loc || 'N/A'}`;
 
   let content = [
     `${youtubeResult}\t|  ${netflixResult}`,
@@ -60,6 +60,13 @@ let args = getArgs();
 
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
+
+  // Send a notification with the detection results
+  $notification.post(
+    `解鎖檢測結果 ${hour}:${minutes}`, // Title
+    "", // Subtitle (optional)
+    content.join("\n") // Notification body
+  );
 
   let panel_result = {
     title: `${args.title} | ${hour}:${minutes}`,
