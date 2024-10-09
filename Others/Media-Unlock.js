@@ -23,8 +23,14 @@ const STATUS_ERROR = -2
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
 
 ;(async () => {
+    let now = new Date();
+    let hour = now.getHours();
+    let minutes = now.getMinutes();
+    hour = hour > 9 ? hour : "0" + hour;
+    minutes = minutes > 9 ? minutes : "0" + minutes;
+
     let panel_result = {
-        title: '解鎖檢測',
+        title: `解鎖檢測 | ${hour}:${minutes}`,
         content: '',
         icon: 'play.tv.fill',
         'icon-color': '#FF2D55',
