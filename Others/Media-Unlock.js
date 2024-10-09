@@ -1,18 +1,13 @@
 const REQUEST_HEADERS = { 
-    'User-Agent':
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
     'Accept-Language': 'en',
 }
 
-// 即将登陆
+// 状态定义
 const STATUS_COMING = 2
-// 支持解锁
 const STATUS_AVAILABLE = 1
-// 不支持解锁
 const STATUS_NOT_AVAILABLE = 0
-// 检测超时
 const STATUS_TIMEOUT = -1
-// 检测异常
 const STATUS_ERROR = -2
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
@@ -25,29 +20,26 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
         'icon-color': '#FF2D55',
     }
     
-    // 同时检测多个服务
     let [{ region, status }] = await Promise.all([testDisneyPlus()])
-    await Promise.all([check_chatgpt(), check_youtube_premium(), check_netflix()])
-        .then((result) => {
-        let disney_result = ''
-        if (status == STATUS_COMING) {
-            disney_result = 'Disney\u2009➟ Soon~ ' + region
-        } else if (status == STATUS_AVAILABLE){
-            disney_result = 'Disney\u2009➟ \u2611\u2009' + region
-        } else if (status == STATUS_NOT_AVAILABLE) {
-            disney_result = 'Disney\u2009➟ \u2612'
-        } else if (status == STATUS_TIMEOUT) {
-            disney_result = 'Disney\u2009➟ N/A '
-        }
-        result.push(disney_result)
+    let [chatgpt_result, youtube_check_result, netflix_check_result] = await Promise.all([check_chatgpt(), check_youtube_premium(), check_netflix()])
+    
+    let disney_result = ''
+    if (status == STATUS_COMING) {
+        disney_result = 'Disney\u2009➟ Soon~ ' + region
+    } else if (status == STATUS_AVAILABLE) {
+        disney_result = 'Disney\u2009➟ \u2611\u2009' + region
+    } else if (status == STATUS_NOT_AVAILABLE) {
+        disney_result = 'Disney\u2009➟ \u2612'
+    } else if (status == STATUS_TIMEOUT) {
+        disney_result = 'Disney\u2009➟ N/A '
+    }
 
-        // 将结果整合成面板内容
-        let content = result.join('\n')
-        panel_result['content'] = content
-    })
-    .finally(() => {
-        $done(panel_result)
-    })
+    // 整合结果为面板内容
+    let content = `${youtube_check_result}\u2009\t|  ${netflix_check_result}\n${chatgpt_result}\u2009\t|  ${disney_result}`
+    panel_result['content'] = content
+
+    // 完成后输出结果
+    $done(panel_result)
 })()
 
 // 检测 ChatGPT
@@ -76,12 +68,7 @@ async function check_chatgpt() {
                 }, {})
 
                 let result = country.loc
-                if (result != null && result.length === 2) {
-                    region = result
-                } else {
-                    region = 'US'
-                }
-                resolve(region) // 返回区域信息，不再包含国旗
+                resolve(result ? result.toUpperCase() : 'US')
             })
         })
     }
@@ -90,13 +77,9 @@ async function check_chatgpt() {
 
     await inner_check()
         .then((code) => {
-        if (code === 'Not Available') {
-            check_result += '\u2612\u2009'
-        } else {
-            check_result += '\u2611\u2009' + code.toUpperCase()
-        }
+        check_result += code === 'Not Available' ? '\u2612\u2009' : '\u2611\u2009' + code
     })
-        .catch((error) => {
+        .catch(() => {
         check_result += '  N/A '
     })
 
@@ -125,14 +108,8 @@ async function check_youtube_premium() {
                 let region = ''
                 let re = new RegExp('"countryCode":"(.*?)"', 'gm')
                 let result = re.exec(data)
-                if (result != null && result.length === 2) {
-                    region = result[1].toUpperCase()
-                } else if (data.indexOf('www.google.cn') !== -1) {
-                    region = 'CN'
-                } else {
-                    region = 'US'
-                }
-                resolve(region) // 只返回区域代码
+                region = result ? result[1].toUpperCase() : 'US'
+                resolve(region)
             })
         })
     }
@@ -141,13 +118,9 @@ async function check_youtube_premium() {
 
     await inner_check()
         .then((code) => {
-        if (code === 'Not Available') {
-            youtube_check_result += '\u2612     \u2009'
-        } else {
-            youtube_check_result += '\u2611\u2009 ' + code
-        }
+        youtube_check_result += code === 'Not Available' ? '\u2612\u2009' : '\u2611\u2009 ' + code
     })
-        .catch((error) => {
+        .catch(() => {
         youtube_check_result += '  N/A '
     })
 
@@ -168,31 +141,14 @@ async function check_netflix() {
                     return
                 }
 
-                if (response.status === 403) {
-                    reject('Not Available')
+                if (response.status === 403 || response.status === 404) {
+                    resolve('Not Available')
                     return
                 }
 
-                if (response.status === 404) {
-                    resolve('Not Found')
-                    return
-                }
-
-                if (response.status === 200) {
-                    let url = response.headers['x-originating-url']
-                    let region = url.split('/')[3]
-                    region = region.split('-')[0]
-                    if (region == 'title') {
-                        region = 'US'
-                    }
-                    if (region != null) {
-                        region = region.toUpperCase()
-                    }
-                    resolve(region) // 只返回区域代码
-                    return
-                }
-
-                reject('Error')
+                let url = response.headers['x-originating-url']
+                let region = url.split('/')[3]?.split('-')[0] || 'US'
+                resolve(region.toUpperCase())
             })
         })
     }
@@ -201,29 +157,10 @@ async function check_netflix() {
 
     await inner_check(81280792)
         .then((code) => {
-        if (code === 'Not Found') {
-            return inner_check(80018499)
-        }
-        netflix_check_result += '\u2611\u2009: ' + code
-        return Promise.reject('BreakSignal')
+        netflix_check_result += code === 'Not Found' ? '\u2612' : '\u2611\u2009: ' + code
     })
-        .then((code) => {
-        if (code === 'Not Found') {
-            return Promise.reject('Not Available')
-        }
-
-        netflix_check_result += '⚠\u2009' + code
-        return Promise.reject('BreakSignal')
-    })
-        .catch((error) => {
-        if (error === 'BreakSignal') {
-            return
-        }
-        if (error === 'Not Available') {
-            netflix_check_result += '\u2612'
-            return
-        }
-        netflix_check_result += 'N/A'
+        .catch(() => {
+        netflix_check_result += '  N/A '
     })
 
     return netflix_check_result
@@ -233,22 +170,16 @@ async function check_netflix() {
 async function testDisneyPlus() {
     try {
         let {region, cnbl} = await Promise.race([testHomePage(), timeout(7000)])
-
         let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(7000)])
-
         region = countryCode ?? region
 
-        if (region != null) {
-            region = region.toUpperCase()
-        }
+        if (region) region = region.toUpperCase()
 
-        // 即将登陆
-        if (inSupportedLocation === false || inSupportedLocation === 'false') {
-            return {region, status: STATUS_COMING}
-        } else {
-            return {region, status: STATUS_AVAILABLE}
-        }
-
+        return inSupportedLocation === false ? {region, status: STATUS_COMING} : {region, status: STATUS_AVAILABLE}
+    } catch {
+        return {status: STATUS_NOT_AVAILABLE}
+    }
+}
     } catch (error) {
         if (error === 'Not Available') {
             return {status: STATUS_NOT_AVAILABLE}
