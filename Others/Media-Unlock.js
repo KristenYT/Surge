@@ -1,23 +1,7 @@
 /*
 脚本参考 @Helge_0x00 ,@githubdulong
 修改日期：2024.10.08
-Surge配置参考注释
- 
  ----------------------------------------
- 
-[Panel]
-策略面板 = script-name=解鎖檢測,update-interval=7200
-
-[Script]
-解鎖檢測 = type=generic,timeout=30,script-path=https://raw.githubusercontent.com/githubdulong/Script/master/Stream-All.js,script-update-interval=0,argument=title=解鎖檢測&icon=headphones.circle&color=#FF2121
-
-----------------------------------------
-
-支持使用脚本使用 argument 參數自定義配置，如：argument=title=解鎖檢測&icon=headphones.circle&color=#FF2121，具體參數如下所示，
- * title: 面板標題
- * icon: SFSymbols 圖標
- * color：圖標顏色
- 
  */
 
 const STATUS_COMING = 2;
