@@ -90,29 +90,27 @@ async function check_chatgpt() {
         if (restricted_countries.includes(country_code)) {
           resolve('Not Available')
         } else {
-          resolve('Available')
+          resolve(country_code.toUpperCase())
         }
       })
     })
   }
-  return inner_check();
-}
 
-    let check_result = 'ChatGPT\u2009➟ '
+  let check_result = 'ChatGPT\u2009➟ ';
 
-    await inner_check()
-        .then((code) => {
-        if (code === 'Not Available') {
-            check_result += '\u2612\u2009'
-        } else {
-            check_result += '\u2611\u2009' + code.toUpperCase()
-        }
+  await inner_check()
+    .then((code) => {
+      if (code === 'Not Available') {
+        check_result += '\u2612\u2009'
+      } else {
+        check_result += '\u2611\u2009' + code
+      }
     })
-        .catch((error) => {
-        check_result += ' \u2009\u2009N/A '
+    .catch((error) => {
+      check_result += ' \u2009\u2009N/A '
     })
 
-    return check_result
+  return check_result
 }
 
 // 检测 YouTube Premium
