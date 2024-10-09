@@ -14,59 +14,57 @@ const REQUEST_HEADERS = {
   'User-Agent': UA,
   'Accept-Language': 'en',
 };
-const SUPPORTED_LOCATIONS = ["AL", "DZ", "AF", "AD", "AO", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BB", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "BN", "BG", "BF", "BI", "CV", "KH", "CM", "CA", "CF", "TD", "CL", "CO", "KM", "CG", "CD", "CR", "CI", "HR", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "GQ", "ER", "EE", "SZ", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GR", "GD", "GT", "GN", "GW", "GY", "HT", "VA", "HN", "HU", "IS", "IN", "ID", "IQ", "IE", "IL", "IT", "JM", "JP", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LR", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MH", "MR", "MU", "MX", "FM", "MD", "MC", "MN", "ME", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "MK", "NO", "OM", "PK", "PW", "PS", "PA", "PG", "PY", "PE", "PH", "PL", "PT", "QA", "RO", "RW", "KN", "LC", "VC", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "SS", "ES", "LK", "SR", "SE", "CH", "SD", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "TV", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VN", "YE", "ZM", "ZW"];
+const SUPPORTED_LOCATIONS = ["T1","XX","AL","DZ","AD","AO","AG","AR","AM","AU","AT","AZ","BS","BD","BB","BE","BZ","BJ","BT","BA","BW","BR","BG","BF","CV","CA","CL","CO","KM","CR","HR","CY","DK","DJ","DM","DO","EC","SV","EE","FJ","FI","FR","GA","GM","GE","DE","GH","GR","GD","GT","GN","GW","GY","HT","HN","HU","IS","IN","ID","IQ","IE","IL","IT","JM","JP","JO","KZ","KE","KI","KW","KG","LV","LB","LS","LR","LI","LT","LU","MG","MW","MY","MV","ML","MT","MH","MR","MU","MX","MC","MN","ME","MA","MZ","MM","NA","NR","NP","NL","NZ","NI","NE","NG","MK","NO","OM","PK","PW","PA","PG","PE","PH","PL","PT","QA","RO","RW","KN","LC","VC","WS","SM","ST","SN","RS","SC","SL","SG","SK","SI","SB","ZA","ES","LK","SR","SE","CH","TH","TG","TO","TT","TN","TR","TV","UG","AE","US","UY","VU","ZM","BO","BN","CG","CZ","VA","FM","MD","PS","KR","TW","TZ","TL","GB"];
 
-async function getTraceData() {
-  return new Promise((resolve, reject) => {
-    $httpClient.get("https://chat.openai.com/cdn-cgi/trace", function (error, response, data) {
-      if (error) {
-        reject(error);
-        return;
-      }
-      const lines = data.split("\n");
-      const cf = lines.reduce((acc, line) => {
-        const [key, value] = line.split("=");
-        acc[key] = value;
-        return acc;
-      }, {});
-      resolve(cf);
-    });
-  });
-}
-
+// Fetch media unlock status
 (async () => {
-  let now = new Date();
-  let hour = now.getHours();
-  let minutes = now.getMinutes();
-  hour = hour > 9 ? hour : "0" + hour;
-  minutes = minutes > 9 ? minutes : "0" + minutes;
+  try {
+    let now = new Date();
+    let hour = now.getHours();
+    let minutes = now.getMinutes();
+    hour = hour > 9 ? hour : "0" + hour;
+    minutes = minutes > 9 ? minutes : "0" + minutes;
 
-  let traceData = await getTraceData();
-  let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
-    ? `ChatGPT\u2009➟ \u2611\u2009${traceData.loc}`
-    : `ChatGPT\u2009➟ \u2612\u2009${traceData.loc}`;
-  let content = [
-    `${youtubeResult}\u2009\t|  ${netflixResult}`,
-    `${gptSupportStatus}\u2009\t|  ${disney_result}`,
-   
-  console.log(`${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`);
+    // Fetch media unlock statuses (no IP fetching)
+    let [{ region, status }] = await Promise.all([testDisneyPlus()]);
+    let netflixResult = await check_netflix();
+    let youtubeResult = await check_youtube_premium();
 
-  // Send a notification with the detection results
-  $notification.post(
-    `解鎖檢測結果 ${hour}:${minutes}`, // Title
-    "", // Subtitle (optional)
-    content.join("\n") // Notification body
-  );
+    let disney_result = formatDisneyPlusResult(status, region);
+    let traceData = await getTraceData();
+    let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
+      ? `ChatGPT\u2009➟ \u2611\u2009${traceData.loc}`
+      : `ChatGPT\u2009➟ \u2612\u2009${traceData.loc}`;
 
-  let panel_result = {
-    title: `${args.title} | ${hour}:${minutes}`,
-    content: content.join("\n"),
-    icon: args.icon || "eye.slash.circle.fill",
-    "icon-color": args.color || "#ffb621",
-  };
 
-  $done(panel_result);
+    let content = [
+      `${youtubeResult} \t| ${netflixResult}`, // Media unlock statuses
+      `${gptSupportStatus} \t| ${disney_result}` // ChatGPT and Disney results
+    ];
+
+    // Use $notification.post to push the detection results
+    $notification.post(
+      `网络、流媒体检测 ${hour}:${minutes}`, // Title
+      "", // Subtitle (optional)
+      content.join("\n") // Notification body
+    );
+
+    // Panel display results
+    let panel_result = {
+      title: `${args.title} | ${hour}:${minutes}`,
+      content: content.join("\n"),
+      icon: args.icon || "eye.slash.circle.fill",
+      "icon-color": args.color || "#ffb621",
+    };
+
+    console.log(`${hour}:${minutes} 解锁检测完成：${content.join("\n")}`);
+    $done(panel_result);
+  } catch (error) {
+    $notification.post("解锁检测失败", "", error.toString());
+    $done();
+  }
 })();
+
 
 function formatDisneyPlusResult(status, region) {
   switch (status) {
