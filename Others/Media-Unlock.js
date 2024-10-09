@@ -22,7 +22,7 @@ const STATUS_ERROR = -2
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
 
-    let args = $argument
+    let args = getArgs();
 ;(async (args) => {
     let now = new Date();
     let hour = now.getHours();
@@ -31,12 +31,20 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
     minutes = minutes > 9 ? minutes : "0" + minutes;
 
     let panel_result = {
-        title: `${args.title} | ${hour}:${minutes}`,
+        title: `${args.title} | ${hour}:${minutes}` || `解鎖檢測 | ${hour}:${minutes}`,
         content: '',
         icon: args.icon || "play.tv.fill",
         "icon-color": args.color || "#FF2D55",
     }
-
+    
+function getArgs() {
+  return Object.fromEntries(
+    $argument
+      .split("&")
+      .map((item) => item.split("="))
+      .map(([k, v]) => [k, decodeURIComponent(v)])
+  );
+}
     
     // 同時檢測多個服務
     let [{ region, status }] = await Promise.all([testDisneyPlus()])
