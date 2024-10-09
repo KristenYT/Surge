@@ -49,8 +49,8 @@ let args = getArgs();
   let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc) 
-  ? `ChatGPT: ✅ ${traceData.loc}` 
-  : traceData.loc === undefined ? `ChatGPT: N/A` : `ChatGPT: ❌ ${traceData.loc}`;
+  ? `ChatGPT: \u2611 ${traceData.loc}` 
+  : traceData.loc === undefined ? `ChatGPT:\u2009   N/A` : `ChatGPT: \u2612 ${traceData.loc}`;
 
 
   let content = [
@@ -60,13 +60,6 @@ let args = getArgs();
 
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
   console.log(log);
-
-  // 發送通知
-  $notification.post(
-    `解锁检测结果 ${hour}:${minutes}`, // 標題
-    "", // 副標題（可選）
-    content.join("\n") // 通知內容
-  );
 
   let panel_result = {
     title: `${args.title} | ${hour}:${minutes}`,
@@ -92,9 +85,9 @@ function formatDisneyPlusResult(status, region) {
     case STATUS_COMING:
       return `Disney: Soon~  ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `Disney: ✅ ${region.toUpperCase()} `;
+      return `Disney: \u2611 ${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `Disney: ❌`;
+      return `Disney: \u2612`;
     case STATUS_TIMEOUT:
       return `Disney: N/A `;
     default:
@@ -140,13 +133,13 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '❌';
+        youtube_check_result += '\u2009\u2612     \u2009';
       } else {
-        youtube_check_result += "✅ " + code.toUpperCase();
+        youtube_check_result += "\u2009\u2611 " + code.toUpperCase() + '';
       }
     })
     .catch(() => {
-      youtube_check_result += ' N/A ';
+      youtube_check_result += '   N/A ';
     });
 
   return youtube_check_result;
@@ -198,7 +191,7 @@ async function check_netflix() {
       if (code === 'Not Found') {
         return inner_check(80018499);
       }
-      netflix_check_result += '✅ ' + code.toUpperCase();
+      netflix_check_result += '\u2009\u2611 ' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .then((code) => {
@@ -206,7 +199,7 @@ async function check_netflix() {
         return Promise.reject('Not Available');
       }
 
-      netflix_check_result += '⚠ ' + code.toUpperCase();
+      netflix_check_result += '\u2009⚠ ' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .catch((error) => {
@@ -214,10 +207,10 @@ async function check_netflix() {
         return;
       }
       if (error === 'Not Available') {
-        netflix_check_result += '❌';
+        netflix_check_result += '\u2009\u2612';
         return;
       }
-      netflix_check_result += ' N/A';
+      netflix_check_result += '\u2009N/A';
     });
 
   return netflix_check_result;
@@ -226,21 +219,30 @@ async function check_netflix() {
 async function testDisneyPlus() {
   try {
     let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)]);
+    console.log(`homepage: region=${region}, cnbl=${cnbl}`);
     let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(7000)]);
+    console.log(`getLocationInfo: countryCode=${countryCode}, inSupportedLocation=${inSupportedLocation}`);
 
     region = countryCode ?? region;
-
+    console.log("region:" + region);
+    // 即將登陸Soon
     if (inSupportedLocation === false || inSupportedLocation === 'false') {
       return { region, status: STATUS_COMING };
     } else {
+      // 支持解鎖
       return { region, status: STATUS_AVAILABLE };
     }
 
   } catch (error) {
+    console.log("error:" + error);
+
+    // 不支持解鎖
     if (error === 'Not Available') {
+      console.log("不支持");
       return { status: STATUS_NOT_AVAILABLE };
     }
 
+    // 檢測超時
     if (error === 'Timeout') {
       return { status: STATUS_TIMEOUT };
     }
@@ -288,6 +290,14 @@ function getLocationInfo() {
       }
 
       if (response.status !== 200) {
+        console.log('getLocationInfo: ' + data);
+        reject('Not Available');
+        return;
+      }
+
+      data = JSON.parse(data);
+      if (data?.errors) {
+        console.log('getLocationInfo: ' + data);
         reject('Not Available');
         return;
       }
@@ -298,7 +308,7 @@ function getLocationInfo() {
           inSupportedLocation,
           location: { countryCode },
         },
-      } = JSON.parse(data)?.extensions?.sdk;
+      } = data?.extensions?.sdk;
       resolve({ inSupportedLocation, countryCode, accessToken });
     });
   });
