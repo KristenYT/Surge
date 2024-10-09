@@ -86,14 +86,14 @@ async function check_chatgpt() {
         })
     }
 
-    let check_result = 'ChatGPT: '
+    let check_result = 'ChatGPT\u2009➟ '
 
     await inner_check()
         .then((code) => {
         if (code === 'Not Available') {
-            check_result += 'ChatGPT\u2009➟ \u2612\u2009'
+            check_result += '\u2612\u2009'
         } else {
-            check_result += 'ChatGPT\u2009➟ \u2611\u2009' + code.toUpperCase()
+            check_result += '\u2611\u2009' + code.toUpperCase()
         }
     })
         .catch((error) => {
@@ -144,7 +144,7 @@ async function check_youtube_premium() {
         if (code === 'Not Available') {
             youtube_check_result += '\u2612     \u2009'
         } else {
-            youtube_check_result += '\u2611\u2009: ' + code
+            youtube_check_result += '\u2611\u2009 ' + code
         }
     })
         .catch((error) => {
@@ -197,14 +197,14 @@ async function check_netflix() {
         })
     }
 
-    let netflix_check_result = 'Netflix: '
+    let netflix_check_result = 'Netflix ➟ '
 
     await inner_check(81280792)
         .then((code) => {
         if (code === 'Not Found') {
             return inner_check(80018499)
         }
-        netflix_check_result += 'u2611\u2009: ' + code
+        netflix_check_result += '\u2611\u2009: ' + code
         return Promise.reject('BreakSignal')
     })
         .then((code) => {
