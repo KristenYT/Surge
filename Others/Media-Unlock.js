@@ -1,6 +1,6 @@
 /*
-脚本修改自 @CyWr110
-修改日期：2024.10.08
+脚本修改自 @CyWr110 , @githubdulong
+修改日期：2024.10.10
  ----------------------------------------
  */
 const REQUEST_HEADERS = { 
@@ -24,7 +24,7 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
 
 ;(async () => {
     let panel_result = {
-        title: '流媒体解锁检测',
+        title: '解鎖檢測',
         content: '',
         icon: 'play.tv.fill',
         'icon-color': '#FF2D55',
