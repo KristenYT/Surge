@@ -14,55 +14,42 @@ const REQUEST_HEADERS = {
   'User-Agent': UA,
   'Accept-Language': 'en',
 };
-const SUPPORTED_LOCATIONS = ["T1","XX","AL","DZ","AD","AO","AG","AR","AM","AU","AT","AZ","BS","BD","BB","BE","BZ","BJ","BT","BA","BW","BR","BG","BF","CV","CA","CL","CO","KM","CR","HR","CY","DK","DJ","DM","DO","EC","SV","EE","FJ","FI","FR","GA","GM","GE","DE","GH","GR","GD","GT","GN","GW","GY","HT","HN","HU","IS","IN","ID","IQ","IE","IL","IT","JM","JP,\u2009","JO","KZ","KE","KI","KW","KG","LV","LB","LS","LR","LI","LT","LU","MG","MW","MY","MV","ML","MT","MH","MR","MU","MX","MC","MN","ME","MA","MZ","MM","NA","NR","NP","NL","NZ","NI","NE","NG","MK","NO","OM","PK","PW","PA","PG","PE","PH","PL","PT","QA","RO","RW","KN","LC","VC","WS","SM","ST","SN","RS","SC","SL","SG","SK","SI","SB","ZA","ES","LK","SR","SE","CH","TH","TG","TO","TT","TN","TR","TV","UG","AE","US","UY","VU","ZM","BO","BN","CG","CZ","VA","FM","MD","PS","KR","TW","TZ","TL","GB"];
-const WARP_FEATURES = ["plus", "on"];
+const SUPPORTED_LOCATIONS = ["AL", "DZ", "AF", "AD", "AO", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BB", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "BN", "BG", "BF", "BI", "CV", "KH", "CM", "CA", "CF", "TD", "CL", "CO", "KM", "CG", "CD", "CR", "CI", "HR", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "GQ", "ER", "EE", "SZ", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GR", "GD", "GT", "GN", "GW", "GY", "HT", "VA", "HN", "HU", "IS", "IN", "ID", "IQ", "IE", "IL", "IT", "JM", "JP", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LR", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MH", "MR", "MU", "MX", "FM", "MD", "MC", "MN", "ME", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "MK", "NO", "OM", "PK", "PW", "PS", "PA", "PG", "PY", "PE", "PH", "PL", "PT", "QA", "RO", "RW", "KN", "LC", "VC", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "SS", "ES", "LK", "SR", "SE", "CH", "SD", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "TV", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VN", "YE", "ZM", "ZW"];
 
-function fetchData(url, attempts = 3) {
+async function getTraceData() {
   return new Promise((resolve, reject) => {
-    const makeRequest = (remainingAttempts) => {
-      $httpClient.get({
-        url: url,
-        headers: { 'User-Agent': UA }
-      }, function (error, response, data) {
-        if (error || response.status !== 200) {
-          if (remainingAttempts > 1) {
-            makeRequest(remainingAttempts - 1);
-          } else {
-            reject(error || 'Request failed');
-          }
-        } else {
-          resolve(data);
-        }
-      });
-    };
-    makeRequest(attempts);
+    $httpClient.get("https://chat.openai.com/cdn-cgi/trace", function (error, response, data) {
+      if (error) {
+        reject(error);
+        return;
+      }
+      const lines = data.split("\n");
+      const cf = lines.reduce((acc, line) => {
+        const [key, value] = line.split("=");
+        acc[key] = value;
+        return acc;
+      }, {});
+      resolve(cf);
+    });
   });
 }
 
-  (async () => {
+(async () => {
   let now = new Date();
   let hour = now.getHours();
   let minutes = now.getMinutes();
   hour = hour > 9 ? hour : "0" + hour;
   minutes = minutes > 9 ? minutes : "0" + minutes;
 
-  let [{ region, status }] = await Promise.all([testDisneyPlus()]);
-  let netflixResult = await check_netflix();
-  let youtubeResult = await check_youtube_premium();
-
-  let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
     ? `ChatGPT\u2009➟ \u2611\u2009${traceData.loc}`
     : `ChatGPT\u2009➟ \u2612\u2009${traceData.loc}`;
-
   let content = [
     `${youtubeResult}\u2009\t|  ${netflixResult}`,
     `${gptSupportStatus}\u2009\t|  ${disney_result}`,
-  ];
-
-  let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
-  console.log(log);
+   
+  console.log(`${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`);
 
   // Send a notification with the detection results
   $notification.post(
