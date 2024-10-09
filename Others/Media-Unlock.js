@@ -50,8 +50,8 @@ let args = getArgs();
   let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
-    ? `ChatGPT\u2009➟ \u2611 ${traceData.loc}`
-    : `ChatGPT\u2009➟ \u2612 ${traceData.loc || 'N/A'}`;
+    ? `ChatGPT\u2009➟ \u2611${traceData.loc}`
+    : `ChatGPT\u2009➟ \u2612${traceData.loc || 'N/A'}`;
 
   let content = [
     `${youtubeResult}\u2009\t|  ${netflixResult}`,
@@ -90,9 +90,9 @@ function getArgs() {
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `Disney\u2009➟ Soon~  ${region.toUpperCase()} `;
+      return `Disney\u2009➟ Soon~ ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `Disney\u2009➟ \u2611 ${region.toUpperCase()} `;
+      return `Disney\u2009➟ \u2611${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
       return `Disney\u2009➟ \u2612`;
     case STATUS_TIMEOUT:
@@ -142,7 +142,7 @@ async function check_youtube_premium() {
       if (code === 'Not Available') {
         youtube_check_result += '\u2612     \u2009';
       } else {
-        youtube_check_result += "\u2611 " + code.toUpperCase() + '';
+        youtube_check_result += "\u2611" + code.toUpperCase() + '';
       }
     })
     .catch(() => {
@@ -198,7 +198,7 @@ async function check_netflix() {
       if (code === 'Not Found') {
         return inner_check(80018499);
       }
-      netflix_check_result += '\u2611 ' + code.toUpperCase() ;
+      netflix_check_result += '\u2611' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .then((code) => {
@@ -206,7 +206,7 @@ async function check_netflix() {
         return Promise.reject('Not Available');
       }
 
-      netflix_check_result += '⚠ ' + code.toUpperCase() ;
+      netflix_check_result += '⚠' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .catch((error) => {
