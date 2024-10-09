@@ -1,23 +1,7 @@
 /*
 脚本参考 @Helge_0x00 ,@githubdulong
-修改日期：2024.10.03
-Surge配置参考注释
- 
+修改日期：2024.10.08
  ----------------------------------------
- 
-[Panel]
-策略面板 = script-name=解鎖檢測,update-interval=7200
-
-[Script]
-解鎖檢測 = type=generic,timeout=30,script-path=https://raw.githubusercontent.com/githubdulong/Script/master/Stream-All.js,script-update-interval=0,argument=title=解鎖檢測&icon=headphones.circle&color=#FF2121
-
-----------------------------------------
-
-支持使用脚本使用 argument 參數自定義配置，如：argument=title=解鎖檢測&icon=headphones.circle&color=#FF2121，具體參數如下所示，
- * title: 面板標題
- * icon: SFSymbols 圖標
- * color：圖標顏色
- 
  */
 
 const STATUS_COMING = 2;
@@ -33,8 +17,27 @@ const REQUEST_HEADERS = {
 const SUPPORTED_LOCATIONS = ["T1","XX","AL","DZ","AD","AO","AG","AR","AM","AU","AT","AZ","BS","BD","BB","BE","BZ","BJ","BT","BA","BW","BR","BG","BF","CV","CA","CL","CO","KM","CR","HR","CY","DK","DJ","DM","DO","EC","SV","EE","FJ","FI","FR","GA","GM","GE","DE","GH","GR","GD","GT","GN","GW","GY","HT","HN","HU","IS","IN","ID","IQ","IE","IL","IT","JM","JP,\u2009","JO","KZ","KE","KI","KW","KG","LV","LB","LS","LR","LI","LT","LU","MG","MW","MY","MV","ML","MT","MH","MR","MU","MX","MC","MN","ME","MA","MZ","MM","NA","NR","NP","NL","NZ","NI","NE","NG","MK","NO","OM","PK","PW","PA","PG","PE","PH","PL","PT","QA","RO","RW","KN","LC","VC","WS","SM","ST","SN","RS","SC","SL","SG","SK","SI","SB","ZA","ES","LK","SR","SE","CH","TH","TG","TO","TT","TN","TR","TV","UG","AE","US","UY","VU","ZM","BO","BN","CG","CZ","VA","FM","MD","PS","KR","TW","TZ","TL","GB"];
 const WARP_FEATURES = ["plus", "on"];
 
-let args = getArgs();
-
+function fetchData(url, attempts = 3) {
+  return new Promise((resolve, reject) => {
+    const makeRequest = (remainingAttempts) => {
+      $httpClient.get({
+        url: url,
+        headers: { 'User-Agent': UA }
+      }, function (error, response, data) {
+        if (error || response.status !== 200) {
+          if (remainingAttempts > 1) {
+            makeRequest(remainingAttempts - 1);
+          } else {
+            reject(error || 'Request failed');
+          }
+        } else {
+          resolve(data);
+        }
+      });
+    };
+    makeRequest(attempts);
+  });
+}
 
   (async () => {
   let now = new Date();
@@ -50,12 +53,12 @@ let args = getArgs();
   let disney_result = formatDisneyPlusResult(status, region);
   let traceData = await getTraceData();
   let gptSupportStatus = SUPPORTED_LOCATIONS.includes(traceData.loc)
-    ? `ChatGPT\u2009➟ ✅ ${traceData.loc}`
-    : `ChatGPT\u2009➟ ❌ ${traceData.loc || 'N/A'}`;
+    ? `ChatGPT\u2009➟ \u2611\u2009${traceData.loc}`
+    : `ChatGPT\u2009➟ \u2612\u2009${traceData.loc}`;
 
   let content = [
-    `${youtubeResult}\t|  ${netflixResult}`,
-    `${gptSupportStatus}\t|  ${disney_result}`,
+    `${youtubeResult}\u2009\t|  ${netflixResult}`,
+    `${gptSupportStatus}\u2009\t|  ${disney_result}`,
   ];
 
   let log = `${hour}:${minutes}.${now.getMilliseconds()} 解鎖檢測完成：${content}`;
@@ -78,23 +81,14 @@ let args = getArgs();
   $done(panel_result);
 })();
 
-function getArgs() {
-  return Object.fromEntries(
-    $argument
-      .split("&")
-      .map((item) => item.split("="))
-      .map(([k, v]) => [k, decodeURIComponent(v)])
-  );
-}
-
 function formatDisneyPlusResult(status, region) {
   switch (status) {
     case STATUS_COMING:
-      return `Disney\u2009➟ Soon~  ${region.toUpperCase()} `;
+      return `Disney\u2009➟ Soon~ ${region.toUpperCase()} `;
     case STATUS_AVAILABLE:
-      return `Disney\u2009➟ ✅ ${region.toUpperCase()} `;
+      return `Disney\u2009➟ \u2611\u2009${region.toUpperCase()} `;
     case STATUS_NOT_AVAILABLE:
-      return `Disney\u2009➟ ❌`;
+      return `Disney\u2009➟ \u2612`;
     case STATUS_TIMEOUT:
       return `Disney\u2009➟ N/A `;
     default:
@@ -140,9 +134,9 @@ async function check_youtube_premium() {
   await inner_check()
     .then((code) => {
       if (code === 'Not Available') {
-        youtube_check_result += '❌     \u2009';
+        youtube_check_result += '\u2612     \u2009';
       } else {
-        youtube_check_result += "✅ " + code.toUpperCase() + '';
+        youtube_check_result += "\u2611\u2009" + code.toUpperCase() + '';
       }
     })
     .catch(() => {
@@ -198,7 +192,7 @@ async function check_netflix() {
       if (code === 'Not Found') {
         return inner_check(80018499);
       }
-      netflix_check_result += '✅ ' + code.toUpperCase() ;
+      netflix_check_result += '\u2611\u2009' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .then((code) => {
@@ -206,7 +200,7 @@ async function check_netflix() {
         return Promise.reject('Not Available');
       }
 
-      netflix_check_result += '⚠ ' + code.toUpperCase() ;
+      netflix_check_result += '⚠\u2009' + code.toUpperCase() ;
       return Promise.reject('BreakSignal');
     })
     .catch((error) => {
@@ -214,7 +208,7 @@ async function check_netflix() {
         return;
       }
       if (error === 'Not Available') {
-        netflix_check_result += '❌';
+        netflix_check_result += '\u2612';
         return;
       }
       netflix_check_result += 'N/A';
