@@ -66,10 +66,14 @@ let args = getArgs();
         // 更新面板內容
         panel_result['content'] = youtube_netflix + '\n' + chatgpt_disney
     })
-    .finally(() => {
-        $done(panel_result)
-    })
-})()
+            // 立即發送通知
+            $notification.post(`${args.title || '解鎖檢測完成'}`, '', `${panel_result['content']}`);
+        })
+        .finally(() => {
+            // 顯示面板並結束腳本
+            $done(panel_result);
+        });
+})();
 
 // 參數處理函數
 function getArgs() {
