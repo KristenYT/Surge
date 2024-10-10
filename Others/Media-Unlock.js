@@ -109,7 +109,7 @@ async function check_chatgpt() {
       }
     })
     .catch((error) => {
-      check_result += '\u2009N/A '
+      check_result += 'N/A '
     })
 
   return check_result
