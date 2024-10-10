@@ -43,7 +43,7 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
         .then((result) => {
         let disney_result = ''
         if (status == STATUS_COMING) {
-            disney_result = 'Disney\u2009➟ ≈ ' + region
+            disney_result = 'Disney\u2009➟ \u2009≈ ' + region
         } else if (status == STATUS_AVAILABLE){
             disney_result = 'Disney\u2009➟ \u2611\u2009' + region
         } else if (status == STATUS_NOT_AVAILABLE) {
