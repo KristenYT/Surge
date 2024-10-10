@@ -39,6 +39,17 @@ let args = getArgs();
         'icon-color': args.color || '#FF2D55',
     };
 
+        // 將結果整合成面板內容
+        let youtube_netflix = [result[1], result[2]].join('\t|  ')
+        let chatgpt_disney = [result[0], result[3]].join('\t|  ')
+        
+        // 更新面板內容
+        panel_result['content'] = youtube_netflix + '\n' + chatgpt_disney
+    })
+    .finally(() => {
+        $done(panel_result)
+    })
+})()
 
     
     // 同時檢測多個服務
@@ -59,17 +70,7 @@ let args = getArgs();
         }
         result.push(disney_result)
 
-        // 將結果整合成面板內容
-        let youtube_netflix = [result[1], result[2]].join('\t|  ')
-        let chatgpt_disney = [result[0], result[3]].join('\t|  ')
-        
-        // 更新面板內容
-        panel_result['content'] = youtube_netflix + '\n' + chatgpt_disney
-    })
-    .finally(() => {
-        $done(panel_result)
-    })
-})()
+
 
 // 參數處理函數
 function getArgs() {
