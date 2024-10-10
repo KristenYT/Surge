@@ -51,13 +51,13 @@ let content = ''
 !(async () => {
   if ($.lodash_get(arg, 'TYPE') === 'EVENT') {
     const eventDelay = parseFloat($.lodash_get(arg, 'EVENT_DELAY') || 3)
-    $.log(`網絡變化, 等待 ${eventDelay} 秒後開始查詢`)
+    $.log(`網路變化, 等待 ${eventDelay} 秒後開始查詢`)
     if (eventDelay) {
       await $.wait(1000 * eventDelay)
     }
   }
   if (isTile()) {
-    await notify('網絡信息', '面板', '開始查詢')
+    await notify('網路信息', '面板', '開始查詢')
   }
 
   let SSID = ''
@@ -134,7 +134,7 @@ let content = ''
       $.setjson({ CN_IP, PROXY_IP, CN_IPv6, PROXY_IPv6 }, 'lastNetworkInfoEvent')
     } else {
       // 否則 直接結束
-      $.log('網絡信息未發生變化, 不繼續')
+      $.log('網路信息未發生變化, 不繼續')
       continueFlag = false
     }
   }
@@ -202,7 +202,7 @@ let content = ''
     }
     const policy_prefix = $.isQuanX() || $.isLoon() ? '節點: ' : '代理策略: '
     if (PROXY_POLICY === 'DIRECT') {
-      PROXY_POLICY = `${policy_prefix}直連`
+      PROXY_POLICY = `${policy_prefix}DIRECT`
     } else if (PROXY_POLICY) {
       PROXY_POLICY = `${policy_prefix}${maskAddr(PROXY_POLICY) || '-'}`
     } else {
@@ -225,18 +225,18 @@ let content = ''
       content = `${content}\n執行時間: ${new Date().toTimeString().split(' ')[0]}`
     }
 
-    title = title || '網絡信息 𝕏'
+    title = title || '網路信息 𝕏'
     if (isTile()) {
-      await notify('網絡信息', '面板', '查詢完成')
+      await notify('網路信息', '面板', '查詢完成')
     } else if (!isPanel()) {
       if ($.lodash_get(arg, 'TYPE') === 'EVENT') {
         await notify(
           `🄳 ${maskIP(CN_IP) || '-'} 🅿 ${maskIP(PROXY_IP) || '-'}`.replace(/\n+/g, '\n').replace(/\ +/g, ' ').trim(),
-          `${maskAddr(CN_INFO.replace(/(位置|運營商).*?:/g, '').replace(/\n/g, ' '))}`
+          `${maskAddr(CN_INFO.replace(/(位置|營運商).*?:/g, '').replace(/\n/g, ' '))}`
             .replace(/\n+/g, '\n')
             .replace(/\ +/g, ' ')
             .trim(),
-          `${maskAddr(PROXY_INFO.replace(/(位置|運營商).*?:/g, '').replace(/\n/g, ' '))}${
+          `${maskAddr(PROXY_INFO.replace(/(位置|營運商).*?:/g, '').replace(/\n/g, ' '))}${
             CN_IPv6 ? `\n🄳 ${CN_IPv6.replace(/\n+/g, '')}` : ''
           }${PROXY_IPv6 ? `\n🅿 ${PROXY_IPv6.replace(/\n+/g, '')}` : ''}${SSID ? `\n${SSID}` : '\n'}${LAN}`
             .replace(/\n+/g, '\n')
@@ -244,7 +244,7 @@ let content = ''
             .trim()
         )
       } else {
-        await notify('網絡信息 𝕏', title, content)
+        await notify('網路信息 𝕏', title, content)
       }
     }
   }
@@ -255,7 +255,7 @@ let content = ''
     const msg = `${$.lodash_get(e, 'message') || $.lodash_get(e, 'error') || e}`
     title = `❌`
     content = msg
-    await notify('網絡信息 𝕏', title, content)
+    await notify('網路信息 𝕏', title, content)
   })
   .finally(async () => {
     if (isRequest()) {
@@ -290,7 +290,7 @@ let content = ''
         .replace(/\n/g, '<br/>')}</div>`
       // $.log(html)
       $.done({
-        title: '網絡信息 𝕏',
+        title: '網路信息 𝕏',
         htmlMessage: html,
       })
     } else {
@@ -412,7 +412,7 @@ async function getDirectInfo(ip, provider) {
       CN_IP = ip || body.match(/IP\s*(:|：)\s*(.*?)\s/)[2]
       CN_INFO = [
         ['位置:', isCN ? getflag('CN') : undefined, addr.replace(/中國\s*/, '') || ''].filter(i => i).join(' '),
-        ['運營商:', body.match(/運營商\s*(:|：)\s*(.*)/)[2].replace(/中國\s*/, '') || ''].filter(i => i).join(' '),
+        ['營運商:', body.match(/營運商\s*(:|：)\s*(.*)/)[2].replace(/中國\s*/, '') || ''].filter(i => i).join(' '),
       ]
         .filter(i => i)
         .join('\n')
@@ -445,7 +445,7 @@ async function getDirectInfo(ip, provider) {
         ]
           .filter(i => i)
           .join(' '),
-        ['運營商:', $.lodash_get(body, 'data.owner')].filter(i => i).join(' '),
+        ['營運商:', $.lodash_get(body, 'data.owner')].filter(i => i).join(' '),
       ]
         .filter(i => i)
         .join('\n')
@@ -511,7 +511,7 @@ async function getDirectInfo(ip, provider) {
         ]
           .filter(i => i)
           .join(' '),
-        ['運營商:', $.lodash_get(body, 'data.isp')].filter(i => i).join(' '),
+        ['營運商:', $.lodash_get(body, 'data.isp')].filter(i => i).join(' '),
       ]
         .filter(i => i)
         .join('\n')
@@ -545,7 +545,7 @@ async function getDirectInfo(ip, provider) {
         ]
           .filter(i => i)
           .join(' '),
-        ['運營商:', $.lodash_get(body, 'result.operator')].filter(i => i).join(' '),
+        ['營運商:', $.lodash_get(body, 'result.operator')].filter(i => i).join(' '),
       ]
         .filter(i => i)
         .join('\n')
@@ -610,7 +610,7 @@ async function getDirectInfo(ip, provider) {
         ]
           .filter(i => i)
           .join(' '),
-        ['運營商:', $.lodash_get(body, 'data.showapi_res_body.isp') || '-'].filter(i => i).join(' '),
+        ['營運商:', $.lodash_get(body, 'data.showapi_res_body.isp') || '-'].filter(i => i).join(' '),
       ]
         .filter(i => i)
         .join('\n')
@@ -679,7 +679,7 @@ async function getDirectInfo(ip, provider) {
         ]
           .filter(i => i)
           .join(' '),
-        ['運營商:', $.lodash_get(body, 'data.operator') || $.lodash_get(body, 'data.isp') || '-']
+        ['營運商:', $.lodash_get(body, 'data.operator') || $.lodash_get(body, 'data.isp') || '-']
           .filter(i => i)
           .join(' '),
       ]
@@ -716,7 +716,7 @@ async function getDirectInfo(ip, provider) {
         ]
           .filter(i => i)
           .join(' '),
-        ['運營商:', $.lodash_get(body, 'data.isp') || '-'].filter(i => i).join(' '),
+        ['營運商:', $.lodash_get(body, 'data.isp') || '-'].filter(i => i).join(' '),
         $.lodash_get(arg, 'ORG') == 1
           ? ['組織:', $.lodash_get(body, 'org') || '-'].filter(i => i).join(' ')
           : undefined,
@@ -794,7 +794,7 @@ async function getProxyInfo(ip, provider) {
           .filter(i => i)
           .join(' '),
         [
-          '運營商:',
+          '營運商:',
           $.lodash_get(body, 'company.name') || $.lodash_get(body, 'asn.name') || '-',
           companyType ? ` | ${companyType}` : '',
         ]
@@ -871,7 +871,7 @@ async function getProxyInfo(ip, provider) {
         ]
           .filter(i => i)
           .join(' '),
-        ['運營商:', body.isp || body.org || body.asn].filter(i => i).join(' '),
+        ['營運商:', body.isp || body.org || body.asn].filter(i => i).join(' '),
       ]
         .filter(i => i)
         .join('\n')
@@ -905,7 +905,7 @@ async function getProxyInfo(ip, provider) {
           .filter(i => i)
           .join(' '),
 
-        ['運營商:', body.isp || body.organization].filter(i => i).join(' '),
+        ['營運商:', body.isp || body.organization].filter(i => i).join(' '),
         $.lodash_get(arg, 'ORG') == 1
           ? ['組織:', $.lodash_get(body, 'asn_organization') || '-'].filter(i => i).join(' ')
           : undefined,
@@ -951,7 +951,7 @@ async function getProxyInfo(ip, provider) {
         ['位置:', getflag(body.country_code), body.country.replace(/\s*中國\s*/, ''), body.region, body.city]
           .filter(i => i)
           .join(' '),
-        ['運營商:', $.lodash_get(body, 'connection.isp') || '-'].filter(i => i).join(' '),
+        ['營運商:', $.lodash_get(body, 'connection.isp') || '-'].filter(i => i).join(' '),
         $.lodash_get(arg, 'ORG') == 1
           ? ['組織:', $.lodash_get(body, 'connection.org') || '-'].filter(i => i).join(' ')
           : undefined,
@@ -1009,7 +1009,7 @@ async function getProxyInfo(ip, provider) {
         ]
           .filter(i => i)
           .join(' '),
-        ['運營商:', body.isp || body.org || body.as].filter(i => i).join(' '),
+        ['營運商:', body.isp || body.org || body.as].filter(i => i).join(' '),
         $.lodash_get(arg, 'ORG') == 1
           ? ['組織:', $.lodash_get(body, 'org') || '-'].filter(i => i).join(' ')
           : undefined,
@@ -1102,7 +1102,7 @@ async function ipim(ip) {
 
   INFO = [
     ['位置:', isCN ? getflag('CN') : getflag(country), country, province, city, district].filter(i => i).join(' '),
-    ['運營商:', isp || '-'].filter(i => i).join(' '),
+    ['營運商:', isp || '-'].filter(i => i).join(' '),
     $.lodash_get(arg, 'ORG') == 1 ? ['組織:', org || '-'].filter(i => i).join(' ') : undefined,
   ]
     .filter(i => i)
