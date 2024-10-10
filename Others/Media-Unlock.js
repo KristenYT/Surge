@@ -59,7 +59,6 @@ let args = getArgs();
         }
         result.push(disney_result)
 
-
         // 將結果整合成面板內容
         let youtube_netflix = [result[1], result[2]].join('\t|  ')
         let chatgpt_disney = [result[0], result[3]].join('\t|  ')
@@ -72,13 +71,14 @@ let args = getArgs();
     })
 })()
 
-
 // 參數處理函數
 function getArgs() {
     return Object.fromEntries(
         $argument.split("&").map(item => item.split("=")).map(([k, v]) => [k, decodeURIComponent(v)])
     );
 }
+
+
 
 // 檢測 ChatGPT
 async function check_chatgpt() {
