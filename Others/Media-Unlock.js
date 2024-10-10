@@ -55,7 +55,7 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
 
         // 將結果整合成面板內容
         let youtube_netflix = [result[1], result[2]].join(' \t|  ')
-        let chatgpt_disney = [result[0], result[3]].join(' \t|  ')
+        let chatgpt_disney = [result[0], result[3]].join(' \t| ')
         
         // 更新面板內容
         panel_result['content'] = youtube_netflix + '\n' + chatgpt_disney
