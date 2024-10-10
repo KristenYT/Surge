@@ -1,9 +1,9 @@
 #!name= Troubleshoot
-#!desc= 故障排除/規則統計 访问 http://trouble.shoot  http://surge.tool https://app.linkey.store/st https://🍉.eu.org/st 查看
-#!author= @xream @key
+#!desc= 故障排除/規則統計 訪問 http://trouble.shoot  http://surge.tool https://app.linkey.store/st https://🍉.eu.org/st 查看
+#!author= @xream @key 
 #!category= Key
 #!arguments= script-update:-1, update-interval:-1, Type:1, Log:0, List:1, Push:1,title:規則詳情 | , color:#66CDA9, icon:heart.text.square, ST Panel:ST Panel
-#!arguments-desc= 规则集数量统计支持远程分流规则/本地单条规则,不支持无法读取的本地规则集, ScriptHub 转换的规则有缓存会更快速地读取, ScriptHub转换过的规则会读取缓存数, 速度快\n\nST Panel 如果填写为 # 则关闭面板\n在通知显示规则类型数量: Type\n在通知显示各规则集数量: List\n开启通知: Push\n開啟日誌: Log\n\n開啟為: 1\n關閉為: 0
+#!arguments-desc= 規則集數量統計支持遠程分流規則/本地單條規則,不支持無法讀取的本地規則集, ScriptHub 轉換的規則有緩存會更快速地讀取, ScriptHub轉換過的規則會讀取緩存數, 速度快\n\nST Panel 如果填寫為 # 則關閉面板\n在通知顯示規則類型數量: Type\n在通知顯示各規則集數量: List\n開啓通知: Push\n開啟日誌: Log\n\n開啟為: 1\n關閉為: 0\n訪問 http://trouble.shoot  http://surge.tool https://app.linkey.store/st https://🍉.eu.org/st 查看
 #!date=2024-01-24 21:14:45
 // @xream https://raw.githubusercontent.com/xream/scripts/main/surge/modules/troubleshoot/troubleshoot.js
 
