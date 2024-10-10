@@ -50,6 +50,8 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
             disney_result = 'Disney\u2009➟ \u2612'
         } else if (status == STATUS_TIMEOUT) {
             disney_result = 'Disney\u2009➟ N/A'
+        } else {
+            disney_result = 'Disney\u2009➟ N/A';
         }
         result.push(disney_result)
 
