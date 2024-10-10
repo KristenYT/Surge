@@ -326,11 +326,13 @@ if (typeof $argument !== "undefined" && $argument !== "") {
           url: "http://surge.tool",
         });
       result = {
-  title: ptitle + " " + ALL_NUM,
-  content: `Mitm:✔ ${hostnameNUM} ~JS :✔ ${hostnameNUM} ~Rewrite :✔ ${hostnameNUM}`,
-  icon: icons,
-  "icon-color": icolor,
-};
+        title: ptitle + " " + ALL_NUM,
+        content: `MitM${mitm ? "☑" : "☒"}${hostnameNUM.replace(':', '')} JS${
+          scripting ? "☑" : "☒"
+        }${ScriptNUM.replace(':', '')} Rewrite${rewrite ? "☑" : "☒"}${RewriteNUM.replace(':', '')}`,
+        icon: icons,
+        "icon-color": icolor,
+      };
     } else {
       result = {
         response: {
