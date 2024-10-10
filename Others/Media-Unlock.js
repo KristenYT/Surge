@@ -54,7 +54,7 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
         result.push(disney_result)
 
         // 將結果整合成面板內容
-        let youtube_netflix = [result[1], result[2]].join(' \t|  ')
+        let youtube_netflix = [result[1], result[2]].join('\t|  ')
         let chatgpt_disney = [result[0], result[3]].join('\t|  ')
         
         // 更新面板內容
@@ -109,7 +109,7 @@ async function check_chatgpt() {
       }
     })
     .catch((error) => {
-      check_result += ' \u2009\u2009N/A '
+      check_result += '\u2009N/A '
     })
 
   return check_result
@@ -160,7 +160,7 @@ async function check_youtube_premium() {
         }
     })
         .catch((error) => {
-        youtube_check_result += '  N/A '
+        youtube_check_result += 'N/A '
     })
 
     return youtube_check_result
