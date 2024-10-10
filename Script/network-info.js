@@ -200,7 +200,7 @@ let content = ''
     if (CN_INFO) {
       CN_INFO = `\n${CN_INFO}`
     }
-    const policy_prefix = $.isQuanX() || $.isLoon() ? '節點: ' : '代理策略: '
+    const policy_prefix = $.isQuanX() || $.isLoon() ? '節點: ' : '代理策略：'
     if (PROXY_POLICY === 'DIRECT') {
       PROXY_POLICY = `${policy_prefix}Direct`
     } else if (PROXY_POLICY) {
