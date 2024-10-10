@@ -1,4 +1,4 @@
-// @xream @key
+//腳本修改自 @xream @key
 const UPDATA = "2024-03-16 14:14:49";
 const isPanel = typeof $input != "undefined",
   stname = "SurgeTool_Rule_NUM",
@@ -327,9 +327,9 @@ if (typeof $argument !== "undefined" && $argument !== "") {
         });
       result = {
         title: ptitle + " " + ALL_NUM,
-        content: `Mitm:${mitm ? "☑" : "☒"}${hostnameNUM.replace(':', '')} ⇹ JS:${
+        content: `Mitm:${mitm ? "☑" : "☒"}${hostnameNUM.replace(':', '')} ⇿ JS:${
           scripting ? "☑" : "☒"
-        }${ScriptNUM.replace(':', '')} ⇹ Rewrite:${rewrite ? "☑" : "☒"}${RewriteNUM.replace(':', '')}`,
+        }${ScriptNUM.replace(':', '')} ⇿ Rewrite:${rewrite ? "☑" : "☒"}${RewriteNUM.replace(':', '')}`,
         icon: icons,
         "icon-color": icolor,
       };
