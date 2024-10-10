@@ -327,9 +327,9 @@ if (typeof $argument !== "undefined" && $argument !== "") {
         });
       result = {
         title: ptitle + " " + ALL_NUM,
-        content: `Mitm:${mitm ? "☑" : "☒"}${hostnameNUM.replace(':', '')} ⇄ JS:${
+        content: `Mitm:${mitm ? "☑" : "☒"}${hostnameNUM.replace(':', '')}⭤JS:${
           scripting ? "☑" : "☒"
-        }${ScriptNUM.replace(':', '')} ⇄ Rewrite:${rewrite ? "☑" : "☒"}${RewriteNUM.replace(':', '')}`,
+        }${ScriptNUM.replace(':', '')}⭤Rewrite:${rewrite ? "☑" : "☒"}${RewriteNUM.replace(':', '')}`,
         icon: icons,
         "icon-color": icolor,
       };
