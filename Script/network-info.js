@@ -152,7 +152,7 @@ let content = ''
     }
     if (ENTRANCE_IP && ENTRANCE_IP !== PROXY_IP) {
       const entranceDelay = parseFloat($.lodash_get(arg, 'ENTRANCE_DELAY') || 0)
-      $.log(`入口: ${ENTRANCE_IP} 與落地 IP: ${PROXY_IP} 不一致, 等待 ${entranceDelay} 秒後查詢入口`)
+      $.log(`入口: ${ENTRANCE_IP} 與落地 IP : ${PROXY_IP} 不一致, 等待 ${entranceDelay} 秒後查詢入口`)
       if (entranceDelay) {
         await $.wait(1000 * entranceDelay)
       }
@@ -218,9 +218,9 @@ let content = ''
       PROXY_INFO = `\n${PROXY_INFO}`
     }
     title = `${PROXY_POLICY}`
-    content = `${SSID}${LAN}${CN_POLICY}IP: ${maskIP(CN_IP) || '-'}${CN_IPv6}${maskAddr(
+    content = `${SSID}${LAN}${CN_POLICY}IP : ${maskIP(CN_IP) || '-'}${CN_IPv6}${maskAddr(
       CN_INFO
-    )}\n\n${ENTRANCE}落地 IP: ${maskIP(PROXY_IP) || '-'}${PROXY_IPv6}${maskAddr(PROXY_INFO)}${PROXY_PRIVACY}`
+    )}\n\n${ENTRANCE}落地 IP : ${maskIP(PROXY_IP) || '-'}${PROXY_IPv6}${maskAddr(PROXY_INFO)}${PROXY_PRIVACY}`
     if (!isInteraction()) {
       content = `${content}\n執行時間: ${new Date().toTimeString().split(' ')[0]}`
     }
