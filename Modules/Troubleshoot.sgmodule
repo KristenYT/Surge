@@ -1,5 +1,5 @@
 #!name= Troubleshoot
-#!desc= 故障排除/規則統計 訪問 http://trouble.shoot  http://surge.tool https://app.linkey.store/st https://🍉.eu.org/st 查看
+#!desc= 故障排除/規則統計
 #!author= @xream @key 
 #!category= Key
 #!arguments= script-update:-1, update-interval:-1, Type:1, Log:0, List:1, Push:1,title:規則詳情 | , color:#66CDA9, icon:heart.text.square, ST Panel:ST Panel
