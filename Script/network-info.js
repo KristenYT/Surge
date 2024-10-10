@@ -202,7 +202,7 @@ let content = ''
     }
     const policy_prefix = $.isQuanX() || $.isLoon() ? '節點: ' : '代理策略: '
     if (PROXY_POLICY === 'DIRECT') {
-      PROXY_POLICY = `${policy_prefix}DIRECT`
+      PROXY_POLICY = `${policy_prefix}Direct`
     } else if (PROXY_POLICY) {
       PROXY_POLICY = `${policy_prefix}${maskAddr(PROXY_POLICY) || '-'}`
     } else {
