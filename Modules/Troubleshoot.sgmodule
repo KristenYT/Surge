@@ -1,7 +1,7 @@
 #!name= Troubleshoot
 #!desc= 故障排除/規則統計
 #!author= @xream @key 
-#!category= Key
+#!category= Panel
 #!arguments= script-update:-1, update-interval:-1, Type:1, Log:0, List:1, Push:1,title:規則詳情 | , color:#66CDA9, icon:heart.text.square, ST Panel:ST Panel
 #!arguments-desc= 規則集數量統計支持遠程分流規則/本地單條規則,不支持無法讀取的本地規則集, ScriptHub 轉換的規則有緩存會更快速地讀取, ScriptHub轉換過的規則會讀取緩存數, 速度快\n\nST Panel 如果填寫為 # 則關閉面板\n在通知顯示規則類型數量: Type\n在通知顯示各規則集數量: List\n開啓通知: Push\n開啟日誌: Log\n\n開啟為: 1\n關閉為: 0\n訪問 http://trouble.shoot  http://surge.tool https://app.linkey.store/st https://🍉.eu.org/st 查看
 #!date=2024-01-24 21:14:45
