@@ -268,7 +268,7 @@ async function testDisneyPlus() {
             region = region.toUpperCase()
         }
 
-        // 即将登陆
+        // 即將登陸
         if (inSupportedLocation === false || inSupportedLocation === 'false') {
             return {region, status: STATUS_COMING}
         } else {
