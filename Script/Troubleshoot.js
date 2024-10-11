@@ -329,7 +329,7 @@ if (typeof $argument !== "undefined" && $argument !== "") {
         title: ptitle + " " + ALL_NUM,
         content: `Mitm:${mitm ? "☑" : "☒"}${hostnameNUM.replace(':', '')} ⇿ JS:${
           scripting ? "☑" : "☒"
-        }${ScriptNUM.replace(':', '')} ⇿ Rew:${rewrite ? "☑" : "☒"}${RewriteNUM.replace(':', '')}`,
+        }${ScriptNUM.replace(':', '')} ⇿ Rw:${rewrite ? "☑" : "☒"}${RewriteNUM.replace(':', '')}`,
         icon: icons,
         "icon-color": icolor,
       };
