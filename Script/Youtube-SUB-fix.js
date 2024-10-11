@@ -1,12 +1,12 @@
-// Surge Script to Fix YouTube Traditional Chinese Subtitle Timing Issue1
+// Surge Script to Fix YouTube Traditional Chinese Subtitle Timing Issue
+// Based on https://github.com/Frank0945/fix-yt-traditional-chinese-subtitle
 
-// 攔截和修改 YouTube 字幕 API 回應
 let body = $response.body;
 let headers = $response.headers;
 
-// 確保回應的 Content-Type 是字幕 XML
+// 確保回應是字幕 XML
 if (headers["Content-Type"] && headers["Content-Type"].includes("text/xml")) {
-  // 對字幕進行修正
+  // 修正字幕
   let fixedBody = fixTraditionalChineseSubtitle(body);
 
   // 返回修改後的字幕
@@ -15,18 +15,21 @@ if (headers["Content-Type"] && headers["Content-Type"].includes("text/xml")) {
     headers: headers
   });
 } else {
-  // 如果回應不是字幕，則直接返回不修改
+  // 非字幕回應則不做任何修改
   $done({});
 }
 
-// 修正字幕時間軌的功能
+// 修正 YouTube 字幕時間軌的功能
 function fixTraditionalChineseSubtitle(data) {
   try {
-    // 匹配 <text> 標籤並修正其 start 和 dur 屬性
+    // 匹配 <text> 標籤，修正其 start 和 dur 屬性
     return data.replace(/<text start="([\d.]+)" dur="([\d.]+)">/g, function (match, start, dur) {
-      // 將 start 時間提前 0.5 秒
-      let newStart = (parseFloat(start) - 0.5).toFixed(3);
-      return `<text start="${newStart}" dur="${dur}">`;
+      // 將 start 和 dur 四捨五入保留三位小數
+      let fixedStart = parseFloat(start).toFixed(3);
+      let fixedDur = parseFloat(dur).toFixed(3);
+
+      // 返回修正後的 <text> 標籤
+      return `<text start="${fixedStart}" dur="${fixedDur}">`;
     });
   } catch (e) {
     console.log("Failed to fix subtitles:", e);
