@@ -1,59 +1,63 @@
-// 使用 fetch 請求來動態加載 OpenCC 的 cn2t.js 腳本1
-$httpClient.get('https://raw.githubusercontent.com/KristenYT/Surge/refs/heads/main/Script/cn2t.js', function(error, response, body) {
+// Surge Script to Fix YouTube Traditional Chinese Subtitle Timing Issue
+// Reference: https://github.com/Frank0945/fix-yt-traditional-chinese-subtitle
+
+// 1. 設置攔截 URL 規則，針對 YouTube 字幕 API 的請求
+// Surge requires URL filters to apply the script, use a Surge rule like:
+// URL-REGEX,^https:\/\/www\.youtube\.com\/api\/timedtext
+
+// 2. 攔截和修改字幕數據
+const url = $request.url;
+const headers = $request.headers;
+
+if (url.includes("/api/timedtext")) {
+  // 攔截 YouTube 字幕請求
+  $httpClient.get(url, { headers }, function(error, response, data) {
     if (error) {
-        console.error("無法加載 cn2t.js:", error);
-        $done({ body: $response.body });
-        return;
+      // 若出現錯誤，則不做任何修改
+      $done({});
+      return;
     }
 
-    try {
-        // 執行加載的腳本
-        eval(body);
+    // 對字幕進行修正 (仿照 Frank0945 的修正方式)
+    const fixedData = fixTraditionalChineseSubtitle(data);
 
-        // 確保 OpenCC 轉換器已經加載
-        if (typeof OpenCC !== 'undefined') {
-            const converter = OpenCC.Converter({ from: 'cn', to: 't' });
+    // 返回修正後的字幕
+    $done({
+      body: fixedData,
+      headers: response.headers
+    });
+  });
+} else {
+  // 如果不是目標請求，則直接跳過
+  $done({});
+}
 
-            // 獲取字幕內容
-            let responseBody = $response.body;
+// 修正字幕時間軌的功能 (基於 Frank0945 的邏輯進行時間軌修復)
+function fixTraditionalChineseSubtitle(data) {
+  try {
+    // 將字幕資料解析為 XML 文檔
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(data, "text/xml");
 
-            // 解析 JSON 格式的字幕
-            let parsedBody;
-            try {
-                parsedBody = JSON.parse(responseBody);
-            } catch (jsonError) {
-                console.error("字幕內容不是 JSON 格式，將按文本進行轉換");
-                parsedBody = null;
-            }
+    // 遍歷所有的 <text> 標籤，修正其中的時間軌
+    const texts = xmlDoc.getElementsByTagName("text");
+    for (let i = 0; i < texts.length; i++) {
+      const textNode = texts[i];
+      let startTime = parseFloat(textNode.getAttribute("start"));
+      let duration = parseFloat(textNode.getAttribute("dur"));
 
-            if (parsedBody) {
-                // 對每段字幕進行簡轉繁，保留時間戳
-                for (let i = 0; i < parsedBody.length; i++) {
-                    if (parsedBody[i].segs) {
-                        // 轉換每一段字幕的文字
-                        for (let j = 0; j < parsedBody[i].segs.length; j++) {
-                            parsedBody[i].segs[j].utf8 = converter.convert(parsedBody[i].segs[j].utf8);
-                        }
-                    }
-                }
-
-                // 返回轉換後的 JSON
-                $done({ body: JSON.stringify(parsedBody) });
-            } else {
-                // 如果不是 JSON，將純文本進行轉換
-                converter.convertPromise(responseBody).then((traditionalText) => {
-                    $done({ body: traditionalText });
-                }).catch((conversionError) => {
-                    console.error("轉換錯誤：", conversionError);
-                    $done({ body: responseBody });
-                });
-            }
-        } else {
-            console.error("OpenCC 未正確加載");
-            $done({ body: $response.body });
-        }
-    } catch (evalError) {
-        console.error("腳本執行錯誤：", evalError);
-        $done({ body: $response.body });
+      // 修正時間邏輯 (具體修正邏輯請參照實際問題)
+      if (startTime && duration) {
+        // 假設問題是由於時間滯後造成，進行一個簡單的時間修正
+        textNode.setAttribute("start", (startTime - 0.5).toFixed(3));
+      }
     }
-});
+
+    // 將修正後的字幕轉回字串
+    const serializer = new XMLSerializer();
+    return serializer.serializeToString(xmlDoc);
+  } catch (e) {
+    console.error("Failed to fix subtitles:", e);
+    return data;  // 如果解析或修正失敗，返回原始數據
+  }
+}
