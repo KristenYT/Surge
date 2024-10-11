@@ -322,14 +322,14 @@ if (typeof $argument !== "undefined" && $argument !== "") {
         });
       }
       push &&
-        $notification.post("", text, "點擊跳轉瀏覽器打開", {
+        $notification.post("", text, "点击跳转浏览器打开", {
           url: "http://surge.tool",
         });
       result = {
         title: ptitle + " " + ALL_NUM,
-        content: `Mitm:${mitm ? "☑" : "☒"}${hostnameNUM.replace(':', '')}|JS:${
+        content: `Mitm:${mitm ? "☑" : "☒"}${hostnameNUM.replace(':', '')} ⇿ JS:${
           scripting ? "☑" : "☒"
-        }${ScriptNUM.replace(':', '')}|Rewrite:${rewrite ? "☑" : "☒"}${RewriteNUM.replace(':', '')}`,
+        }${ScriptNUM.replace(':', '')} ⇿ Rew:${rewrite ? "☑" : "☒"}${RewriteNUM.replace(':', '')}`,
         icon: icons,
         "icon-color": icolor,
       };
