@@ -1,5 +1,5 @@
 //腳本修改自 @xream @key
-const UPDATA = "2024-03-16 14:14:49";
+const UPDATA = "2024-10-10";
 const isPanel = typeof $input != "undefined",
   stname = "SurgeTool_Rule_NUM",
   STversion = "5.10.03",
