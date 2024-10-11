@@ -322,7 +322,7 @@ if (typeof $argument !== "undefined" && $argument !== "") {
         });
       }
       push &&
-        $notification.post("", text, "点击跳转浏览器打开", {
+        $notification.post("", text, "點擊跳轉瀏覽器打開", {
           url: "http://surge.tool",
         });
       result = {
