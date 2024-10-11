@@ -1,4 +1,4 @@
-// 使用 fetch 請求來動態加載 OpenCC 的 cn2t.js 腳本
+// 使用 fetch 請求來動態加載 OpenCC 的 cn2t.js 腳本1
 $httpClient.get('https://raw.githubusercontent.com/KristenYT/Surge/refs/heads/main/Script/cn2t.js', function(error, response, body) {
     if (error) {
         console.error("無法加載 cn2t.js:", error);
@@ -27,9 +27,10 @@ $httpClient.get('https://raw.githubusercontent.com/KristenYT/Surge/refs/heads/ma
             }
 
             if (parsedBody) {
-                // 對字幕文本進行處理
+                // 對每段字幕進行簡轉繁，保留時間戳
                 for (let i = 0; i < parsedBody.length; i++) {
                     if (parsedBody[i].segs) {
+                        // 轉換每一段字幕的文字
                         for (let j = 0; j < parsedBody[i].segs.length; j++) {
                             parsedBody[i].segs[j].utf8 = converter.convert(parsedBody[i].segs[j].utf8);
                         }
