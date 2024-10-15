@@ -106,9 +106,9 @@ async function check_chatgpt() {
         let country_code = cf.loc;
         let restricted_countries = ['HK', 'RU', 'CN', 'KP', 'CU', 'IR', 'SY'];
         if (restricted_countries.includes(country_code)) {
-          resolve('Not Available') // 無法訪問
+          resolve('Not Available')
         } else {
-          resolve(country_code.toUpperCase()) // 可以訪問
+          resolve(country_code.toUpperCase())
         }
       })
     })
@@ -127,7 +127,7 @@ async function check_chatgpt() {
           return
         }
 
-        resolve('App Unlocked'); // App 可以訪問
+        resolve('App Unlocked');
       })
     })
   }
@@ -138,22 +138,21 @@ async function check_chatgpt() {
   await Promise.all([check_web(), check_app()])
     .then((results) => {
       const [webStatus, appStatus] = results;
-      if (webStatus === 'Not Available' && appStatus === 'App Unlocked') {
-        check_result += '\u2612 只能訪問 App'
-      } else if (webStatus === 'Not Available' && appStatus === 'Not Available') {
-        check_result += '\u2612 無法訪問網頁和 App'
-      } else if (webStatus !== 'Not Available' && appStatus === 'App Unlocked') {
-        check_result += '\u2611 網頁和 App 完整解鎖'
-      } else if (webStatus !== 'Not Available' && appStatus !== 'App Unlocked') {
-        check_result += '\u2611 只能訪問網頁'
+      if (webStatus === 'Not Available') {
+        check_result += '\u2612 ❌'
+      } else if (appStatus === 'App Unlocked') {
+        check_result += '\u2611 ✅'
+      } else {
+        check_result += '\u2611 ⚠️'
       }
     })
     .catch((error) => {
-      check_result += 'N/A' // 若發生錯誤
+      check_result += 'N/A'
     })
 
   return check_result
 }
+
 
 // 檢測 YouTube Premium
 async function check_youtube_premium() {
