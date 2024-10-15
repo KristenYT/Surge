@@ -91,8 +91,8 @@ async function check_chatgpt() {
         headers: REQUEST_HEADERS,
       }
       $httpClient.get(option, function (error, response, data) {
-        if (error != null || response.status !== 200) {
-          reject('Error')
+        if (error || response.status !== 200) {
+          resolve('Not Available')  // 網頁無法訪問時返回 "Not Available"
           return
         }
 
@@ -106,13 +106,13 @@ async function check_chatgpt() {
         let country_code = cf.loc;
         let restricted_countries = ['HK', 'RU', 'CN', 'KP', 'CU', 'IR', 'SY'];
         if (restricted_countries.includes(country_code)) {
-          resolve('Not Available')
+          resolve('Not Available')  // 被限制國家返回 "Not Available"
         } else {
-          resolve(country_code.toUpperCase())
+          resolve('Available')  // 可以訪問
         }
       })
-    })
-  }
+    });
+  };
 
   // 檢測 App 訪問狀態
   let check_app = () => {
@@ -122,35 +122,33 @@ async function check_chatgpt() {
         headers: REQUEST_HEADERS,
       }
       $httpClient.get(option, function (error, response, data) {
-        if (error != null || response.status !== 200) {
-          reject('Error')
+        if (error || response.status !== 200) {
+          resolve('Not Available')  // App 無法訪問
           return
         }
-
-        resolve('App Unlocked');
+        resolve('App Unlocked');  // App 可以訪問
       })
-    })
-  }
+    });
+  };
 
   let check_result = 'ChatGPT\u2009➟ ';
 
   // 同時檢測網頁和 App
-  await Promise.all([check_web(), check_app()])
-    .then((results) => {
-      const [webStatus, appStatus] = results;
-      if (webStatus === 'Not Available') {
-        check_result += '\u2612 ❌'
-      } else if (appStatus === 'App Unlocked') {
-        check_result += '\u2611 ✅'
-      } else {
-        check_result += '\u2611 ⚠️'
-      }
-    })
-    .catch((error) => {
-      check_result += 'N/A'
-    })
+  let webStatus = await check_web();
+  let appStatus = await check_app();
 
-  return check_result
+  // 根據兩個檢測結果返回最終狀態
+  if (webStatus === 'Not Available' && appStatus === 'Not Available') {
+    check_result += '\u2612 無法訪問網頁和 App';
+  } else if (webStatus === 'Available' && appStatus === 'App Unlocked') {
+    check_result += '\u2611 網頁和 App 完整解鎖';
+  } else if (webStatus === 'Available') {
+    check_result += '\u2611 只能訪問網頁';
+  } else if (appStatus === 'App Unlocked') {
+    check_result += '\u2612 只能訪問 App';
+  }
+
+  return check_result;
 }
 
 
