@@ -83,51 +83,99 @@ function getArgs() {
 
 // 檢測 ChatGPT
 async function check_chatgpt() {
-  let inner_check = () => {
-    return new Promise((resolve, reject) => {
-      let option = {
-        url: 'http://chat.openai.com/cdn-cgi/trace',
-        headers: REQUEST_HEADERS,
-      }
-      $httpClient.get(option, function(error, response, data) {
-        if (error != null || response.status !== 200) {
-          reject('Error')
-          return
+    const log = (message) => console.log(message);
+
+    // 使用簡單的內存緩存
+    const cache = {};
+
+    // 從 CDN 提取地區代碼
+    let getRegionCode = () => {
+        return new Promise((resolve, reject) => {
+            let option = {
+                url: 'http://chat.openai.com/cdn-cgi/trace',
+                headers: REQUEST_HEADERS,
+            };
+
+            // 發起請求
+            $httpClient.get(option, function(error, response, data) {
+                if (error != null || response.status !== 200) {
+                    reject('Error');
+                    return;
+                }
+
+                // 解析回應數據
+                let lines = data.split("\n");
+                let cf = lines.reduce((acc, line) => {
+                    let [key, value] = line.split("=");
+                    acc[key] = value;
+                    return acc;
+                }, {});
+
+                // 提取地區代碼
+                let country_code = cf.loc;
+                let restricted_countries = ['HK', 'RU', 'CN', 'KP', 'CU', 'IR', 'SY'];  // 限制地區
+
+                // 檢測該地區是否受限
+                if (restricted_countries.includes(country_code)) {
+                    resolve('Not Available');
+                } else {
+                    resolve(country_code.toUpperCase());
+                }
+            });
+        });
+    };
+
+    async function fetchDataWithTimeout(url, headers, timeout = 5000) { // 默認超時 5 秒
+        if (cache[url]) return cache[url];
+
+        return Promise.race([
+            new Promise((resolve, reject) => {
+                $httpClient.get({ url, headers }, (error, response, data) => {
+                    if (error) {
+                        reject(`ChatGPT: 檢測失敗 (網絡連接問題 - ${url})`);
+                    } else {
+                        cache[url] = data;
+                        resolve(data);
+                    }
+                });
+            }),
+            new Promise((_, reject) => setTimeout(() => reject('請求超時'), timeout))
+        ]);
+    }
+
+    try {
+        // 獲取地區代碼
+        const region_code = await getRegionCode();
+
+        // 發送其他 API 請求
+        const [cookieResponse, vpnResponse] = await Promise.all([
+            fetchDataWithTimeout('https://api.openai.com/compliance/cookie_requirements', {
+                'authority': 'api.openai.com',
+                'accept': '*/*',
+                'authorization': 'Bearer null',
+                'content-type': 'application/json',
+            }),
+            fetchDataWithTimeout('https://ios.chat.openai.com/', {
+                'authority': 'ios.chat.openai.com',
+                'accept': '*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            })
+        ]);
+
+        const isCountryUnsupported = cookieResponse.toLowerCase().includes('unsupported_country');
+
+        if (isCountryUnsupported || region_code === 'Not Available') {
+            return `ChatGPT➟ ❌    `;
         }
 
-        let lines = data.split("\n");
-        let cf = lines.reduce((acc, line) => {
-          let [key, value] = line.split("=");
-          acc[key] = value;
-          return acc;
-        }, {});
+        const isVpnRestricted = vpnResponse.toLowerCase().includes('vpn');
 
-        let country_code = cf.loc;
-        let restricted_countries = ['HK', 'RU', 'CN', 'KP', 'CU', 'IR', 'SY'];
-        if (restricted_countries.includes(country_code)) {
-          resolve('Not Available')
-        } else {
-          resolve(country_code.toUpperCase())
-        }
-      })
-    })
-  }
+        let check_result = `ChatGPT➟ `;
+        check_result += !isVpnRestricted ? `✅ ${region_code}` : `⚠️ ${region_code}`;
 
-  let check_result = 'ChatGPT\u2009➟ ';
-
-  await inner_check()
-    .then((code) => {
-      if (code === 'Not Available') {
-        check_result += '\u2612  \u2009'
-      } else {
-        check_result += '\u2611\u2009' + code
-      }
-    })
-    .catch((error) => {
-      check_result += 'N/A '
-    })
-
-  return check_result
+        return check_result;
+    } catch (error) {
+        return `ChatGPT➟ N/A    `;
+    }
 }
 
 // 檢測 YouTube Premium
