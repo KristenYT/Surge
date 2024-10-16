@@ -164,13 +164,13 @@ async function check_chatgpt() {
         const isCountryUnsupported = cookieResponse.toLowerCase().includes('unsupported_country');
 
         if (isCountryUnsupported || region_code === 'Not Available') {
-            return `ChatGPT➟ ❌    `;
+            return `ChatGPT➟ \u2612    `;
         }
 
         const isVpnRestricted = vpnResponse.toLowerCase().includes('vpn');
 
         let check_result = `ChatGPT➟ `;
-        check_result += !isVpnRestricted ? `✅ ${region_code}` : `⚠️ ${region_code}`;
+        check_result += !isVpnRestricted ? `\u2611\u2009${region_code}` : `⚠\u2009${region_code}`;
 
         return check_result;
     } catch (error) {
