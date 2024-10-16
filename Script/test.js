@@ -165,11 +165,11 @@ async function check_chatgpt() {
 
         // 根據檢查結果生成最終返回內容
         if (webResult.status === 'Available' && iosResult === 'Client Available') {
-            check_result += `✅\u2009${webResult.region}`; // Web 和 iOS 都可用
+            check_result += `\u2611\u2009${webResult.region}`; // Web 和 iOS 都可用
         } else if (webResult.status === 'Available' && iosResult === 'Client Not Available') {
-            check_result += `⚠️\u2009${webResult.region}  `; // Web 可用，但 iOS 不可用
+            check_result += `⚠\u2009${webResult.region}  `; // Web 可用，但 iOS 不可用
         } else {
-            check_result += '❌     '; // 都不可用
+            check_result += '\u2612     '; // 都不可用
         }
     } catch (error) {
         console.log("Error:", error);
