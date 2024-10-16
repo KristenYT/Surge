@@ -81,74 +81,102 @@ function getArgs() {
 
 
 
-// 修改後的 ChatGPT 解鎖檢測函數
+// 檢測 ChatGPT
 async function check_chatgpt() {
-  // 檢測網頁訪問狀態
-  let check_web = () => {
-    return new Promise((resolve, reject) => {
-      let option = {
-        url: 'http://chat.openai.com/cdn-cgi/trace',
-        headers: REQUEST_HEADERS,
-      }
-      $httpClient.get(option, function (error, response, data) {
-        if (error || response.status !== 200) {
-          resolve('Not Available')  // 網頁無法訪問時返回 "Not Available"
-          return
-        }
+    // Web 檢測
+    let inner_check_web = () => {
+        return new Promise((resolve, reject) => {
+            let option = {
+                url: 'http://chat.openai.com/cdn-cgi/trace', // 設置請求的 URL
+                headers: REQUEST_HEADERS, // 設置請求的標頭
+            };
+            $httpClient.get(option, function (error, response, data) {
+                if (error != null || response.status !== 200) { // 檢查是否有錯誤或狀態碼不是 200
+                    reject('Error'); // 拒絕 Promise
+                    return;
+                }
 
-        let lines = data.split("\n");
-        let cf = lines.reduce((acc, line) => {
-          let [key, value] = line.split("=");
-          acc[key] = value;
-          return acc;
-        }, {});
+                let lines = data.split("\n"); // 將返回的數據按行分割
+                let cf = lines.reduce((acc, line) => { // 將每一行轉換為鍵值對
+                    let [key, value] = line.split("="); // 按 = 分割每行
+                    acc[key] = value; // 將鍵值對添加到累加器
+                    return acc;
+                }, {});
 
-        let country_code = cf.loc;
-        let restricted_countries = ['HK', 'RU', 'CN', 'KP', 'CU', 'IR', 'SY'];
-        if (restricted_countries.includes(country_code)) {
-          resolve('Not Available')  // 被限制國家返回 "Not Available"
+                let country_code = cf.loc; // 獲取國家代碼
+                let restricted_countries = ['HK', 'RU', 'CN', 'KP', 'CU', 'IR', 'SY']; // 限制國家列表
+                if (restricted_countries.includes(country_code)) { // 檢查是否在限制國家列表中
+                    resolve({ status: 'Not Available', region: '' }); // 返回不可用狀態
+                } else {
+                    resolve({ status: 'Available', region: country_code.toUpperCase() }); // 返回可用狀態
+                }
+            });
+        });
+    };
+
+    // iOS 客戶端檢測
+    let inner_check_ios = () => {
+        return new Promise((resolve, reject) => {
+            let option = {
+                url: 'https://ios.chat.openai.com/', // 設置請求的 URL
+                headers: {
+                    'authority': 'ios.chat.openai.com',
+                    'accept': '*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                    'accept-language': 'en-US,en;q=0.9',
+                    'sec-ch-ua': '',
+                    'sec-ch-ua-mobile': '?0',
+                    'sec-ch-ua-platform': '"iOS"',  // 這裡設置為 iOS
+                    'sec-fetch-dest': 'document',
+                    'sec-fetch-mode': 'navigate',
+                    'sec-fetch-site': 'none',
+                    'sec-fetch-user': '?1',
+                    'upgrade-insecure-requests': '1',
+                    'user-agent': '' // 可以根據需要填寫 user-agent
+                }
+            };
+            $httpClient.get(option, function (error, response, data) {
+                if (error) {
+                    const errorMsg = "ChatGPT: 檢測失敗 (網絡連接問題 - VPN 請求)"; // 錯誤信息
+                    console.log(errorMsg);
+                    resolve('Client Error'); // 返回客戶端錯誤
+                    return;
+                }
+
+                console.log("ChatGPT: 已收到 VPN 請求的響應。");
+                const vpnDetected = data.toLowerCase().includes('vpn'); // 檢查響應中是否包含 'vpn'
+                console.log(`VPN 檢測響應: ${data}`);
+
+                if (vpnDetected) {
+                    resolve('Client Not Available'); // 如果檢測到 VPN，返回不可用
+                } else {
+                    resolve('Client Available'); // 否則，返回可用
+                }
+            });
+        });
+    };
+
+    let check_result = 'ChatGPT➟ '; // 初始化檢查結果
+
+    try {
+        // 同時檢測 Web 和 iOS 客戶端
+        const [webResult, iosResult] = await Promise.all([inner_check_web(), inner_check_ios()]);
+        console.log("Web Result:", webResult);
+        console.log("iOS Result:", iosResult);
+
+        // 根據檢查結果生成最終返回內容
+        if (webResult.status === 'Available' && iosResult === 'Client Available') {
+            check_result += `✅\u2009${webResult.region}`; // Web 和 iOS 都可用
+        } else if (webResult.status === 'Available' && iosResult === 'Client Not Available') {
+            check_result += `⚠️\u2009${webResult.region}  `; // Web 可用，但 iOS 不可用
         } else {
-          resolve('Available')  // 可以訪問
+            check_result += '❌     '; // 都不可用
         }
-      })
-    });
-  };
+    } catch (error) {
+        console.log("Error:", error);
+        check_result += ' N/A   '; // 發生錯誤，返回 N/A
+    }
 
-  // 檢測 App 訪問狀態
-  let check_app = () => {
-    return new Promise((resolve, reject) => {
-      let option = {
-        url: 'https://api.openai.com/v1/engines',
-        headers: REQUEST_HEADERS,
-      }
-      $httpClient.get(option, function (error, response, data) {
-        if (error || response.status !== 200) {
-          resolve('Not Available')  // App 無法訪問
-          return
-        }
-        resolve('App Unlocked');  // App 可以訪問
-      })
-    });
-  };
-
-  let check_result = 'ChatGPT\u2009➟ ';
-
-  // 同時檢測網頁和 App
-  let webStatus = await check_web();
-  let appStatus = await check_app();
-
-  // 根據兩個檢測結果返回最終狀態
-  if (webStatus === 'Not Available' && appStatus === 'Not Available') {
-    check_result += '\u2612 無法訪問網頁和 App';
-  } else if (webStatus === 'Available' && appStatus === 'App Unlocked') {
-    check_result += '\u2611 網頁和 App 完整解鎖';
-  } else if (webStatus === 'Available') {
-    check_result += '\u2611 只能訪問網頁';
-  } else if (appStatus === 'App Unlocked') {
-    check_result += '\u2612 只能訪問 App';
-  }
-
-  return check_result;
+    return check_result; // 返回檢查結果
 }
 
 
