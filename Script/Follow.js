@@ -2,7 +2,7 @@
 作者:可莉
 脚本引用 https://github.com/chavyleung/scripts/blob/master/follow/follow.js , https://raw.githubusercontent.com/luestr/ProxyResource/main/Resource/Script/FollowRSS/FollowRSS_checkin.js
 */
-const $ = new Env('Follow 簽到')
+const $ = new Env('Follow簽到')
 $.desc = []
 
 let arg;
