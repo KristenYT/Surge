@@ -15,17 +15,20 @@ const cookie = $argument.cookie;
 
 function sign() {
   return new Promise((resolve) => {
-    const options = {
-      url: 'https://api.follow.is/wallets/transactions/claim_daily',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.38(0x1800262c) NetType/4G Language/zh_CN',
-        'Content-Type': 'application/json',
-        'Accept': '*/*',
-        'Connection': 'keep-alive',
-        'Cookie': cookie,
-      },
-      body: JSON.stringify({ csrfToken }),
-    };
+    cconst options = {
+  url: 'https://api.follow.is/wallets/transactions/claim_daily',
+  headers: {
+    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.38(0x1800262c) NetType/4G Language/zh_CN',
+    'Content-Type': 'application/json',
+    'Accept': '*/*',
+    'Connection': 'keep-alive',
+    'Referer': 'https://api.follow.is/',
+    'Cookie': cookie,
+    // 'Authorization': 'Bearer YOUR_ACCESS_TOKEN' // 如需授權，取消註釋並填寫
+  },
+  body: JSON.stringify({ csrfToken }),
+};
+
     $.post(options, async (err, resp, body) => {
       try {
         console.log(body);
