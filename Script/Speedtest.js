@@ -1,3 +1,8 @@
+/*
+脚本修改自 @@cc63
+修改日期：2024.10.10
+ ----------------------------------------
+ */
 const $ = new Env('network-speed')
 $.isPanel = () => $.isSurge() && typeof $input != 'undefined' && $.lodash_get($input, 'purpose') === 'panel'
 $.isTile = () => $.isStash() && typeof $script != 'undefined' && $.lodash_get($script, 'type') === 'tile'
