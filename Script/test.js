@@ -15,7 +15,7 @@ const cookie = 'authjs.session-token=da64358f-6496-4ff4-8c11-340cc0094e1c';
 
 function sign() {
   return new Promise((resolve) => {
-    cconst options = {
+    const options = {
   url: 'https://api.follow.is/wallets/transactions/claim_daily',
   headers: {
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.38(0x1800262c) NetType/4G Language/zh_CN',
