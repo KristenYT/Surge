@@ -1,3 +1,8 @@
+/*
+脚本修改自 @xream
+修改日期：2024.10.10
+ ----------------------------------------
+ */
 const NAME = 'network-info'
 const $ = new Env(NAME)
 
