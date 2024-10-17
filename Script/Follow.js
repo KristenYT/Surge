@@ -1,4 +1,8 @@
-const $ = new Env('Follow每日签到')
+/*
+作者:可莉
+脚本引用 https://github.com/chavyleung/scripts/blob/master/follow/follow.js , https://raw.githubusercontent.com/luestr/ProxyResource/main/Resource/Script/FollowRSS/FollowRSS_checkin.js
+*/
+const $ = new Env('Follow 簽到')
 $.desc = []
 
 let arg;
@@ -8,7 +12,6 @@ if (typeof $argument != 'undefined') {
   arg = {};
 }
 
-// 从 arg 对象中获取 token 和 cookie
 const csrfToken = arg.token || '';
 const cookie = arg.cookie || '';
 
@@ -37,9 +40,9 @@ function sign() {
         console.log(body);
         const { code, message } = JSON.parse(body);
         if (code !== 0) {
-          $.msg($.name, `签到失败: ${message}`);
+          $.msg($.name, `簽到失敗: ${message}`);
         } else {
-          $.msg($.name, `签到成功`);
+          $.msg($.name, `簽到成功`);
         }
       } catch (e) {
         $.logErr(e, resp);
