@@ -1,0 +1,14 @@
+HOST-SUFFIX,mobilefuse.com
+HOST-SUFFIX,inmobi.com
+HOST-SUFFIX,crashlytics.com
+HOST-SUFFIX,talkatone.com
+HOST-SUFFIX,kochava.com
+HOST-SUFFIX,cohere.com
+HOST-SUFFIX,ip-api.com
+HOST-SUFFIX,agkn.com
+HOST-SUFFIX,tktn.at
+IP-CIDR,50.117.27.0/24
+IP-CIDR,69.46.75.0/24
+IP-CIDR,205.164.56.0/24
+IP-CIDR,63.251.124.0/24
+HOST-SUFFIX,tktn.be
