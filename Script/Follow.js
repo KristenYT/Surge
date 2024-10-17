@@ -1,7 +1,3 @@
-/*
-作者:可莉
-脚本引用 https://github.com/chavyleung/scripts/blob/master/follow/follow.js , https://raw.githubusercontent.com/luestr/ProxyResource/main/Resource/Script/FollowRSS/FollowRSS_checkin.js
-*/
 const $ = new Env('Follow每日签到')
 $.desc = []
 
