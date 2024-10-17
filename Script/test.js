@@ -4,8 +4,8 @@
 const $ = new Env('Follow每日签到')
 $.desc = []
 
-const csrfToken = '007264b1f68b5341f4ab19d58979095f6173a2a64862bf1a308a807d05064949%7C190f057e9dcb57bec754a2b30559eee3b077e165d15e692a170ccb06b3ef2740';
-const cookie = 'authjs.session-token=da64358f-6496-4ff4-8c11-340cc0094e1c';
+const csrfToken = '8e221a65482c27d9dc8dec3aaadd32bf862bdbe056ba814efe556197482bcd56%7C800ad64b5f652dde4efa6c756f69897393a84a901eb0d083720d647423f01c7e';
+const cookie = 'f916d355-a83d-4a15-b97b-389daefc3392';
 
 !(async () => {
   await sign()
