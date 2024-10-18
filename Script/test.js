@@ -1,3 +1,5 @@
+const $ = new Env('Follow自動簽到');
+
 let args = getArgs(); // 從 Surge 傳入參數
 
 !(async () => {
