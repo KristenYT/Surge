@@ -1,30 +1,25 @@
-const $ = new Env('Follow簽到');
-$.desc = [];
-
-// CSRF Tokens 和 Cookies
-const tasks = [
-  {
-    csrfToken: 'csrfToken1',
-    cookie: 'cookie1',
-    name: 'name1'
-  },
-  {
-    csrfToken: 'csrfToken2',
-    cookie: 'cookie2',
-    name: 'name2'
-  }
-];
-
-// 設定固定的方框長度
-const boxLength = 12; // 例如 [     YT     ] 總長度是14
+let args = getArgs(); // 從 Surge 傳入參數
 
 !(async () => {
+  let tasks = [
+    {
+      csrfToken: args.csrfToken1 || 'defaultToken1',
+      cookie: args.cookie1 || 'defaultCookie1',
+      name: args.name1 || 'defaultName1'
+    },
+    {
+      csrfToken: args.csrfToken2 || 'defaultToken2',
+      cookie: args.cookie2 || 'defaultCookie2',
+      name: args.name2 || 'defaultName2'
+    }
+  ];
+
   for (let task of tasks) {
     await sign(task);
   }
-})()
-  .catch((e) => $.logErr(e))
-  .finally(() => $.done());
+
+  $done(); // Surge結束指令
+})().catch((e) => console.log(e));
 
 function sign(task) {
   return new Promise((resolve) => {
@@ -41,45 +36,28 @@ function sign(task) {
       body: JSON.stringify({ csrfToken: task.csrfToken }),
     };
 
-    $.post(options, async (err, resp, body) => {
-      try {
-        console.log(body);
-        const { code, message } = JSON.parse(body);
-
-        // 將帳號名稱置中，並用空格填充到設定的 boxLength 長度
-        const nameLength = task.name.length;
-        const paddingTotal = boxLength - 2 - nameLength; // 2 是為了考慮左右的方括號
-        const paddingLeft = Math.floor(paddingTotal / 2);
-        const paddingRight = paddingTotal - paddingLeft;
-
-        const paddedName = `[${' '.repeat(paddingLeft)}${task.name}${' '.repeat(paddingRight)}]`;
-
-        if (code !== 0) {
-          $.desc.push(`${paddedName} ➟ 簽到失敗：${message}`);
-        } else {
-          $.desc.push(`${paddedName} ➟ 簽到成功`);
+    $httpClient.post(options, (err, resp, body) => {
+      if (err) {
+        console.log(`Error signing in for ${task.name}:`, err);
+      } else {
+        try {
+          const { code, message } = JSON.parse(body);
+          const result = code === 0 ? '簽到成功' : `簽到失敗：${message}`;
+          console.log(`[${task.name}] ➟ ${result}`);
+        } catch (e) {
+          console.log(`Error parsing response for ${task.name}:`, e);
         }
-      } catch (e) {
-        $.logErr(e, resp);
-      } finally {
-        // 在所有簽到結束後只發送一次通知
-        if (tasks.indexOf(task) === tasks.length - 1) {
-          $.msg($.name, '', $.desc.join('\n'));
-        }
-        resolve();
       }
+      resolve();
     });
   });
 }
 
-function Env(name) {
-  this.name = name;
-  this.msg = (title, subtitle, message) => $notification.post(title, subtitle, message);
-  this.log = (msg) => console.log(msg);
-  this.getdata = (key) => $persistentStore.read(key);
-  this.setdata = (val, key) => $persistentStore.write(val, key);
-  this.get = (options, callback) => $httpClient.get(options, callback);
-  this.post = (options, callback) => $httpClient.post(options, callback);
-  this.done = (val = {}) => $done(val);
-  this.logErr = (err) => console.log(`❗️${this.name}, 錯誤!`, err);
+function getArgs() {
+  return Object.fromEntries(
+    $argument
+      .split("&")
+      .map((item) => item.split("="))
+      .map(([k, v]) => [k, decodeURIComponent(v)])
+  );
 }
