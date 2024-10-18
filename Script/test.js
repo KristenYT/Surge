@@ -3,14 +3,14 @@ let args = getArgs(); // 從 Surge 傳入參數
 !(async () => {
   let tasks = [
     {
-      csrfToken: args.csrfToken1 || 'defaultToken1',
-      cookie: args.cookie1 || 'defaultCookie1',
-      name: args.name1 || 'defaultName1'
+      csrfToken: args.csrfToken1 || 'csrfToken1',
+      cookie: args.cookie1 || 'cookie1',
+      name: args.name1 || 'name1'
     },
     {
-      csrfToken: args.csrfToken2 || 'defaultToken2',
-      cookie: args.cookie2 || 'defaultCookie2',
-      name: args.name2 || 'defaultName2'
+      csrfToken: args.csrfToken2 || 'csrfToken2',
+      cookie: args.cookie2 || 'cookie2',
+      name: args.name2 || 'name2'
     }
   ];
 
