@@ -1,6 +1,6 @@
 #!name=Follow自動簽到
 #!desc=每天凌晨1點自動執行簽到
-#!arguments=Cron:0 1 * * *,CSRFToken1,Cookie1,Name1,CSRFToken2,Cookie2,Name2
+#!arguments=Cron:0 1 * * *,csrfToken1,cookie1,name1,csrfToken2,cookie2,name2
 #!arguments-desc=可配置多個帳號的 CSRF Token 和 Cookie
 
 [Script]
