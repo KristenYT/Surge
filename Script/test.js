@@ -1,22 +1,22 @@
 const $ = new Env('Follow簽到');
 $.desc = [];
 
-// 透過 Surge 模塊更改參數
+// CSRF Tokens 和 Cookies
 const tasks = [
   {
-    csrfToken: $.getdata('csrfToken1') || 'csrfToken1',
-    cookie: $.getdata('cookie1') || 'cookie1',
-    name: $.getdata('name1') || 'name1'
+    csrfToken: 'csrfToken1',
+    cookie: 'cookie1',
+    name: 'name1'
   },
   {
-    csrfToken: $.getdata('csrfToken2') || 'csrfToken2',
-    cookie: $.getdata('cookie2') || 'cookie2',
-    name: $.getdata('name2') || 'name2'
+    csrfToken: 'csrfToken2',
+    cookie: 'cookie2',
+    name: 'name2'
   }
 ];
 
 // 設定固定的方框長度
-const boxLength = 14;
+const boxLength = 12; // 例如 [     YT     ] 總長度是14
 
 !(async () => {
   for (let task of tasks) {
@@ -46,8 +46,9 @@ function sign(task) {
         console.log(body);
         const { code, message } = JSON.parse(body);
 
+        // 將帳號名稱置中，並用空格填充到設定的 boxLength 長度
         const nameLength = task.name.length;
-        const paddingTotal = boxLength - 2 - nameLength;
+        const paddingTotal = boxLength - 2 - nameLength; // 2 是為了考慮左右的方括號
         const paddingLeft = Math.floor(paddingTotal / 2);
         const paddingRight = paddingTotal - paddingLeft;
 
@@ -61,6 +62,7 @@ function sign(task) {
       } catch (e) {
         $.logErr(e, resp);
       } finally {
+        // 在所有簽到結束後只發送一次通知
         if (tasks.indexOf(task) === tasks.length - 1) {
           $.msg($.name, '', $.desc.join('\n'));
         }
@@ -81,4 +83,3 @@ function Env(name) {
   this.done = (val = {}) => $done(val);
   this.logErr = (err) => console.log(`❗️${this.name}, 錯誤!`, err);
 }
-
