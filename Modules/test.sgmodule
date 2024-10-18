@@ -1,7 +1,7 @@
 #!name=Follow自動簽到
 #!desc=每天凌晨1點自動執行簽到
-#!arguments=Cron:0 1 * * *,CSRF Token1,Cookie1,Name1,CSRF Token2,Cookie2,Name2
+#!arguments=Cron:0 1 * * *,CSRFToken1,Cookie1,Name1,CSRFToken2,Cookie2,Name2
 #!arguments-desc=可配置多個帳號的 CSRF Token 和 Cookie
 
 [Script]
-Follow自動簽到 = type=cron,cronexp={{{Cron}}},wake-system=1,timeout=60,script-path=https://raw.githubusercontent.com/KristenYT/Surge/main/Script/test.js,argument=csrfToken1={{{CSRF Token1}}}&cookie1={{{Cookie1}}}&name1={{{Name1}}}&csrfToken2={{{CSRF Token2}}}&cookie2={{{Cookie2}}}&name2={{{Name2}}}
+Follow自動簽到 = type=cron,cronexp={{{Cron}}},wake-system=1,timeout=60,script-path=https://raw.githubusercontent.com/KristenYT/Surge/main/Script/test.js,argument=csrfToken1={{{CSRFToken1}}}&cookie1={{{Cookie1}}}&name1={{{Name1}}}&csrfToken2={{{CSRFToken2}}}&cookie2={{{Cookie2}}}&name2={{{Name2}}}
