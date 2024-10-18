@@ -1,4 +1,5 @@
 const $ = new Env('Follow自動簽到');
+$.desc = [];
 
 let args = getArgs(); // 從 Surge 傳入參數
 
