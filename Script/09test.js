@@ -279,6 +279,7 @@ function operator(pro) {
           usflag = usflag === "🇹🇼" ? "🇨🇳" : usflag;
         }
       }
+      let currentIndex = t.count.toString().padStart(2, "0");
       keyover = keyover
     .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
     .filter((k) => k !== "");
