@@ -310,20 +310,33 @@ function jxh(e) {
   const n = e.reduce((e, n) => { 
     const t = e.find((e) => e.name === n.name); 
     if (t) { 
+      // Increment the count for existing items
       t.count++; 
-      t.items.push({ ...n, name: `${n.name}${XHFGF}${t.count.toString().padStart(2, "0")}` }); 
+      t.items.push({ 
+        ...n, 
+        name: `${n.name}${XHFGF}${t.count.toString().padStart(2, "0")}${FGF}${nNames}`, 
+      }); 
     } else { 
-      e.push({ name: n.name, count: 1, items: [{ ...n, name: `${n.name}${XHFGF}01` }] }); 
+      // Initialize the count for new items
+      e.push({ 
+        name: n.name, 
+        count: 1, 
+        items: [{ 
+          ...n, 
+          name: `${n.name}${XHFGF}01${FGF}${nNames}` 
+        }], 
+      }); 
     } 
     return e; 
-  }, []);
-  
-  const t = (typeof Array.prototype.flatMap === 'function' ? n.flatMap((e) => e.items) : n.reduce((acc, e) => acc.concat(e.items), [])); 
-  
+  }, []); 
+
+  // Flatten the array while preserving the sequence formatting
+  const t = (typeof Array.prototype.flatMap === 'function' 
+      ? n.flatMap((e) => e.items) 
+      : n.reduce((acc, e) => acc.concat(e.items), [])); 
   e.splice(0, e.length, ...t); 
   return e; 
 }
-
 // prettier-ignore
 function oneP(e) { 
   const t = e.reduce((e, t) => { 
