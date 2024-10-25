@@ -303,6 +303,7 @@ e.name = keyover.join(FGF);
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
 // prettier-ignore
+// prettier-ignore
 function jxh(e) { 
     const n = e.reduce((e, n) => { 
         const t = e.find((e) => e.name === n.name);
@@ -311,7 +312,7 @@ function jxh(e) {
             t.count++; 
             t.items.push({ 
                 ...n, 
-                name: `${n.name}${t.count.toString().padStart(2, "0")}${XHFGF}`, // 移到序號後
+                name: `${n.name}${t.count.toString().padStart(2, "0")}${XHFGF}`, // 名稱 + 序號 + 後綴
             }); 
         } else { 
             e.push({ 
@@ -319,7 +320,7 @@ function jxh(e) {
                 count: 1, 
                 items: [{ 
                     ...n, 
-                    name: `${n.name}01${XHFGF}`  // 移到序號後
+                    name: `${n.name}01${XHFGF}`  // 名稱 + 序號 + 後綴
                 }],
             }); 
         }
@@ -331,7 +332,6 @@ function jxh(e) {
         ? n.flatMap((e) => e.items)
         : n.reduce((acc, e) => acc.concat(e.items), [])
     );
-    
     e.splice(0, e.length, ...t); 
     return e;
 }
