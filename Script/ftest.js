@@ -110,7 +110,7 @@ const namenx = /(高倍|(?!1)(0\.|\d)+(x|倍)|ˣ²|ˣ³|ˣ⁴|ˣ⁵|ˣ¹⁰)/i;
 const keya =
   /港|Hong|HK|新加坡|SG|Singapore|日本|Japan|JP|美国|United States|US|韩|土耳其|TR|Turkey|Korea|KR|🇸🇬|🇭🇰|🇯🇵|🇺🇸|🇰🇷|🇹🇷/i;
 const keyb =
-  /(((1|2|3|4)\d)|(香港|Hong|HK) 0[5-9]|((新加坡|SG|Singapore|日本|Japan|JP|美国|United States|US|韩|土耳其|TR|Turkey|Korea|KR) 0[3-9]))/i;
+  /((香港|Hong|HK)|((新加坡|SG|Singapore|日本|Japan|JP|美国|United States|US|韩|土耳其|TR|Turkey|Korea|KR))/i;
 const rurekey = {
   GB: /UK/g,
   "B-G-P": /BGP/g,
@@ -149,27 +149,6 @@ const rurekey = {
   Esnc: /esnc/gi,
 };
 
-function formatNumberSuperscript(num) {
-    const superscripts = '⁰¹²³⁴⁵⁶⁷⁸⁹'; // 对应的 Unicode 上标数字字符
-    return String(num).split('').map(digit => superscripts[digit]).join('');
-}
-
-function jxh(e) {
-    const n = e.reduce((acc, curr) => {
-        const t = acc.find((item) => item.name === curr.name);
-        if (t) {
-            t.count++;
-            t.items.push({ ...curr, name: `${curr.name}${XHFGF}${t.count > 1 ? formatNumberSuperscript(t.count) : '01'}` });
-        } else {
-            acc.push({ name: curr.name, count: 1, items: [{ ...curr, name: `${curr.name}${XHFGF}01` }] });
-        }
-        return acc;
-    }, []);
-    
-    const t = (typeof Array.prototype.flatMap === 'function' ? n.flatMap((e) => e.items) : n.reduce((acc, e) => acc.concat(e.items), []));
-    e.splice(0, e.length, ...t);
-    return e;
-}
 
 let GetK = false, AMK = []
 function ObjKA(i) {
