@@ -149,7 +149,27 @@ const rurekey = {
   Esnc: /esnc/gi,
 };
 
+function formatNumberSuperscript(num) {
+    const superscripts = '⁰¹²³⁴⁵⁶⁷⁸⁹'; // 对应的 Unicode 上标数字字符
+    return String(num).split('').map(digit => superscripts[digit]).join('');
+}
 
+function jxh(e) {
+    const n = e.reduce((acc, curr) => {
+        const t = acc.find((item) => item.name === curr.name);
+        if (t) {
+            t.count++;
+            t.items.push({ ...curr, name: `${curr.name}${XHFGF}${t.count > 1 ? formatNumberSuperscript(t.count) : '01'}` });
+        } else {
+            acc.push({ name: curr.name, count: 1, items: [{ ...curr, name: `${curr.name}${XHFGF}01` }] });
+        }
+        return acc;
+    }, []);
+    
+    const t = (typeof Array.prototype.flatMap === 'function' ? n.flatMap((e) => e.items) : n.reduce((acc, e) => acc.concat(e.items), []));
+    e.splice(0, e.length, ...t);
+    return e;
+}
 
 let GetK = false, AMK = []
 function ObjKA(i) {
