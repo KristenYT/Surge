@@ -307,70 +307,64 @@ e.name = keyover.join(FGF);
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
 // prettier-ignore
 function jxh(e) { 
-    const n = e.reduce((e, n) => { 
-        const t = e.find((e) => e.name === n.name); 
-        if (t) { 
-            t.count++; 
-            t.items.push({ 
-                ...n, 
-                name: `${n.name}${XHFGF}${t.count.toString().padStart(2, "0")}`, 
-            }); 
-        } else { 
-            e.push({ 
-                name: n.name, 
-                count: 1, 
-                items: [{ 
-                    ...n, 
-                    name: `${n.name}${XHFGF}01` 
-                }], 
-            }); 
-        } 
-        return e; 
-    }, []);
-    
-    const t = (typeof Array.prototype.flatMap === 'function'
-        ? n.flatMap((e) => e.items)
-        : n.reduce((acc, e) => acc.concat(e.items), [])
-    ); 
-    
-    e.splice(0, e.length, ...t); 
+  const n = e.reduce((e, n) => { 
+    const t = e.find((e) => e.name === n.name); 
+    if (t) { 
+      t.count++; 
+      t.items.push({ ...n, name: `${n.name}${XHFGF}${t.count.toString().padStart(2, "0")}` }); 
+    } else { 
+      e.push({ name: n.name, count: 1, items: [{ ...n, name: `${n.name}${XHFGF}01` }] }); 
+    } 
     return e; 
+  }, []);
+  
+  const t = (typeof Array.prototype.flatMap === 'function' ? n.flatMap((e) => e.items) : n.reduce((acc, e) => acc.concat(e.items), [])); 
+  
+  e.splice(0, e.length, ...t); 
+  return e; 
 }
 
 // prettier-ignore
 function oneP(e) { 
-    const t = e.reduce((e, t) => { 
-        const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+\d+$/, ""); 
-        if (!e[n]) { 
-            e[n] = []; 
-        } 
-        e[n].push(t); 
-        return e; 
-    }, {}); 
-    
-    for (const e in t) { 
-        if (t[e].length === 1 && t[e][0].name.endsWith("01")) {
-            t[e][0].name = t[e][0].name.replace(/[^.]01/, ""); 
-        } 
+  const t = e.reduce((e, t) => { 
+    const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+\d+$/, ""); 
+    if (!e[n]) { 
+      e[n] = []; 
     } 
-    
+    e[n].push(t); 
     return e; 
+  }, {}); 
+  
+  for (const e in t) { 
+    if (t[e].length === 1 && t[e][0].name.endsWith("01")) {
+      // 如果只有一個項目且名稱以"01"結尾，則去掉"01"
+      t[e][0].name = t[e][0].name.replace(/[^.]01/, ""); 
+    } 
+  } 
+  
+  return e; 
 }
 
 // prettier-ignore
 function fampx(pro) { 
-    const wis = []; 
-    const wnout = []; 
+  const wis = []; 
+  const wnout = []; 
+  
+  for (const proxy of pro) { 
+    const fan = specialRegex.some((regex) => regex.test(proxy.name)); 
     
-    for (const proxy of pro) { 
-        const fan = specialRegex.some((regex) => regex.test(proxy.name)); 
-        if (fan) { 
-            wis.push(proxy); 
-        } else { 
-            wnout.push(proxy); 
-        } 
+    if (fan) { 
+      wis.push(proxy); 
+    } else { 
+      wnout.push(proxy); 
     } 
-    
-    const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name))); 
-    wis.sort((a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)) || a.name.localeCompare(b.name)); 
-    wnout
+  } 
+  
+  const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name))); 
+  
+  wis.sort((a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name)); 
+  
+  wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); 
+  
+  return wnout.concat(wis);
+}
