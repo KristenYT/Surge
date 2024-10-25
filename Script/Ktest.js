@@ -283,27 +283,29 @@ function operator(pro) {
       nNames = FNAME;
     }
     if (findKey?.[1]) {
-      const findKeyValue = findKey[1];
-      let keyover = [],
-        usflag = "";
-      if (addflag) {
-        const index = outList.indexOf(findKeyValue);
-        if (index !== -1) {
-          usflag = FG[index];
-          usflag = usflag === "🇹🇼" ? "🇹🇼" : usflag;
-        }
-      }
-      keyover = keyover
-        .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys, nNames)
-        .filter((k) => k !== "");
-      e.name = keyover.join(FGF);
-    } else {
-      if (nm) {
-        e.name = FNAME + FGF + e.name;
-      } else {
-        e.name = null;
-      }
+  const findKeyValue = findKey[1];
+  let keyover = [],
+      usflag = "";
+  if (addflag) {
+    const index = outList.indexOf(findKeyValue);
+    if (index !== -1) {
+      usflag = FG[index];
+      usflag = usflag === "🇹🇼" ? "🇹🇼" : usflag;
     }
+  }
+  keyover = keyover
+      .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
+      .filter((k) => k !== "");
+  
+  // 修改這段，將 nNames 放置在序號後面
+  e.name = keyover.join(FGF) + (nNames ? " " + nNames : "");
+} else {
+  if (nm) {
+    e.name = e.name + (nNames ? " " + nNames : ""); // 確保在這裡也做相同的修改
+  } else {
+    e.name = null;
+  }
+}
   });
   pro = pro.filter((e) => e.name !== null);
   jxh(pro);
