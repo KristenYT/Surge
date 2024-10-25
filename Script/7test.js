@@ -280,10 +280,13 @@ function operator(pro) {
         }
       }
       keyover = keyover
-        .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys, nNames)
-        .filter((k) => k !== "");
-      keyover.push(nNames);
-      e.name = keyover.join(FGF);
+    .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
+    .filter((k) => k !== "");
+
+// 在這裡添加 nNames 到 keyover 的最後
+keyover.push(nNames);
+
+e.name = keyover.join(FGF);
     } else {
       if (nm) {
         e.name = FNAME + FGF + e.name;
