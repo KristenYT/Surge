@@ -280,10 +280,10 @@ function operator(pro) {
         }
       }
       keyover = keyover
-    .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys, nNames)
+    .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
     .filter((k) => k !== "");
 
-e.name = keyover.join(FGF);
+e.name = ${currentIndex} ${keyover.join(FGF)} ${nNames}${XHFGF}
     } else {
       if (nm) {
         e.name = FNAME + FGF + e.name;
