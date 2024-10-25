@@ -311,8 +311,8 @@ function jxh(e) {
       t.items.push({
         ...n,
         name: n.name.endsWith(FNAME)
-          ? `${n.name}`
-          : `${n.name}${XHFGF}${t.count.toString().padStart(2, "0")}`,
+          ? `${n.name}${XHFGF}${t.count.toString().padStart(2, "0")}`
+          : `${n.name}${XHFGF}${t.count.toString().padStart(2, "0")}${FGF}${FNAME}`,
       });
     } else {
       e.push({
@@ -322,8 +322,8 @@ function jxh(e) {
           {
             ...n,
             name: n.name.endsWith(FNAME)
-              ? `${n.name}`
-              : `${n.name}${XHFGF}01`,
+              ? `${n.name}${XHFGF}01`
+              : `${n.name}${XHFGF}01${FGF}${FNAME}`,
           },
         ],
       });
