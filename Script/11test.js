@@ -279,9 +279,10 @@ function operator(pro) {
           usflag = usflag === "🇹🇼" ? "🇨🇳" : usflag;
         }
       }
-        keyover = keyover
-        .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys, nNames)
-        .filter((k) => k !== "");
+     keyover = keyover
+    .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
+    .filter((k) => k !== "")
+    .concat(nNames); 
         e.name = keyover.join(FGF);
     } else {
       if (nm) {
