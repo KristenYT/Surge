@@ -149,6 +149,7 @@ const rurekey = {
   Esnc: /esnc/gi,
 };
 
+const dateRegex = /\d{4}-\d{2}-\d{2}/; // 匹配 YYYY-MM-DD 格式
 
 let GetK = false, AMK = []
 function ObjKA(i) {
