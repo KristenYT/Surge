@@ -75,7 +75,6 @@ const FG = ['🇭🇰','🇲🇴','🇹🇼','🇯🇵','🇰🇷','🇸🇬','�
 // prettier-ignore
 const EN = ['HK','MO','TW','JP','KR','SG','US','GB','FR','DE','AU','AE','AF','AL','DZ','AO','AR','AM','AT','AZ','BH','BD','BY','BE','BZ','BJ','BT','BO','BA','BW','BR','VG','BN','BG','BF','BI','KH','CM','CA','CV','KY','CF','TD','CL','CO','KM','CG','CD','CR','HR','CY','CZ','DK','DJ','DO','EC','EG','SV','GQ','ER','EE','ET','FJ','FI','GA','GM','GE','GH','GR','GL','GT','GN','GY','HT','HN','HU','IS','IN','ID','IR','IQ','IE','IM','IL','IT','CI','JM','JO','KZ','KE','KW','KG','LA','LV','LB','LS','LR','LY','LT','LU','MK','MG','MW','MY','MV','ML','MT','MR','MU','MX','MD','MC','MN','ME','MA','MZ','MM','NA','NP','NL','NZ','NI','NE','NG','KP','NO','OM','PK','PA','PY','PE','PH','PT','PR','QA','RO','RU','RW','SM','SA','SN','RS','SL','SK','SI','SO','ZA','ES','LK','SD','SR','SZ','SE','CH','SY','TJ','TZ','TH','TG','TO','TT','TN','TR','TM','VI','UG','UA','UY','UZ','VE','VN','YE','ZM','ZW','AD','RE','PL','GU','VA','LI','CW','SC','AQ','GI','CU','FO','AX','BM','TL'];
 // prettier-ignore
-// 定义繁体中文数组
 const ZHT = ['香港', '澳門', '台灣', '日本', '韓國', '新加坡', '美國', '英國', '法國', '德國', '澳大利亞', '阿聯酋', '阿富汗', '阿爾巴尼亞', 
   '阿爾及利亞', '安哥拉', '阿根廷', '亞美尼亞', '奧地利', '阿塞拜疆', '巴林', '孟加拉國', '白俄羅斯', '比利時', '伯利茲', 
   '貝寧', '不丹', '玻利維亞', '波黑', '博茨瓦納', '巴西', '英屬維爾京群島', '文萊', '保加利亞', '布基納法索', '布隆迪', 
