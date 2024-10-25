@@ -306,12 +306,14 @@ function jxh(e) {
   const n = e.reduce((e, n) => { 
     const t = e.find((e) => e.name === n.name); 
     if (t) { 
+      // Increment the count for existing items
       t.count++; 
       t.items.push({ 
         ...n, 
         name: `${n.name}${XHFGF}${t.count.toString().padStart(2, "0")}${FGF}${nNames}`, 
       }); 
     } else { 
+      // Initialize the count for new items
       e.push({ 
         name: n.name, 
         count: 1, 
@@ -323,6 +325,8 @@ function jxh(e) {
     } 
     return e; 
   }, []); 
+
+  // Flatten the array while preserving the sequence formatting
   const t = (typeof Array.prototype.flatMap === 'function' 
       ? n.flatMap((e) => e.items) 
       : n.reduce((acc, e) => acc.concat(e.items), [])); 
