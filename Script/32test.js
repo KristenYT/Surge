@@ -24,9 +24,9 @@
  * [one]    清理只有一个节点的地区的01
  * [flag]   给节点前面加国旗
  *
- *** 後缀参数
- * [name=]  节点添加机场名称後缀；
- * [nf]     把 name= 的後缀值放在最前面便前綴
+ *** 前後缀参数
+ * [Sname=]  节点添加机场名称後缀；
+ * [Pname=]  节点添加机场名称前綴
  *** 保留参数
  * [blkey=iplc+gpt+NF+IPLC] 用+号添加多个关键词 保留节点名的自定义字段 需要区分大小写!
  * 如果需要修改 保留的关键词 替换成别的 可以用 > 分割 例如 [#blkey=GPT>新名字+其他关键词] 这将把【GPT】替换成【新名字】
@@ -340,7 +340,4 @@ async function operator(proxies = []) {
     });
 }
 
-// 测试代码
-const proxies = Array.from({ length: 20 }, (_, i) => ({ name: `Node${i + 1}` }));
-operator(proxies).then(result => console.log(result.map(p => p.name)));
 
