@@ -1,3 +1,7 @@
+// 测试代码
+const proxies = Array.from({ length: 20 }, (_, i) => ({ name: `Node${i + 1}` }));
+operator(proxies).then(result => console.log(result.map(p => p.name)));
+
 /**
  * 作者:Keywos
  * 更新日期：2024-10-25 
@@ -113,14 +117,14 @@ const rurekey = {
   香港: /(深|沪|呼|京|广|杭)港(?!.*(I|线))/g,
   日本: /(深|沪|呼|京|广|杭|中|辽)日(?!.*(I|线))|东京|NRT|大坂/g,
   新加坡: /狮城|SIN|(深|沪|呼|京|广|杭)新/g,
-  美国: /(深|沪|呼|京|广|杭)美|波特兰|芝加哥|哥伦布|纽约|硅谷|俄勒冈|西雅图|LAX|IAD|芝加哥/g,
+  美国: /(深|沪|呼|京|广|杭)美|波特兰|芝加哥|哥伦布|纽约|硅谷|俄勒冈|西雅图|LAX|IAD|CMH|DEN|芝加哥/g,
   波斯尼亚和黑塞哥维那: /波黑共和国/g,
   印尼: /印度尼西亚|雅加达/g,
   印度: /孟买/g,
   阿联酋: /迪拜|阿拉伯联合酋长国/g,
   孟加拉国: /孟加拉/g,
   捷克: /捷克共和国/g,
-  台湾: /新台|新北|TPE|台(?!.*线)/g,
+  台湾: /新台|新北|TPE|KHH|台(?!.*线)/g,
   Taiwan: /Taipei/g,
   韩国: /春川|韩|ICN|首尔/g,
   Japan: /Tokyo|Osaka/g,
@@ -128,11 +132,23 @@ const rurekey = {
   India: /Mumbai/g,
   Germany: /Frankfurt/g,
   Switzerland: /Zurich/g,
-  俄罗斯: /莫斯科|LED/g,
+  俄罗斯: /莫斯科|LED|KLD/g,
   荷兰: /AMS/g,
   土耳其: /伊斯坦布尔/g,
   泰国: /泰國|曼谷/g,
-  法国: /巴黎|FRA/g,
+  法国: /巴黎|FRA|CDG/g,
+  丹麦: /CPH/g,
+  保加利亚: /SOF/g,
+  芬兰: /HEL/g,
+  摩尔多瓦: /KIV/g,
+  冰岛: /KEF/g,
+  爱沙尼亚: /TLL/g,
+  西班牙: /MAD/g,
+  立陶宛: /VNO/g,
+  意大利: /MXP/g,
+  波兰: /WAW/g,
+  瑞典: /ARN/g,
+  澳大利亚: /SYD/g,
   G: /\d\s?GB/gi,
   Esnc: /esnc/gi,
 };
@@ -276,17 +292,16 @@ function operator(pro) {
         const index = outList.indexOf(findKeyValue);
         if (index !== -1) {
           usflag = FG[index];
-          usflag = usflag === "🇹🇼" ? "🇨🇳" : usflag;
+          usflag = usflag === "🇹🇼" ? "🇹🇼" : usflag;
         }
       }
-     keyover = keyover
-    .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
-    .filter((k) => k !== "")
-    .concat(nNames); 
-        e.name = keyover.join(FGF);
+      keyover = keyover
+        .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys, nNames)
+        .filter((k) => k !== "");
+      e.name = keyover.join(FGF);
     } else {
       if (nm) {
-        e.name = FGF + e.name + FNAME;
+        e.name = FNAME + FGF + e.name;
       } else {
         e.name = null;
       }
@@ -303,43 +318,7 @@ function operator(pro) {
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
 // prettier-ignore
-function jxh(e) {
-  const n = e.reduce((e, n) => {
-    const t = e.find((e) => e.name === n.name);
-    if (t) {
-      t.count++;
-      t.items.push({
-        ...n,
-        name: n.name.endsWith(FNAME)
-          ? `${n.name}${XHFGF}${t.count.toString().padStart(2, "0")}`
-          : `${n.name}${XHFGF}${t.count.toString().padStart(2, "0")}${FGF}${FNAME}`,
-      });
-    } else {
-      e.push({
-        name: n.name,
-        count: 1,
-        items: [
-          {
-            ...n,
-            name: n.name.endsWith(FNAME)
-              ? `${n.name}${XHFGF}01`
-              : `${n.name}${XHFGF}01${FGF}${FNAME}`,
-          },
-        ],
-      });
-    }
-    return e;
-  }, []);
-
-  const t = (typeof Array.prototype.flatMap === 'function'
-    ? n.flatMap((e) => e.items)
-    : n.reduce((acc, e) => acc.concat(e.items), [])
-  );
-
-  e.splice(0, e.length, ...t);
-  return e;
-}
-
+function jxh(e) { const n = e.reduce((e, n) => { const t = e.find((e) => e.name === n.name); if (t) { t.count++; t.items.push({ ...n, name: `${n.name}${XHFGF}${t.count.toString().padStart(2, "0")}`, }); } else { e.push({ name: n.name, count: 1, items: [{ ...n, name: `${n.name}${XHFGF}01` }], }); } return e; }, []);const t=(typeof Array.prototype.flatMap==='function'?n.flatMap((e) => e.items):n.reduce((acc, e) => acc.concat(e.items),[])); e.splice(0, e.length, ...t); return e;}
 // prettier-ignore
 function oneP(e) { const t = e.reduce((e, t) => { const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+\d+$/, ""); if (!e[n]) { e[n] = []; } e[n].push(t); return e; }, {}); for (const e in t) { if (t[e].length === 1 && t[e][0].name.endsWith("01")) {/* const n = t[e][0]; n.name = e;*/ t[e][0].name= t[e][0].name.replace(/[^.]01/, "") } } return e; }
 // prettier-ignore
