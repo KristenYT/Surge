@@ -320,18 +320,11 @@ function oneP(e) { const t = e.reduce((e, t) => { const n = t.name.replace(/[^A-
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
 
-// 获取参数
-const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
-const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
+const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
 
-async function operator(proxies = []) {
-    const _ = lodash;
-
-    return proxies.map((p = {}, index) => {
-        const name = _.get(p, 'name') || ''; // 获取代理名称
-        _.set(p, 'name', `${prefix} ${name} ${suffix}`); // 拼接前缀、名称和后缀
-        return p;
-    });
+// 定义函数，将数字转换成上标格式
+function toSuperscript(num) {
+    return String(num).split('').map(digit => superscriptMap[digit]).join('');
 }
 
 
