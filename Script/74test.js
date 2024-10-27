@@ -42,6 +42,41 @@
 
 // const inArg = {'blkey':'iplc+GPT>GPTnewName+NF+IPLC', 'flag':true };
 const inArg = $arguments; // console.log(inArg)
+const _ = require('lodash');
+
+// 定義 superscriptMap 和 toSuperscript 函數
+const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
+
+// 定義函數，將數字轉換成上標格式
+function toSuperscript(num) {
+    return String(num).split('').map(digit => superscriptMap[digit]).join('');
+}
+
+// 修改 operator 函數
+async function operator(proxies = []) {
+    const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作為後綴，如果沒有則為空
+    const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作為前綴，如果沒有則為空
+
+    // 用於記錄每個名稱的出現次數
+    const nameCount = {};
+
+    return proxies.map((p = {}) => {
+        const name = _.get(p, 'name') || ''; // 獲取代理名稱
+
+        // 初始化當前名稱的計數
+        if (!nameCount[name]) {
+            nameCount[name] = 0;
+        }
+        nameCount[name] += 1; // 增加該名稱的計數
+
+        // 生成上標序號：如果是第一次出現，顯示上標 ¹，重名顯示 ²、³
+        const superscript = nameCount[name] > 1 ? toSuperscript(nameCount[name]) : toSuperscript(1);
+
+        // 拼接名稱、序號和後綴，確保在重名情況下正確顯示上標
+        _.set(p, 'name', `${prefix} ${name}${nameCount[name] > 1 ? ' ' + superscript : ''} ${suffix}`);
+        return p;
+    });
+}
 const nx = inArg.nx || false,
   bl = inArg.bl || false,
   nf = inArg.nf || false,
@@ -319,31 +354,3 @@ function jxh(e) { const n = e.reduce((e, n) => { const t = e.find((e) => e.name 
 function oneP(e) { const t = e.reduce((e, t) => { const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+\d+$/, ""); if (!e[n]) { e[n] = []; } e[n].push(t); return e; }, {}); for (const e in t) { if (t[e].length === 1 && t[e][0].name.endsWith("01")) {/* const n = t[e][0]; n.name = e;*/ t[e][0].name= t[e][0].name.replace(/[^.]01/, "") } } return e; }
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
-
-const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
-
-// 定义函数，将数字转换成上标格式
-function toSuperscript(num) {
-    return String(num).split('').map(digit => superscriptMap[digit]).join('');
-}
-
-    const _ = lodash;
-    const suffix = '➟CF'; // 定义后缀为 '➟CF'
-
-    // 记录每个名称的计数
-    const nameCount = {};
-
-    return proxies.map((p = {}, index) => {
-        const name = _.get(p, 'name') || ''; // 获取代理名称
-
-        // 统计当前名称的出现次数
-        if (!nameCount[name]) {
-            nameCount[name] = 0;
-        }
-        nameCount[name]++;
-
-        const superscript = toSuperscript(nameCount[name]); // 生成上标格式的序号
-        _.set(p, 'name', `${prefix} ${name} ${superscript} ${suffix}`); // 拼接名称、序号和后缀
-        return p;
-    });
-}
