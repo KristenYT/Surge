@@ -39,15 +39,18 @@
  * [blpx]   如果用了上面的bl参数,对保留标识后的名称分组排序,如果没用上面的bl参数单独使用blpx则不起任何作用
  * [blockquic] blockquic=on 阻止; blockquic=off 不阻止
  */
+const lodash = require('lodash'); // 確保 lodash 已被正確引入
+
 const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
 
 // 定义函数，将数字转换成上标格式
 function toSuperscript(num) {
-    return String(num).split('').map(digit => superscriptMap[digit]).join('');
+    return String(num).split('').map(digit => superscriptMap[digit] || digit).join('');
 }
 
 async function operator(proxies = []) {
     const _ = lodash;
+    const inArg = $arguments || {}; // 確保 inArg 已被正確定義
     const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
     const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
 
