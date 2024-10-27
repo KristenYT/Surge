@@ -39,40 +39,6 @@
  * [blpx]   如果用了上面的bl参数,对保留标识后的名称分组排序,如果没用上面的bl参数单独使用blpx则不起任何作用
  * [blockquic] blockquic=on 阻止; blockquic=off 不阻止
  */
-const _ = require('lodash');
-
-const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
-
-// 定義函數，將數字轉換成上標格式
-function toSuperscript(num) {
-    return String(num).split('').map(digit => superscriptMap[digit] || digit).join('');
-}
-
-async function processProxies(proxies = []) { // 使用不同的函數名稱以避免衝突
-    const inArg = $arguments || {}; // 確保 inArg 已被正確定義
-    const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
-    const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
-
-    // 用於記錄每個名稱的出現次數
-    const nameCount = {};
-
-    return proxies.map((p = {}) => {
-        const name = _.get(p, 'name') || ''; // 獲取代理名稱
-
-        // 初始化當前名稱的計數
-        if (!nameCount[name]) {
-            nameCount[name] = 0;
-        }
-        nameCount[name] += 1; // 增加該名稱的計數
-
-        // 生成上標序號：如果是第一次出現，顯示上標 ¹，重名顯示 ²、³
-        const superscript = nameCount[name] > 1 ? toSuperscript(nameCount[name]) : toSuperscript(1); 
-
-        // 拼接名稱、序號和後綴，確保在重名情況下正確顯示上標
-        _.set(p, 'name', `${prefix} ${name}${nameCount[name] > 1 ? ' ' + superscript : ''} ${suffix}`); 
-        return p;
-    });
-}
 
 // const inArg = {'blkey':'iplc+GPT>GPTnewName+NF+IPLC', 'flag':true };
 const inArg = $arguments; // console.log(inArg)
