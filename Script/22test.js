@@ -338,6 +338,4 @@ async function operator(proxies = []) {
     });
 }
 
-// 测试代码
-const proxies = Array.from({ length: 20 }, (_, i) => ({ name: `Node${i + 1}` }));
-operator(proxies).then(result => console.log(result.map(p => p.name)));
+
