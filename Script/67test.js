@@ -320,7 +320,7 @@ function oneP(e) { const t = e.reduce((e, t) => { const n = t.name.replace(/[^A-
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
 
-const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']; 
+const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
 
 // 定义函数，将数字转换成上标格式
 function toSuperscript(num) {
@@ -344,11 +344,11 @@ async function operator(proxies = []) {
         }
         nameCount[name] += 1; // 增加该名称的计数
 
-        // 生成上标序号：第一次出现为¹，重名显示²、³
-        const superscript = nameCount[name] === 1 ? toSuperscript(1) : toSuperscript(nameCount[name]);
+        // 生成上标序号：只有重名时才显示上标
+        const superscript = nameCount[name] > 1 ? toSuperscript(nameCount[name]) : ''; 
 
-        // 拼接名称、序号和后缀，确保在重名情况下正确显示上标
-        _.set(p, 'name', `${prefix} ${name}${nameCount[name] > 1 ? ' ' + superscript : ''} ${suffix}`); 
+        // 拼接名称、序号和后缀，確保在重名情況下正確顯示上標
+        _.set(p, 'name', `${prefix} ${name}${superscript ? ' ' + superscript : ''} ${suffix}`); 
         return p;
     });
 }
