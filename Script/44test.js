@@ -347,7 +347,6 @@ const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为
 
     // 生成代理数组并添加上标
     return proxies.map((p = {}, index) => {
-        const name = _.get(p, 'name') || ''; // 获取代理名称
         const count = nameCount[name]; // 获取该名称的计数
         const superscript = count > 1 ? toSuperscript(count) : ''; // 只有当计数大于1时才生成上标
         _.set(p, 'name', ${prefix} ${name}${superscript ? ` ${superscript}` : ''}${suffix}`); // 拼接名称、序号和后缀
