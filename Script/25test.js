@@ -326,9 +326,6 @@ function toSuperscript(num) {
     return String(num).split('').map(digit => superscriptMap[digit]).join('');
 }
 
-async function operator(proxies = []) {
-    const _ = lodash;
-
 const suffix = inArg.name ? decodeURI(inArg.name) : '➟'; // 如果存在 name 参数，则使用它作为后缀
 
 async function operator(proxies = []) {
