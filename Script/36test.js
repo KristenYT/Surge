@@ -329,13 +329,13 @@ function toSuperscript(num) {
 
 async function operator(proxies = []) {
     const _ = lodash;
-    const suffix = '➟CF'; // 定义后缀为 '➟CF'
-
+const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
+const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
+  
     return proxies.map((p = {}, index) => {
         const name = _.get(p, 'name') || ''; // 获取代理名称
         const superscript = toSuperscript(index + 1); // 生成上标格式的序号
-        _.set(p, 'name', `${name} ${superscript}${suffix}`); // 拼接名称、序号和后缀
+        _.set(p, 'name', `${prefix} {name}${superscript} ${suffix}`); // 拼接名称、序号和后缀
         return p;
     });
 }
-
