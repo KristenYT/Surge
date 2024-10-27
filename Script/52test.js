@@ -344,8 +344,8 @@ async function operator(proxies = []) {
         }
         nameCount[name] += 1; // 增加该名称的计数
 
-        // 只有当名称出现超过一次时才生成上标序号
-        const superscript = nameCount[name] > 1 ? toSuperscript(nameCount[name]) : ''; 
+        // 生成上标序号：如果次数大于0，才生成上标，且在重名的情况下显示数字1
+        const superscript = toSuperscript(nameCount[name]); 
 
         // 拼接名称、序号和后缀
         _.set(p, 'name', `${prefix} ${name}${superscript ? ' ' + superscript : ''} ${suffix}`); 
