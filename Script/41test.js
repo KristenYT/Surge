@@ -326,15 +326,27 @@ const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '�
 function toSuperscript(num) {
     return String(num).split('').map(digit => superscriptMap[digit]).join('');
 }
-
+      
 async function operator(proxies = []) {
     const _ = lodash;
 const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
 const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
-  
+
+      const nameCount = {};
+
     return proxies.map((p = {}, index) => {
         const name = _.get(p, 'name') || ''; // 获取代理名称
-        const superscript = toSuperscript(index + 1); // 生成上标格式的序号
+
+        // 初始化重名計數
+        if (!nameCount[name]) {
+            nameCount[name] = 1; // 初始計數為1
+        } else {
+            nameCount[name] += 1; // 重名則計數加1
+        }
+      
+    return proxies.map((p = {}, index) => {
+        const name = _.get(p, 'name') || ''; // 获取代理名称
+        const superscript = toSuperscript(nameCount[name]);
         _.set(p, 'name', `${prefix} ${name} ${superscript} ${suffix}`); // 拼接名称、序号和后缀
         return p;
     });
