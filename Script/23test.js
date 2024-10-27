@@ -332,10 +332,13 @@ async function operator(proxies = []) {
 
     return proxies.map((p = {}, index) => {
         const name = _.get(p, 'name') || ''; // 获取代理名称
-        const superscript = toSuperscript(index + 1); // 生成上标格式的序号
-        _.set(p, 'name', `${name} ${superscript}${suffix}`); // 拼接名称、序号和后缀
+        _.set(p, 'name', `${name} ${suffix}`); // 只拼接名称和后缀，不再添加额外的上标
         return p;
     });
 }
+
+// 测试代码
+const proxies = Array.from({ length: 20 }, (_, i) => ({ name: `Node${i + 1}` }));
+operator(proxies).then(result => console.log(result.map(p => p.name)));
 
 
