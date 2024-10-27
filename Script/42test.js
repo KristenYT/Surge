@@ -343,9 +343,6 @@ const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为
         } else {
             nameCount[name] += 1; // 重名則計數加1
         }
-      
-    return proxies.map((p = {}, index) => {
-        const name = _.get(p, 'name') || ''; // 获取代理名称
         const superscript = toSuperscript(nameCount[name]);
         _.set(p, 'name', `${prefix} ${name} ${superscript} ${suffix}`); // 拼接名称、序号和后缀
         return p;
