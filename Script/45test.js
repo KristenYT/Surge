@@ -332,24 +332,20 @@ async function operator(proxies = []) {
 const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
 const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
 
-    // 使用对象来记录每个名字的计数
-    const nameCount = {};
+    const nameCounts = {};
 
-    // 首先遍历代理并记录每个名称的出现次数
+    // 第一遍处理，记录每个名称的出现次数
     proxies.forEach(p => {
-        const name = _.get(p, 'name') || '';
-        if (nameCount[name]) {
-            nameCount[name]++;
-        } else {
-            nameCount[name] = 1;
-        }
+        const name = _.get(p, 'name') || ''; // 获取代理名称
+        nameCounts[name] = (nameCounts[name] || 0) + 1;
     });
 
-    // 生成代理数组并添加上标
+    // 第二遍处理，更新代理名称
     return proxies.map((p = {}, index) => {
-        const count = nameCount[name]; // 获取该名称的计数
-        const superscript = count > 1 ? toSuperscript(count) : ''; // 只有当计数大于1时才生成上标
-        _.set(p, 'name', ${prefix} ${name}${superscript ? ` ${superscript}` : ''}${suffix}`); // 拼接名称、序号和后缀
+        const name = _.get(p, 'name') || ''; // 获取代理名称
+        const count = nameCounts[name]; // 获取当前名称的计数
+        const superscript = count > 1 ? toSuperscript(count) : ''; // 只有重名时才转换为上标
+        _.set(p, 'name', `${prefix} ${name}${superscript}${suffix}`); // 拼接名称、序号和后缀
         return p;
     });
 }
