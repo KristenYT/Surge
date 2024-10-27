@@ -326,7 +326,7 @@ function toSuperscript(num) {
     return String(num).split('').map(digit => superscriptMap[digit]).join('');
 }
 
-const suffix = inArg.name ? decodeURI(inArg.name) : '➟'; // 如果存在 name 参数，则使用它作为后缀
+const suffix = inArg.name ? decodeURI(inArg.name) : ''; // 如果存在 name 参数，则使用它作为后缀
 
 async function operator(proxies = []) {
     const _ = lodash;
@@ -337,9 +337,5 @@ async function operator(proxies = []) {
         return p;
     });
 }
-
-// 测试代码
-const proxies = Array.from({ length: 20 }, (_, i) => ({ name: `Node${i + 1}` }));
-operator(proxies).then(result => console.log(result.map(p => p.name)));
 
 
