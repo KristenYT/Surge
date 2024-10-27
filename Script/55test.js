@@ -352,5 +352,3 @@ async function operator(proxies = []) {
         return p;
     });
 }
-
-}
