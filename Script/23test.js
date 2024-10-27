@@ -328,11 +328,15 @@ function toSuperscript(num) {
 
 async function operator(proxies = []) {
     const _ = lodash;
-    const suffix = '➟CF'; // 定义后缀为 '➟CF'
+
+const suffix = inArg.name ? decodeURI(inArg.name) : '➟'; // 如果存在 name 参数，则使用它作为后缀
+
+async function operator(proxies = []) {
+    const _ = lodash;
 
     return proxies.map((p = {}, index) => {
         const name = _.get(p, 'name') || ''; // 获取代理名称
-        _.set(p, 'name', `${name} ${suffix}`); // 只拼接名称和后缀，不再添加额外的上标
+        _.set(p, 'name', `${name} ${suffix}`); // 拼接名称和通过参数传入的后缀
         return p;
     });
 }
