@@ -327,14 +327,15 @@ function toSuperscript(num) {
 }
 
 // 获取参数
-const suffix = inArg.sname ? decodeURI(inArg.sname) : (inArg.name ? decodeURI(inArg.name) : ''); // 使用 sname 参数，若不存在则使用 name 参数，最后为默认后缀
+const suffix = inArg.Sname ? decodeURI(inArg.Sname) : '➟CF'; // 使用 Sname 作为后缀，如果没有则默认使用 '➟CF'
+const prefix = inArg.fname ? decodeURI(inArg.Pname) : ''; // 使用 fname 作为前缀，如果没有则为空
 
 async function operator(proxies = []) {
     const _ = lodash;
 
     return proxies.map((p = {}, index) => {
         const name = _.get(p, 'name') || ''; // 获取代理名称
-        _.set(p, 'name', `${name} ${suffix}`); // 拼接名称和后缀
+        _.set(p, 'name', `${prefix} ${name} ${suffix}`); // 拼接前缀、名称和后缀
         return p;
     });
 }
@@ -342,5 +343,4 @@ async function operator(proxies = []) {
 // 测试代码
 const proxies = Array.from({ length: 20 }, (_, i) => ({ name: `Node${i + 1}` }));
 operator(proxies).then(result => console.log(result.map(p => p.name)));
-
 
