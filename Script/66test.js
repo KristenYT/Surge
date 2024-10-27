@@ -344,11 +344,11 @@ async function operator(proxies = []) {
         }
         nameCount[name] += 1; // 增加该名称的计数
 
-        // 生成上标序号：如果是重名，显示上标；否则不显示
-        const superscript = nameCount[name] > 1 ? toSuperscript(nameCount[name]) : '';
+        // 生成上标序号：第一次出现为¹，重名显示²、³
+        const superscript = nameCount[name] === 1 ? toSuperscript(1) : toSuperscript(nameCount[name]);
 
         // 拼接名称、序号和后缀，确保在重名情况下正确显示上标
-        _.set(p, 'name', `${prefix} ${name}${superscript ? ' ' + superscript : ''} ${suffix}`); 
+        _.set(p, 'name', `${prefix} ${name}${nameCount[name] > 1 ? ' ' + superscript : ''} ${suffix}`); 
         return p;
     });
 }
