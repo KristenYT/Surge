@@ -326,3 +326,10 @@ const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '�
 function toSuperscript(num) {
     return String(num).split('').map(digit => superscriptMap[digit]).join('');
 }
+
+// 示例，直接执行将数字变成上标并输出
+for (let i = 0; i < 20; i++) {
+    const superscriptNumber = toSuperscript(i + 1);
+    console.log(`Number ${i + 1} in superscript: ${superscriptNumber}`);
+}
+
