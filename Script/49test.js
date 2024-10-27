@@ -334,8 +334,6 @@ const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为
 
   
   const nameCount = {};
-function operator(proxies, suffix = '') {
-    // 首先遍歷所有代理，計算每個名稱的出現次數
     proxies.forEach(p => {
         const name = _.get(p, 'name') || ''; // 獲取代理名稱
         if (!nameCount[name]) {
