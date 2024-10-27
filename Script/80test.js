@@ -43,33 +43,33 @@ const lodash = require('lodash'); // 確保 lodash 已被正確引入
 
 const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
 
-// 定义函数，将数字转换成上标格式
+// 定義函數，將數字轉換成上標格式
 function toSuperscript(num) {
     return String(num).split('').map(digit => superscriptMap[digit] || digit).join('');
 }
 
-async function operator(proxies = []) {
+async function processProxies(proxies = []) { // 避免與其他函數名稱衝突
     const _ = lodash;
     const inArg = $arguments || {}; // 確保 inArg 已被正確定義
     const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
     const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
 
-    // 用于记录每个名称的出现次数
+    // 用於記錄每個名稱的出現次數
     const nameCount = {};
 
     return proxies.map((p = {}) => {
-        const name = _.get(p, 'name') || ''; // 获取代理名称
+        const name = _.get(p, 'name') || ''; // 獲取代理名稱
 
-        // 初始化当前名称的计数
+        // 初始化當前名稱的計數
         if (!nameCount[name]) {
             nameCount[name] = 0;
         }
-        nameCount[name] += 1; // 增加该名称的计数
+        nameCount[name] += 1; // 增加該名稱的計數
 
-        // 生成上标序号：如果是第一次出现，显示上标 ¹，重名顯示 ²、³
+        // 生成上標序號：如果是第一次出現，顯示上標 ¹，重名顯示 ²、³
         const superscript = nameCount[name] > 1 ? toSuperscript(nameCount[name]) : toSuperscript(1); 
 
-        // 拼接名称、序号和后缀，確保在重名情況下正確顯示上標
+        // 拼接名稱、序號和後綴，確保在重名情況下正確顯示上標
         _.set(p, 'name', `${prefix} ${name}${nameCount[name] > 1 ? ' ' + superscript : ''} ${suffix}`); 
         return p;
     });
