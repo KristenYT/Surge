@@ -330,7 +330,3 @@ const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '�
 function toSuperscript(num) {
     return String(num).split('').map(digit => superscriptMap[digit]).join('');
 }
-
-
-const proxies = Array.from({ length: 20 }, (_, i) => ({ name: `Node${i + 1}` }));
-operator(proxies).then(result => console.log(result.map(p => p.name)));
