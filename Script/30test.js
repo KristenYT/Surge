@@ -327,7 +327,7 @@ function toSuperscript(num) {
 }
 
 // 获取参数
-const suffix = inArg.Sname ? decodeURI(inArg.Sname) : '➟CF'; // 使用 Sname 作为后缀，如果没有则默认使用 '➟CF'
+const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
 const prefix = inArg.fname ? decodeURI(inArg.Pname) : ''; // 使用 fname 作为前缀，如果没有则为空
 
 async function operator(proxies = []) {
