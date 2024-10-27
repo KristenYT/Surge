@@ -24,9 +24,9 @@
  * [one]    清理只有一个节点的地区的01
  * [flag]   给节点前面加国旗
  *
- *** 前後缀参数
- * [Sname=]  节点添加机场名称後缀；
- * [Pname=]  节点添加机场名称前綴
+ *** 後缀参数
+ * [name=]  节点添加机场名称後缀；
+ * [nf]     把 name= 的後缀值放在最前面便前綴
  *** 保留参数
  * [blkey=iplc+gpt+NF+IPLC] 用+号添加多个关键词 保留节点名的自定义字段 需要区分大小写!
  * 如果需要修改 保留的关键词 替换成别的 可以用 > 分割 例如 [#blkey=GPT>新名字+其他关键词] 这将把【GPT】替换成【新名字】
@@ -42,40 +42,6 @@
 
 // const inArg = {'blkey':'iplc+GPT>GPTnewName+NF+IPLC', 'flag':true };
 const inArg = $arguments; // console.log(inArg)
-
-// 定義 superscriptMap 和 toSuperscript 函數
-const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
-
-// 定義函數，將數字轉換成上標格式
-function toSuperscript(num) {
-    return String(num).split('').map(digit => superscriptMap[digit]).join('');
-}
-
-// 修改 operator 函數
-async function operator(proxies = []) {
-    const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作為後綴，如果沒有則為空
-    const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作為前綴，如果沒有則為空
-
-    // 用於記錄每個名稱的出現次數
-    const nameCount = {};
-
-    return proxies.map((p = {}) => {
-        const name = _.get(p, 'name') || ''; // 獲取代理名稱
-
-        // 初始化當前名稱的計數
-        if (!nameCount[name]) {
-            nameCount[name] = 0;
-        }
-        nameCount[name] += 1; // 增加該名稱的計數
-
-        // 生成上標序號：如果是第一次出現，顯示上標 ¹，重名顯示 ²、³
-        const superscript = nameCount[name] > 1 ? toSuperscript(nameCount[name]) : toSuperscript(1);
-
-        // 拼接名稱、序號和後綴，確保在重名情況下正確顯示上標
-        _.set(p, 'name', `${prefix} ${name}${nameCount[name] > 1 ? ' ' + superscript : ''} ${suffix}`);
-        return p;
-    });
-}
 const nx = inArg.nx || false,
   bl = inArg.bl || false,
   nf = inArg.nf || false,
@@ -331,7 +297,7 @@ function operator(pro) {
       e.name = keyover.join(FGF);
     } else {
       if (nm) {
-        e.name = FNAME + '${superscript}' + e.name;
+        e.name = FNAME + FGF + e.name;
       } else {
         e.name = null;
       }
