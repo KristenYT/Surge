@@ -1,10 +1,10 @@
 {
     "name": "Surge Pro",
     "icons": [
+     { "name": "Surge_G", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Surge.png"},
      { "name": "SurgePro", "url": "https://raw.githubusercontent.com/Yu9191/-/main/icon/surgepro.png"},
      { "name": "SurgeProqiyeban", "url": "https://raw.githubusercontent.com/githubdulong/Script/master/Images/Surge.png"},
      { "name": "Surge_1", "url": "https://raw.githubusercontent.com/githubdulong/Script/master/Images/Surge_1.png"},
-     { "name": "Surge_2", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Surge.png"},
      { "name": "69", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/69.png"},
      { "name": "Talkatone", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Talkatone.png"},
      { "name": "Bull", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/BullHead.png"},
@@ -14,5 +14,6 @@
      { "name": "Bujidao", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/AppleTV.png"},
      { "name": "AppleTV", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Bujidao.png"}, 
      { "name": "Bugcat", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/BUGcat.png"}, 
+     { "name": "WLY", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/WLY.png"},   
     ]
 }
