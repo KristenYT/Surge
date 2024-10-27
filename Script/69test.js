@@ -329,8 +329,6 @@ function toSuperscript(num) {
 
 async function operator(proxies = []) {
     const _ = lodash;
-    const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
-    const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
 
     // 用于记录每个名称的出现次数
     const nameCount = {};
@@ -347,8 +345,8 @@ async function operator(proxies = []) {
         // 生成上标序号：只有重名时才显示上标，从 ¹ 开始
         const superscript = nameCount[name] > 1 ? toSuperscript(nameCount[name] - 1) : ''; 
 
-        // 拼接名称、序号和后缀，確保在重名情況下正確顯示上標
-        _.set(p, 'name', `${prefix} ${name}${superscript ? ' ' + superscript : ''} ${suffix}`); 
+        // 拼接名称和序号，確保在重名情況下正確顯示上標
+        _.set(p, 'name', `${name}${superscript ? superscript : ''}`); 
         return p;
     });
 }
