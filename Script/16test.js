@@ -323,3 +323,27 @@ function jxh(e) { const n = e.reduce((e, n) => { const t = e.find((e) => e.name 
 function oneP(e) { const t = e.reduce((e, t) => { const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+\d+$/, ""); if (!e[n]) { e[n] = []; } e[n].push(t); return e; }, {}); for (const e in t) { if (t[e].length === 1 && t[e][0].name.endsWith("01")) {/* const n = t[e][0]; n.name = e;*/ t[e][0].name= t[e][0].name.replace(/[^.]01/, "") } } return e; }
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
+// 定义一个映射表，将数字转换为上标
+const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
+
+// 定义函数，将数字转换成上标格式
+function toSuperscript(num) {
+    return String(num).split('').map(digit => superscriptMap[digit]).join('');
+}
+
+// 修改 operator 函数，添加上标功能
+async function operator(proxies = []) {
+    const _ = lodash;
+    const suffix = '➟CF'; // 定义后缀为 '➟CF'
+
+    return proxies.map((p = {}, index) => {
+        const name = _.get(p, 'name') || ''; // 获取代理名称
+        const superscript = toSuperscript(index + 1); // 生成上标格式的序号
+        _.set(p, 'name', `${name} ${superscript}${suffix}`); // 拼接名称、序号和后缀
+        return p;
+    });
+}
+
+// 测试代码
+const proxies = Array.from({ length: 20 }, (_, i) => ({ name: `Node${i + 1}` }));
+operator(proxies).then(result => console.log(result.map(p => p.name)));
