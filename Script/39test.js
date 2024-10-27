@@ -297,7 +297,7 @@ function operator(pro) {
       e.name = keyover.join(FGF);
     } else {
       if (nm) {
-        e.name = FNAME + FGF + e.name;
+        e.name = FNAME + ${superscript} + e.name;
       } else {
         e.name = null;
       }
