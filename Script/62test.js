@@ -320,19 +320,19 @@ function oneP(e) { const t = e.reduce((e, t) => { const n = t.name.replace(/[^A-
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
 
-superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']; 
+const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']; 
 
 // 定义函数，将数字转换成上标格式
 function toSuperscript(num) {
     return String(num).split('').map(digit => superscriptMap[digit]).join('');
 }
-      
+
 async function operator(proxies = []) {
     const _ = lodash;
-const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
-const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
+    const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
+    const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
 
-   // 用于记录每个名称的出现次数
+    // 用于记录每个名称的出现次数
     const nameCount = {};
 
     return proxies.map((p = {}) => {
@@ -344,8 +344,11 @@ const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为
         }
         nameCount[name] += 1; // 增加该名称的计数
 
-        const superscript = toSuperscript(nameCount[name]); // 生成上标格式的序号
-        _.set(p, 'name', ${prefix} ${name} ${superscript} ${suffix}); // 拼接名称、序号和后缀
+        // 生成上标序号：如果是第一次出现，显示上标 ¹，重名顯示 ²、³
+        const superscript = nameCount[name] > 1 ? toSuperscript(nameCount[name]) : toSuperscript(1); 
+
+        // 拼接名称、序号和后缀，確保在重名情況下正確顯示上標
+        _.set(p, 'name', `${prefix} ${name}${nameCount[name] > 1 ? ' ' + superscript : ''} ${suffix}`); 
         return p;
     });
 }
