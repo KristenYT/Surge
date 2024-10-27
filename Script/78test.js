@@ -39,6 +39,38 @@
  * [blpx]   如果用了上面的bl参数,对保留标识后的名称分组排序,如果没用上面的bl参数单独使用blpx则不起任何作用
  * [blockquic] blockquic=on 阻止; blockquic=off 不阻止
  */
+const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
+
+// 定义函数，将数字转换成上标格式
+function toSuperscript(num) {
+    return String(num).split('').map(digit => superscriptMap[digit]).join('');
+}
+
+async function operator(proxies = []) {
+    const _ = lodash;
+    const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
+    const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
+
+    // 用于记录每个名称的出现次数
+    const nameCount = {};
+
+    return proxies.map((p = {}) => {
+        const name = _.get(p, 'name') || ''; // 获取代理名称
+
+        // 初始化当前名称的计数
+        if (!nameCount[name]) {
+            nameCount[name] = 0;
+        }
+        nameCount[name] += 1; // 增加该名称的计数
+
+        // 生成上标序号：如果是第一次出现，显示上标 ¹，重名顯示 ²、³
+        const superscript = nameCount[name] > 1 ? toSuperscript(nameCount[name]) : toSuperscript(1); 
+
+        // 拼接名称、序号和后缀，確保在重名情況下正確顯示上標
+        _.set(p, 'name', `${prefix} ${name}${nameCount[name] > 1 ? ' ' + superscript : ''} ${suffix}`); 
+        return p;
+    });
+}
 
 // const inArg = {'blkey':'iplc+GPT>GPTnewName+NF+IPLC', 'flag':true };
 const inArg = $arguments; // console.log(inArg)
