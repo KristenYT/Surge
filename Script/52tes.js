@@ -145,10 +145,10 @@ const rurekey = {
   波兰: /WAW/g,
   瑞典: /ARN/g,
   澳大利亚: /SYD/g,
-  G: /(\d+)\s?GB/gi,
+  G: /\d\s?GB/gi,
   Esnc: /esnc/gi,
 };
-let newName = oldName.replace(rurekey.G, '$1 G');
+const replacement = '$1 G'
 
 let GetK = false, AMK = []
 function ObjKA(i) {
