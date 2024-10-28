@@ -350,7 +350,7 @@ function jxh(e) {
 }
 function oneP(e) {
   const t = e.reduce((acc, item) => {
-    // 移除序號和多餘的後綴，但保留唯一的 name= 後綴
+    // 去除序號但保留 `name=` 後綴
     const baseName = item.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(new RegExp(`\\s${FNAME}$`), "").trim();
     if (!acc[baseName]) {
       acc[baseName] = [];
@@ -359,13 +359,13 @@ function oneP(e) {
     return acc;
   }, {});
 
-  // 處理只有一個節點的情況
+  // 針對只有一個節點的情況
   for (const key in t) {
     if (t[key].length === 1) {
-      // 去掉序號並保留 name= 後綴
-      t[key][0].name = `${key} ${FNAME}`.trim();
+      // 去掉唯一節點的序號並保留 `name=` 後綴
+      t[key][0].name = key + (FNAME ? ` ${FNAME}` : "");
     } else {
-      // 確保多個節點時只有一個 name= 後綴
+      // 多個節點的處理
       t[key].forEach((node, index) => {
         node.name = `${key} ${toSuperscript(String(index + 1).padStart(2, "0"))} ${FNAME}`.trim();
       });
