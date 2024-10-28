@@ -148,6 +148,7 @@ const rurekey = {
   G: /(\d+)\s?GB/gi,
   Esnc: /esnc/gi,
 };
+let newName = oldName.replace(rurekey.G, '$1 G');
 
 let GetK = false, AMK = []
 function ObjKA(i) {
