@@ -327,16 +327,15 @@ function toSuperscript(num) {
     return String(num).split('').map(digit => superscriptMap[digit] || digit).join('');
 }
 
-// 更新后的 operator 函数，支持前缀、后缀和上标处理
-function newOperator(proxies = []) {
+// 更新的 operator 函数，支持前缀、后缀和上标处理
+function enhancedOperator(proxies = []) {
     const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
     const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
 
     // 用于记录每个名称的出现次数
     const nameCount = {};
 
-    // 遍历处理每个代理名称
-    proxies.forEach((proxy) => {
+    return proxies.map((proxy) => {
         const originalName = proxy.name || ''; // 获取代理名称
 
         // 初始化当前名称的计数
@@ -351,7 +350,14 @@ function newOperator(proxies = []) {
         // 拼接前缀、名称、上标和后缀
         const newName = `${prefix}${originalName}${superscript}${suffix}`.trim();
         proxy.name = newName;
-    });
 
-    return proxies;
+        return proxy;
+    });
+}
+
+// 使用这个增强的operator来替换原有的修改逻辑
+function operator(proxies) {
+    const processedProxies = enhancedOperator(proxies);
+    // 可以在此处进行更多逻辑或对 `processedProxies` 进行额外处理
+    return processedProxies;
 }
