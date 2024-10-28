@@ -348,59 +348,7 @@ function jxh(e) {
   e.splice(0, e.length, ...t);
   return e;
 }
-function oneP(e) {
-  const t = e.reduce((acc, item) => {
-    // 提取基礎名稱，去除序號並保留 `name=` 後綴
-    const baseName = item.name
-      .replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "")  // 去掉序號
-      .replace(new RegExp(`\\s${FNAME}$`), "")  // 去掉重複的 name= 後綴
-      .trim();
-      
-    if (!acc[baseName]) {
-      acc[baseName] = [];
-    }
-    acc[baseName].push(item);
-    return acc;
-  }, {});
-
-  // 處理唯一節點情況，移除序號
-  for (const key in t) {
-    if (t[key].length === 1) {
-      // 唯一節點情況，移除序號並保留 `name=` 後綴
-      t[key][0].name = key + (FNAME ? ` ${FNAME}` : "");
-    } else {
-      // 多節點的情況下，保留序號和 `name=` 後綴
-      t[key].forEach((node, index) => {
-        node.name = `${key} ${toSuperscript(String(index + 1).padStart(2, "0"))} ${FNAME}`.trim();
-      });
-    }
-  }
-
-  return Object.values(t).flat();
-}
-
-// fampx 函數保持不變
-function fampx(pro) {
-  const wis = [];
-  const wnout = [];
-  for (const proxy of pro) {
-    const fan = specialRegex.some((regex) => regex.test(proxy.name));
-    if (fan) {
-      wis.push(proxy);
-    } else {
-      wnout.push(proxy);
-    }
-  }
-  const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)));
-  wis.sort(
-    (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name)
-  );
-  wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b));
-  return wnout.concat(wis);
-}
-
-// 主調用流程
-function main(proxies) {
-  const processedProxies = oneP(proxies);
-  return fampx(processedProxies);
-}
+// prettier-ignore
+function oneP(e) { const t = e.reduce((e, t) => { const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+\d+$/, ""); if (!e[n]) { e[n] = []; } e[n].push(t); return e; }, {}); for (const e in t) { if (t[e].length === 1 && t[e][0].name.endsWith("01")) {/* const n = t[e][0]; n.name = e;*/ t[e][0].name= t[e][0].name.replace(/[^.]01/, "") } } return e; }
+// prettier-ignore
+function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
