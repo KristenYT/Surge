@@ -40,8 +40,14 @@
  * [blockquic] blockquic=on 阻止; blockquic=off 不阻止
  */
 
-// const inArg = {'blkey':'iplc+GPT>GPTnewName+NF+IPLC', 'flag':true };
-const inArg = $arguments; // console.log(inArg)
+const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']; 
+
+// 将数字转换为上标的函数
+function toSuperscript(num) {
+    return String(num).split('').map(digit => superscriptMap[digit] || digit).join('');
+}
+
+const inArg = $arguments; // 接受脚本参数
 const nx = inArg.nx || false,
   bl = inArg.bl || false,
   nf = inArg.nf || false,
@@ -148,21 +154,13 @@ const rurekey = {
   G: /\d\s?GB/gi,
   Esnc: /esnc/gi,
 };
-
-
-const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']; 
-
-// 定义函数，将数字转换成上标格式
-function toSuperscript(num) {
-    return String(num).split('').map(digit => superscriptMap[digit] || digit).join('');
-}
-
-// 修改和整合的 operator 函数
-function operator(pro) {
+// 修改和整合的 `operator` 函数
+function operator(proxies) {
     const Allmap = {};
     const outList = getList(outputName);
-    let inputList,
+    let inputList = [],
         retainKey = "";
+
     if (inname !== "") {
         inputList = [getList(inname)];
     } else {
@@ -175,68 +173,24 @@ function operator(pro) {
         });
     });
 
-    if (clear || nx || blnx || key) {
-        pro = pro.filter((res) => {
-            const resname = res.name;
-            const shouldKeep =
-                !(clear && nameclear.test(resname)) &&
-                !(nx && namenx.test(resname)) &&
-                !(blnx && !nameblnx.test(resname)) &&
-                !(key && !(keya.test(resname) && /2|4|6|7/i.test(resname)));
-            return shouldKeep;
-        });
-    }
-
-    const BLKEYS = BLKEY ? BLKEY.split("+") : "";
-
     // 用于记录每个名称的出现次数
     const nameCount = {};
 
-    pro.forEach((e) => {
-        let bktf = false, ens = e.name;
+    proxies.forEach((proxy) => {
+        let e = proxy;
+        const originalName = e.name || ''; 
+
         // 初始化当前名称的计数
-        if (!nameCount[ens]) {
-            nameCount[ens] = 0;
+        if (!nameCount[originalName]) {
+            nameCount[originalName] = 0;
         }
-        nameCount[ens] += 1;
+        nameCount[originalName] += 1; 
 
-        // 添加自定義的前後綴邏輯
-        const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 前綴
-        const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 後綴
-        const superscript = nameCount[ens] > 1 ? toSuperscript(nameCount[ens]) : '';
+        const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; 
+        const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; 
+        const superscript = nameCount[originalName] > 1 ? toSuperscript(nameCount[originalName]) : '';
 
-        // 預處理名稱
-        Object.keys(rurekey).forEach((ikey) => {
-            if (rurekey[ikey].test(e.name)) {
-                e.name = e.name.replace(rurekey[ikey], ikey);
-                if (BLKEY) {
-                    bktf = true;
-                    let BLKEY_REPLACE = "",
-                        re = false;
-                    BLKEYS.forEach((i) => {
-                        if (i.includes(">") && ens.includes(i.split(">")[0])) {
-                            if (rurekey[ikey].test(i.split(">")[0])) {
-                                e.name += " " + i.split(">")[0];
-                            }
-                            if (i.split(">")[1]) {
-                                BLKEY_REPLACE = i.split(">")[1];
-                                re = true;
-                            }
-                        } else {
-                            if (ens.includes(i)) {
-                                e.name += " " + i;
-                            }
-                        }
-                        retainKey = re
-                            ? BLKEY_REPLACE
-                            : BLKEYS.filter((items) => e.name.includes(items));
-                    });
-                }
-            }
-        });
-
-        // 生成最終名稱並應用前後綴和上標
-        e.name = `${prefix}${e.name}${superscript}${suffix}`.trim();
+        e.name = `${prefix}${originalName}${superscript}${suffix}`.trim();
 
         if (blockquic == "on") {
             e["block-quic"] = "on";
@@ -246,6 +200,9 @@ function operator(pro) {
             delete e["block-quic"];
         }
     });
+
+    return proxies;
+}
 
     // 自定义
     if (!bktf && BLKEY) {
