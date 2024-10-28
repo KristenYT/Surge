@@ -1,42 +1,38 @@
 /**
- * 作者:Keywos
+ * 作者: Keywos
  * 更新日期：2024-10-25 
  * 用法：Sub-Store 脚本操作添加
- * rename.js 以下是此脚本支持的参数，必须以 # 为开头多个参数使用"&"连接，参考上述地址为例使用参数。 禁用缓存url#noCache
+ * rename.js 以下是此脚本支持的参数，必须以 # 为开头多个参数使用 "&" 连接，参考上述地址为例使用参数。禁用缓存 url#noCache
  *
  *** 主要参数
- * [in=] 自动判断机场节点名类型 优先级 zh(中文) -> flag(国旗) -> quan(英文全称) -> en(英文简写)
+ * [in=] 自动判断机场节点名类型 优先级 zh(中文) -> flag(国旗) -> quan(英文全称) -> en(英文缩写)
  * 如果不准的情况, 可以加参数指定:
- *
- * [nm]    保留没有匹配到的节点
- * [in=zh] 或in=cn识别中文
- * [in=en] 或in=us 识别英文缩写
- * [in=flag] 或in=gq 识别国旗 如果加参数 in=flag 则识别国旗 脚本操作前面不要添加国旗操作 否则移除国旗后面脚本识别不到
+ * [nm] 保留没有匹配到的节点
+ * [in=zh] 或 in=cn 识别中文
+ * [in=en] 或 in=us 识别英文缩写
+ * [in=flag] 或 in=gq 识别国旗 如果加参数 in=flag 则识别国旗 脚本操作前面不要添加国旗操作 否则移除国旗后面脚本识别不到
  * [in=quan] 识别英文全称
-
  *
- * [out=]   输出节点名可选参数: (cn或zh或zht ，us或en ，gq或flag ，quan) 对应：(中文，英文缩写 ，国旗 ，英文全称) 默认中文 例如 [out=en] 或 out=us 输出英文缩写
+ * [out=] 输出节点名可选参数: (cn 或 zh 或 zht ，us 或 en ，gq 或 flag ，quan) 对应：(中文，英文缩写，国旗，英文全称) 默认中文 例如 [out=en] 或 out=us 输出英文缩写
  *** 分隔符参数
- *
- * [fgf=]   节点名前缀或国旗分隔符，默认为空格；
- * [sn=]    设置国家与序号之间的分隔符，默认为空格；
+ * [fgf=] 节点名前缀或国旗分隔符，默认为空格；
+ * [sn=] 设置国家与序号之间的分隔符，默认为空格；
  * 序号参数
- * [one]    清理只有一个节点的地区的01
- * [flag]   给节点前面加国旗
- *
- *** 後缀参数
- * [name=]  节点添加机场名称後缀；
- * [nf]     把 name= 的後缀值放在最前面便前綴
+ * [one] 清理只有一个节点的地区的 01
+ * [flag] 给节点前面加国旗
+ *** 后缀参数
+ * [name=] 节点添加机场名称后缀；
+ * [nf] 把 name= 的后缀值放在最前面变前缀
  *** 保留参数
- * [blkey=iplc+gpt+NF+IPLC] 用+号添加多个关键词 保留节点名的自定义字段 需要区分大小写!
+ * [blkey=iplc+gpt+NF+IPLC] 用 + 号添加多个关键词 保留节点名的自定义字段 需要区分大小写！
  * 如果需要修改 保留的关键词 替换成别的 可以用 > 分割 例如 [#blkey=GPT>新名字+其他关键词] 这将把【GPT】替换成【新名字】
  * 例如      https://raw.githubusercontent.com/Keywos/rule/main/rename.js#flag&blkey=GPT>新名字+NF
- * [blgd]   保留: 家宽 IPLC ˣ² 等
- * [bl]     正则匹配保留 [0.1x, x0.2, 6x ,3倍]等标识
- * [nx]     保留1倍率与不显示倍率的
- * [blnx]   只保留高倍率
- * [clear]  清理乱名
- * [blpx]   如果用了上面的bl参数,对保留标识后的名称分组排序,如果没用上面的bl参数单独使用blpx则不起任何作用
+ * [blgd] 保留: 家宽 IPLC ˣ² 等
+ * [bl] 正则匹配保留 [0.1x, x0.2, 6x ,3倍]等标识
+ * [nx] 保留 1 倍率与不显示倍率的
+ * [blnx] 只保留高倍率
+ * [clear] 清理乱名
+ * [blpx] 如果用了上面的 bl 参数, 对保留标识后的名称分组排序, 如果没用上面的 bl 参数单独使用 blpx 则不起任何作用
  * [blockquic] blockquic=on 阻止; blockquic=off 不阻止
  */
 
@@ -154,7 +150,19 @@ const rurekey = {
   G: /\d\s?GB/gi,
   Esnc: /esnc/gi,
 };
-// 修改和整合的 `operator` 函数
+
+// 获取国家/地区列表
+function getList(arg) { 
+  switch (arg) { 
+    case 'zht': return ZHT;
+    case 'us': return EN; 
+    case 'gq': return FG; 
+    case 'quan': return QC; 
+    default: return ZH; 
+  } 
+}
+
+// 主要的 `operator` 函数
 function operator(proxies) {
     const Allmap = {};
     const outList = getList(outputName);
@@ -203,6 +211,12 @@ function operator(proxies) {
 
     return proxies;
 }
+
+// 其他函数保持原样
+const regexArray = [/ˣ²/, /ˣ³/, /ˣ⁴/, /ˣ⁵/, /ˣ⁶/, /ˣ⁷/, /ˣ⁸/, /ˣ⁹/, /ˣ¹⁰/, /ˣ²⁰/, /ˣ³⁰/, /ˣ⁴⁰/, /ˣ⁵⁰/, /IPLC/i, /IEPL/i, /核心/, /边缘/, /高级/, /标准/, /实验/, /商宽/, /家宽/, /游戏|game/i, /购物/, /专线/, /LB/, /cloudflare/i, /\budp\b/i, /\bgpt\b/i,/udpn\b/];
+// prettier-ignore
+const valueArray= [ "2×","3×","4×","5×","6×","7×","8×","9×","10×","20×","30×","40×","50×","IPLC","IEPL","Kern","Edge","Pro","Std","Exp","Biz","Fam","Game","Buy","Zx","LB","CF","UDP","GPT","UDPN"];
+// 其他保留代码...
 
     // 自定义
     if (!bktf && BLKEY) {
