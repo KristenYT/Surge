@@ -1,42 +1,47 @@
 /**
- * 作者: Keywos
+ * 作者:Keywos
  * 更新日期：2024-10-25 
  * 用法：Sub-Store 脚本操作添加
- * rename.js 以下是此脚本支持的参数，必须以 # 为开头多个参数使用 "&" 连接，参考上述地址为例使用参数。禁用缓存 url#noCache
+ * rename.js 以下是此脚本支持的参数，必须以 # 为开头多个参数使用"&"连接，参考上述地址为例使用参数。 禁用缓存url#noCache
  *
  *** 主要参数
- * [in=] 自动判断机场节点名类型 优先级 zh(中文) -> flag(国旗) -> quan(英文全称) -> en(英文缩写)
+ * [in=] 自动判断机场节点名类型 优先级 zh(中文) -> flag(国旗) -> quan(英文全称) -> en(英文简写)
  * 如果不准的情况, 可以加参数指定:
- * [nm] 保留没有匹配到的节点
- * [in=zh] 或 in=cn 识别中文
- * [in=en] 或 in=us 识别英文缩写
- * [in=flag] 或 in=gq 识别国旗 如果加参数 in=flag 则识别国旗 脚本操作前面不要添加国旗操作 否则移除国旗后面脚本识别不到
- * [in=quan] 识别英文全称
  *
- * [out=] 输出节点名可选参数: (cn 或 zh 或 zht ，us 或 en ，gq 或 flag ，quan) 对应：(中文，英文缩写，国旗，英文全称) 默认中文 例如 [out=en] 或 out=us 输出英文缩写
+ * [nm]    保留没有匹配到的节点
+ * [in=zh] 或in=cn识别中文
+ * [in=en] 或in=us 识别英文缩写
+ * [in=flag] 或in=gq 识别国旗 如果加参数 in=flag 则识别国旗 脚本操作前面不要添加国旗操作 否则移除国旗后面脚本识别不到
+ * [in=quan] 识别英文全称
+
+ *
+ * [out=]   输出节点名可选参数: (cn或zh或zht ，us或en ，gq或flag ，quan) 对应：(中文，英文缩写 ，国旗 ，英文全称) 默认中文 例如 [out=en] 或 out=us 输出英文缩写
  *** 分隔符参数
- * [fgf=] 节点名前缀或国旗分隔符，默认为空格；
- * [sn=] 设置国家与序号之间的分隔符，默认为空格；
+ *
+ * [fgf=]   节点名前缀或国旗分隔符，默认为空格；
+ * [sn=]    设置国家与序号之间的分隔符，默认为空格；
  * 序号参数
- * [one] 清理只有一个节点的地区的 01
- * [flag] 给节点前面加国旗
- *** 后缀参数
- * [name=] 节点添加机场名称后缀；
- * [nf] 把 name= 的后缀值放在最前面变前缀
+ * [one]    清理只有一个节点的地区的01
+ * [flag]   给节点前面加国旗
+ *
+ *** 後缀参数
+ * [name=]  节点添加机场名称後缀；
+ * [nf]     把 name= 的後缀值放在最前面便前綴
  *** 保留参数
- * [blkey=iplc+gpt+NF+IPLC] 用 + 号添加多个关键词 保留节点名的自定义字段 需要区分大小写！
+ * [blkey=iplc+gpt+NF+IPLC] 用+号添加多个关键词 保留节点名的自定义字段 需要区分大小写!
  * 如果需要修改 保留的关键词 替换成别的 可以用 > 分割 例如 [#blkey=GPT>新名字+其他关键词] 这将把【GPT】替换成【新名字】
  * 例如      https://raw.githubusercontent.com/Keywos/rule/main/rename.js#flag&blkey=GPT>新名字+NF
- * [blgd] 保留: 家宽 IPLC ˣ² 等
- * [bl] 正则匹配保留 [0.1x, x0.2, 6x ,3倍]等标识
- * [nx] 保留 1 倍率与不显示倍率的
- * [blnx] 只保留高倍率
- * [clear] 清理乱名
- * [blpx] 如果用了上面的 bl 参数, 对保留标识后的名称分组排序, 如果没用上面的 bl 参数单独使用 blpx 则不起任何作用
+ * [blgd]   保留: 家宽 IPLC ˣ² 等
+ * [bl]     正则匹配保留 [0.1x, x0.2, 6x ,3倍]等标识
+ * [nx]     保留1倍率与不显示倍率的
+ * [blnx]   只保留高倍率
+ * [clear]  清理乱名
+ * [blpx]   如果用了上面的bl参数,对保留标识后的名称分组排序,如果没用上面的bl参数单独使用blpx则不起任何作用
  * [blockquic] blockquic=on 阻止; blockquic=off 不阻止
  */
 
-const inArg = $arguments; // 接受脚本参数
+// const inArg = {'blkey':'iplc+GPT>GPTnewName+NF+IPLC', 'flag':true };
+const inArg = $arguments; // console.log(inArg)
 const nx = inArg.nx || false,
   bl = inArg.bl || false,
   nf = inArg.nf || false,
@@ -144,72 +149,80 @@ const rurekey = {
   Esnc: /esnc/gi,
 };
 
-// 获取国家/地区列表
-function getList(arg) { 
-  switch (arg) { 
-    case 'zht': return ZHT;
-    case 'us': return EN; 
-    case 'gq': return FG; 
-    case 'quan': return QC; 
-    default: return ZH; 
-  } 
+let GetK = false, AMK = []
+function ObjKA(i) {
+  GetK = true
+  AMK = Object.entries(i)
 }
 
-const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']; 
+function operator(pro) {
+  const Allmap = {};
+  const outList = getList(outputName);
+  let inputList,
+    retainKey = "";
+  if (inname !== "") {
+    inputList = [getList(inname)];
+  } else {
+    inputList = [ZH, FG, QC, EN];
+  }
 
-// 將數字轉換為上標的函數
-function toSuperscript(num) {
-    return String(num).split('').map(digit => superscriptMap[digit] || digit).join('');
-}
-
-// 修改和整合的 operator 函數
-function operator(proxies) {
-    const Allmap = {};
-    const outList = getList(outputName);
-    let inputList = [], retainKey = "";
-
-    if (inname !== "") {
-        inputList = [getList(inname)];
-    } else {
-        inputList = [ZH, FG, QC, EN];
-    }
-
-    inputList.forEach((arr) => {
-        arr.forEach((value, valueIndex) => {
-            Allmap[value] = outList[valueIndex];
-        });
+  inputList.forEach((arr) => {
+    arr.forEach((value, valueIndex) => {
+      Allmap[value] = outList[valueIndex];
     });
+  });
 
-    // 用於記錄每個名稱的出現次數
-    const nameCount = {};
+  if (clear || nx || blnx || key) {
+    pro = pro.filter((res) => {
+      const resname = res.name;
+      const shouldKeep =
+        !(clear && nameclear.test(resname)) &&
+        !(nx && namenx.test(resname)) &&
+        !(blnx && !nameblnx.test(resname)) &&
+        !(key && !(keya.test(resname) && /2|4|6|7/i.test(resname)));
+      return shouldKeep;
+    });
+  }
 
-    proxies.forEach((proxy) => {
-        let e = proxy;
-        const originalName = e.name || '';
+  const BLKEYS = BLKEY ? BLKEY.split("+") : "";
 
-        // 初始化當前名稱的計數
-        if (!nameCount[originalName]) {
-            nameCount[originalName] = 0;
-        }
-
-        nameCount[originalName] += 1;
-        const prefix = inArg.Pname ? decodeURI(inArg.Pname) : '';
-        const suffix = inArg.Sname ? decodeURI(inArg.Sname) : '';
-        const superscript = nameCount[originalName] > 1 ? toSuperscript(nameCount[originalName]) : '';
-
-        e.name = `${prefix}${originalName}${superscript}${suffix}`.trim();
-
-        if (blockquic == "on") {
-            e["block-quic"] = "on";
-        } else if (blockquic == "off") {
-            e["block-quic"] = "off";
+  pro.forEach((e) => {
+    let bktf = false, ens = e.name
+    // 预处理 防止预判或遗漏
+    Object.keys(rurekey).forEach((ikey) => {
+      if (rurekey[ikey].test(e.name)) {
+        e.name = e.name.replace(rurekey[ikey], ikey);
+      if (BLKEY) {
+        bktf = true
+        let BLKEY_REPLACE = "",
+        re = false;
+      BLKEYS.forEach((i) => {
+        if (i.includes(">") && ens.includes(i.split(">")[0])) {
+          if (rurekey[ikey].test(i.split(">")[0])) {
+              e.name += " " + i.split(">")[0]
+            }
+          if (i.split(">")[1]) {
+            BLKEY_REPLACE = i.split(">")[1];
+            re = true;
+          }
         } else {
-            delete e["block-quic"];
+          if (ens.includes(i)) {
+             e.name += " " + i
+            }
         }
+        retainKey = re
+        ? BLKEY_REPLACE
+        : BLKEYS.filter((items) => e.name.includes(items));
+      });}
+      }
     });
-
-    return proxies;
-}
+    if (blockquic == "on") {
+      e["block-quic"] = "on";
+    } else if (blockquic == "off") {
+      e["block-quic"] = "off";
+    } else {
+      delete e["block-quic"];
+    }
 
     // 自定义
     if (!bktf && BLKEY) {
@@ -290,13 +303,12 @@ function operator(proxies) {
       }
     }
   });
-    // 其他的已有過濾和排序處理
-    pro = pro.filter((e) => e.name !== null);
-    jxh(pro);
-    numone && oneP(pro);
-    blpx && (pro = fampx(pro));
-    key && (pro = pro.filter((e) => !keyb.test(e.name)));
-    return pro;
+  pro = pro.filter((e) => e.name !== null);
+  jxh(pro);
+  numone && oneP(pro);
+  blpx && (pro = fampx(pro));
+  key && (pro = pro.filter((e) => !keyb.test(e.name)));
+  return pro;
 }
 
 // prettier-ignore
@@ -307,3 +319,37 @@ function jxh(e) { const n = e.reduce((e, n) => { const t = e.find((e) => e.name 
 function oneP(e) { const t = e.reduce((e, t) => { const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+\d+$/, ""); if (!e[n]) { e[n] = []; } e[n].push(t); return e; }, {}); for (const e in t) { if (t[e].length === 1 && t[e][0].name.endsWith("01")) {/* const n = t[e][0]; n.name = e;*/ t[e][0].name= t[e][0].name.replace(/[^.]01/, "") } } return e; }
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
+// Superscript map for number conversion
+const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
+
+// Convert a number to superscript format
+function toSuperscript(num) {
+    return String(num).split('').map(digit => superscriptMap[digit]).join('');
+}
+
+// Modify operator function to add prefix, suffix, and superscript for name counts
+async function operator(proxies = []) {
+    const _ = lodash;
+    const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // Suffix from Sname
+    const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // Prefix from Pname
+
+    // Track occurrences of each name
+    const nameCount = {};
+
+    return proxies.map((p = {}) => {
+        const name = _.get(p, 'name') || ''; // Retrieve proxy name
+
+        // Initialize count for current name if not already done
+        if (!nameCount[name]) {
+            nameCount[name] = 0;
+        }
+        nameCount[name] += 1; // Increment name count
+
+        // Generate superscript for count display if count is greater than 1
+        const superscript = nameCount[name] > 1 ? ' ' + toSuperscript(nameCount[name]) : '';
+
+        // Set new name with prefix, original name, optional superscript, and suffix
+        _.set(p, 'name', `${prefix} ${name}${superscript} ${suffix}`.trim());
+        return p;
+    });
+}
