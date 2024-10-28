@@ -145,7 +145,6 @@ const rurekey = {
   波兰: /WAW/g,
   瑞典: /ARN/g,
   澳大利亚: /SYD/g,
-  G: /\d\s?GB/gi,
   Esnc: /esnc/gi,
 };
 
