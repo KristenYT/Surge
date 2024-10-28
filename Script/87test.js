@@ -149,11 +149,6 @@ const rurekey = {
   Esnc: /esnc/gi,
 };
 
-let GetK = false, AMK = []
-function ObjKA(i) {
-  GetK = true
-  AMK = Object.entries(i)
-}
 
 const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']; 
 
@@ -252,16 +247,6 @@ function operator(pro) {
         }
     });
 
-    // 其他的已有過濾和排序處理
-    pro = pro.filter((e) => e.name !== null);
-    jxh(pro);
-    numone && oneP(pro);
-    blpx && (pro = fampx(pro));
-    key && (pro = pro.filter((e) => !keyb.test(e.name)));
-    return pro;
-}
-
-
     // 自定义
     if (!bktf && BLKEY) {
       let BLKEY_REPLACE = "",
@@ -341,12 +326,13 @@ function operator(pro) {
       }
     }
   });
-  pro = pro.filter((e) => e.name !== null);
-  jxh(pro);
-  numone && oneP(pro);
-  blpx && (pro = fampx(pro));
-  key && (pro = pro.filter((e) => !keyb.test(e.name)));
-  return pro;
+    // 其他的已有過濾和排序處理
+    pro = pro.filter((e) => e.name !== null);
+    jxh(pro);
+    numone && oneP(pro);
+    blpx && (pro = fampx(pro));
+    key && (pro = pro.filter((e) => !keyb.test(e.name)));
+    return pro;
 }
 
 // prettier-ignore
