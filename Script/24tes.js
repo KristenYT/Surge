@@ -350,8 +350,8 @@ function jxh(e) {
 }
 function oneP(e) {
   const t = e.reduce((e, t) => {
-    // 保留 baseName，不包含序號但保留 name= 後綴
-    const baseName = t.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").trim();
+    // 移除名稱後的空白和上標數字，並去除 `name=` 後綴
+    const baseName = t.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(FNAME, "").trim();
     if (!e[baseName]) {
       e[baseName] = [];
     }
@@ -359,13 +359,11 @@ function oneP(e) {
     return e;
   }, {});
 
-  // 針對只有一個節點的情況進行處理
+  // 處理只有一個節點的情況
   for (const key in t) {
     if (t[key].length === 1) {
-      // 去掉唯一節點的序號但保留 name= 後綴
-      t[key][0].name = `${key} ${FNAME}`.trim();
+      t[key][0].name = key; // 如果只有一個節點，則刪除序號和後綴
     }
   }
-
   return e;
 }
