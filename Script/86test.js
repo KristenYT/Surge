@@ -155,74 +155,112 @@ function ObjKA(i) {
   AMK = Object.entries(i)
 }
 
+const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']; 
+
+// 定义函数，将数字转换成上标格式
+function toSuperscript(num) {
+    return String(num).split('').map(digit => superscriptMap[digit] || digit).join('');
+}
+
+// 修改和整合的 operator 函数
 function operator(pro) {
-  const Allmap = {};
-  const outList = getList(outputName);
-  let inputList,
-    retainKey = "";
-  if (inname !== "") {
-    inputList = [getList(inname)];
-  } else {
-    inputList = [ZH, FG, QC, EN];
-  }
-
-  inputList.forEach((arr) => {
-    arr.forEach((value, valueIndex) => {
-      Allmap[value] = outList[valueIndex];
-    });
-  });
-
-  if (clear || nx || blnx || key) {
-    pro = pro.filter((res) => {
-      const resname = res.name;
-      const shouldKeep =
-        !(clear && nameclear.test(resname)) &&
-        !(nx && namenx.test(resname)) &&
-        !(blnx && !nameblnx.test(resname)) &&
-        !(key && !(keya.test(resname) && /2|4|6|7/i.test(resname)));
-      return shouldKeep;
-    });
-  }
-
-  const BLKEYS = BLKEY ? BLKEY.split("+") : "";
-
-  pro.forEach((e) => {
-    let bktf = false, ens = e.name
-    // 预处理 防止预判或遗漏
-    Object.keys(rurekey).forEach((ikey) => {
-      if (rurekey[ikey].test(e.name)) {
-        e.name = e.name.replace(rurekey[ikey], ikey);
-      if (BLKEY) {
-        bktf = true
-        let BLKEY_REPLACE = "",
-        re = false;
-      BLKEYS.forEach((i) => {
-        if (i.includes(">") && ens.includes(i.split(">")[0])) {
-          if (rurekey[ikey].test(i.split(">")[0])) {
-              e.name += " " + i.split(">")[0]
-            }
-          if (i.split(">")[1]) {
-            BLKEY_REPLACE = i.split(">")[1];
-            re = true;
-          }
-        } else {
-          if (ens.includes(i)) {
-             e.name += " " + i
-            }
-        }
-        retainKey = re
-        ? BLKEY_REPLACE
-        : BLKEYS.filter((items) => e.name.includes(items));
-      });}
-      }
-    });
-    if (blockquic == "on") {
-      e["block-quic"] = "on";
-    } else if (blockquic == "off") {
-      e["block-quic"] = "off";
+    const Allmap = {};
+    const outList = getList(outputName);
+    let inputList,
+        retainKey = "";
+    if (inname !== "") {
+        inputList = [getList(inname)];
     } else {
-      delete e["block-quic"];
+        inputList = [ZH, FG, QC, EN];
     }
+
+    inputList.forEach((arr) => {
+        arr.forEach((value, valueIndex) => {
+            Allmap[value] = outList[valueIndex];
+        });
+    });
+
+    if (clear || nx || blnx || key) {
+        pro = pro.filter((res) => {
+            const resname = res.name;
+            const shouldKeep =
+                !(clear && nameclear.test(resname)) &&
+                !(nx && namenx.test(resname)) &&
+                !(blnx && !nameblnx.test(resname)) &&
+                !(key && !(keya.test(resname) && /2|4|6|7/i.test(resname)));
+            return shouldKeep;
+        });
+    }
+
+    const BLKEYS = BLKEY ? BLKEY.split("+") : "";
+
+    // 用于记录每个名称的出现次数
+    const nameCount = {};
+
+    pro.forEach((e) => {
+        let bktf = false, ens = e.name;
+        // 初始化当前名称的计数
+        if (!nameCount[ens]) {
+            nameCount[ens] = 0;
+        }
+        nameCount[ens] += 1;
+
+        // 添加自定義的前後綴邏輯
+        const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 前綴
+        const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 後綴
+        const superscript = nameCount[ens] > 1 ? toSuperscript(nameCount[ens]) : '';
+
+        // 預處理名稱
+        Object.keys(rurekey).forEach((ikey) => {
+            if (rurekey[ikey].test(e.name)) {
+                e.name = e.name.replace(rurekey[ikey], ikey);
+                if (BLKEY) {
+                    bktf = true;
+                    let BLKEY_REPLACE = "",
+                        re = false;
+                    BLKEYS.forEach((i) => {
+                        if (i.includes(">") && ens.includes(i.split(">")[0])) {
+                            if (rurekey[ikey].test(i.split(">")[0])) {
+                                e.name += " " + i.split(">")[0];
+                            }
+                            if (i.split(">")[1]) {
+                                BLKEY_REPLACE = i.split(">")[1];
+                                re = true;
+                            }
+                        } else {
+                            if (ens.includes(i)) {
+                                e.name += " " + i;
+                            }
+                        }
+                        retainKey = re
+                            ? BLKEY_REPLACE
+                            : BLKEYS.filter((items) => e.name.includes(items));
+                    });
+                }
+            }
+        });
+
+        // 生成最終名稱並應用前後綴和上標
+        e.name = `${prefix}${e.name}${superscript}${suffix}`.trim();
+
+        if (blockquic == "on") {
+            e["block-quic"] = "on";
+        } else if (blockquic == "off") {
+            e["block-quic"] = "off";
+        } else {
+            delete e["block-quic"];
+        }
+    });
+
+    // 其他的已有過濾和排序處理
+    pro = pro.filter((e) => e.name !== null);
+    jxh(pro);
+    numone && oneP(pro);
+    blpx && (pro = fampx(pro));
+    key && (pro = pro.filter((e) => !keyb.test(e.name)));
+    return pro;
+}
+
 
     // 自定义
     if (!bktf && BLKEY) {
@@ -319,45 +357,3 @@ function jxh(e) { const n = e.reduce((e, n) => { const t = e.find((e) => e.name 
 function oneP(e) { const t = e.reduce((e, t) => { const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+\d+$/, ""); if (!e[n]) { e[n] = []; } e[n].push(t); return e; }, {}); for (const e in t) { if (t[e].length === 1 && t[e][0].name.endsWith("01")) {/* const n = t[e][0]; n.name = e;*/ t[e][0].name= t[e][0].name.replace(/[^.]01/, "") } } return e; }
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
-
-const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']; 
-
-// 定义函数，将数字转换成上标格式
-function toSuperscript(num) {
-    return String(num).split('').map(digit => superscriptMap[digit] || digit).join('');
-}
-
-// 更新的 operator 函数，支持前缀、后缀和上标处理
-function enhancedOperator(proxies = []) {
-    const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
-    const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
-
-    // 用于记录每个名称的出现次数
-    const nameCount = {};
-
-    return proxies.map((proxy) => {
-        const originalName = proxy.name || ''; // 获取代理名称
-
-        // 初始化当前名称的计数
-        if (!nameCount[originalName]) {
-            nameCount[originalName] = 0;
-        }
-        nameCount[originalName] += 1; // 增加该名称的计数
-
-        // 生成上标序号：第一次出现为¹，重名显示²、³
-        const superscript = nameCount[originalName] > 1 ? toSuperscript(nameCount[originalName]) : '';
-
-        // 拼接前缀、名称、上标和后缀
-        const newName = `${prefix}${originalName}${superscript}${suffix}`.trim();
-        proxy.name = newName;
-
-        return proxy;
-    });
-}
-
-// 使用这个增强的operator来替换原有的修改逻辑
-function operator(proxies) {
-    const processedProxies = enhancedOperator(proxies);
-    // 可以在此处进行更多逻辑或对 `processedProxies` 进行额外处理
-    return processedProxies;
-}
