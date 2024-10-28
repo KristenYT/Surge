@@ -330,7 +330,7 @@ function jxh(e) {
       t.count++;
       t.items.push({
         ...n,
-        name: `${n.name} ${toSuperscript(t.count.toString().padStart(2, "0"))}${FNAME}`
+        name: `${n.name} ${toSuperscript(t.count.toString().padStart(2, "0"))} ${FNAME}`
       });
     } else {
       e.push({
@@ -349,21 +349,28 @@ function jxh(e) {
   return e;
 }
 function oneP(e) {
-  const t = e.reduce((e, t) => {
-    // 移除名稱後的空白和上標數字，並去除 `name=` 後綴
-    const baseName = t.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(FNAME, "").trim();
-    if (!e[baseName]) {
-      e[baseName] = [];
+  const t = e.reduce((acc, item) => {
+    // 移除序號和多餘的後綴，但保留唯一的 name= 後綴
+    const baseName = item.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(new RegExp(`\\s${FNAME}$`), "").trim();
+    if (!acc[baseName]) {
+      acc[baseName] = [];
     }
-    e[baseName].push(t);
-    return e;
+    acc[baseName].push(item);
+    return acc;
   }, {});
 
   // 處理只有一個節點的情況
   for (const key in t) {
     if (t[key].length === 1) {
-      t[key][0].name = key; // 如果只有一個節點，則刪除序號和後綴
+      // 去掉序號並保留 name= 後綴
+      t[key][0].name = `${key} ${FNAME}`.trim();
+    } else {
+      // 確保多個節點時只有一個 name= 後綴
+      t[key].forEach((node, index) => {
+        node.name = `${key} ${toSuperscript(String(index + 1).padStart(2, "0"))} ${FNAME}`.trim();
+      });
     }
   }
-  return e;
+
+  return Object.values(t).flat();
 }
