@@ -293,7 +293,7 @@ function operator(pro) {
       }
 
  keyover = keyover
-        .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys, nNames)
+        .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
         .filter((k) => k !== "");
       e.name = keyover.join(FGF);
     } else {
