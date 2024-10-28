@@ -280,17 +280,19 @@ function operator(pro) {
     } else {
       nNames = FNAME;
     }
-    if (findKey?.[1]) {
-      const findKeyValue = findKey[1];
-      let keyover = [],
+    if (findKey?.[1] && out === "zh") {
+    const findKeyValue = findKey[1];
+    let keyover = [],
         usflag = "";
-      if (addflag) {
+    if (addflag) {
         const index = outList.indexOf(findKeyValue);
         if (index !== -1) {
-          usflag = FG[index];
-          usflag = usflag === "🇹🇼" ? "🇹🇼" : usflag;
+            usflag = FG[index];
+            usflag = usflag === "🇹🇼" ? "🇨🇳" : usflag;
         }
-      }
+    }
+}
+
       keyover = keyover
         .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
         .filter((k) => k !== "");
