@@ -314,17 +314,16 @@ function operator(pro) {
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
 // prettier-ignore
-const superscriptMap = {
-  '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
-  '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
-};
-
 // 將序號轉換為上標數字的函數
 function toSuperscript(numStr) {
+  const superscriptMap = {
+    '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+    '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
+  };
   return numStr.replace(/\d/g, match => superscriptMap[match] || match);
 }
 
-// 更新序號的地方使用 `toSuperscript` 函數
+// 更新序號生成的地方以支持上標
 function jxh(e) {
   const n = e.reduce((e, n) => {
     const t = e.find((e) => e.name === n.name);
@@ -332,7 +331,7 @@ function jxh(e) {
       t.count++;
       t.items.push({
         ...n,
-        name: `${n.name} ${toSuperscript(t.count.toString().padStart(2, "0"))} ${FNAME}`
+        name: `${n.name} ${toSuperscript(t.count.toString().padStart(2, "0"))}${FNAME}`
       });
     } else {
       e.push({
@@ -350,7 +349,23 @@ function jxh(e) {
   e.splice(0, e.length, ...t);
   return e;
 }
-// prettier-ignore
-function oneP(e) { const t = e.reduce((e, t) => { const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+\d+$/, ""); if (!e[n]) { e[n] = []; } e[n].push(t); return e; }, {}); for (const e in t) { if (t[e].length === 1 && t[e][0].name.endsWith("01")) {/* const n = t[e][0]; n.name = e;*/ t[e][0].name= t[e][0].name.replace(/[^.]01/, "") } } return e; }
-// prettier-ignore
-function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
+
+// 修改 oneP 函數，使其在節點只有一個時去掉序號
+function oneP(e) {
+  const t = e.reduce((e, t) => {
+    // 刪除上標數字檢測
+    const baseName = t.name.replace(/[\s⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "");
+    if (!e[baseName]) {
+      e[baseName] = [];
+    }
+    e[baseName].push(t);
+    return e;
+  }, {});
+  // 處理只有一個節點的情況
+  for (const key in t) {
+    if (t[key].length === 1) {
+      t[key][0].name = key;
+    }
+  }
+  return e;
+}
