@@ -313,77 +313,68 @@ function operator(pro) {
 
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
+
 // prettier-ignore
-function toSuperscript(numStr) {
-  const superscriptMap = {
-    '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
-    '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
-  };
-  return numStr.replace(/\d/g, match => superscriptMap[match] || match);
+function toSuperscript(numStr){
+  const superscriptMap={
+'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴',
+'5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'
+};
+return numStr.replace(/\d/g,match=>superscriptMap[match]||match);
 }
 
 // 更新序號生成的地方以支持上標
-function jxh(e) {
-  const n = e.reduce((e, n) => {
-    const t = e.find((e) => e.name === n.name);
-    if (t) {
-      t.count++;
-      t.items.push({
-        ...n,
-        name: `${n.name} ${toSuperscript(t.count.toString().padStart(2, "0"))} ${FNAME}`
-      });
-    } else {
-      e.push({
-        name: n.name,
-        count: 1,
-        items: [{
-          ...n,
-          name: `${n.name} ${toSuperscript("01")} ${FNAME}`
-        }],
-      });
-    }
-    return e;
-  }, []);
-  const t = Array.prototype.flatMap ? n.flatMap(e => e.items) : n.reduce((acc, e) => acc.concat(e.items), []);
-  e.splice(0, e.length, ...t);
-  return e;
+function jxh(e){
+  const n=e.reduce((e,n)=>{
+const t=e.find(e=>e.name===n.name);
+if(t){
+t.count++;
+t.items.push({
+...n,
+name:`${n.name} ${toSuperscript(t.count.toString().padStart(2,"0"))} ${FNAME}`
+});
+}else{
+e.push({
+name:n.name,
+count:1,
+items:[{
+...n,
+name:`${n.name} ${toSuperscript("01")} ${FNAME}`
+}],
+});
 }
-// prettier-ignore
-function oneP(e) {
-  const t = e.reduce((acc, item) => {
-    // 移除序號和多餘的後綴，但保留唯一的 name= 後綴
-    ㄜconst baseName = item.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(new RegExp(`\\s${FNAME}$`), "").trim();
-    if (!acc[baseName]) {
-      acc[baseName] = [];
-    }
-    acc[baseName].push(item);
-    return acc;
-  }, {});
-
-  // 處理只有一個節點的情況
-  for (const key in t) {
-    if (t[key].length === 1) {
-      // 去掉序號並保留 name= 後綴
-      t[key][0].name = `${key} ${FNAME}`.trim();
-    } else {
-      // 確保多個節點時只有一個 name= 後綴
-      t[key].forEach((node, index) => {
-        node.name = `${key} ${toSuperscript(String(index + 1).padStart(2, "0"))} ${FNAME}`.trim();
-      });
-    }
-  }
-
-  return Object.values(t).flat();
+return e;
+},[]);
+const t=Array.prototype.flatMap?n.flatMap(e=>e.items):n.reduce((acc,e)=>acc.concat(e.items),[]);
+e.splice(0,e.length,...t);
+return e;
 }
-const urlParams = new URLSearchParams(window.location.hash.substring(1));
-const oneParam = urlParams.get('one');
-const nameParams = urlParams.getAll('name');
-
-if (oneParam) {
-    // 處理 #one 的邏輯
-}
-
-// 確保其他邏輯不影響 #one
 
 // prettier-ignore
-function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
+function oneP(e){
+const t=e.reduce((acc,item)=>{
+// 移除序號和多餘的後綴，但保留唯一的 name= 後綴
+const baseName=item.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/,"").replace(new RegExp(`\\s${FNAME}$`),"").trim();
+if(!acc[baseName]){
+acc[baseName]=[];
+}
+acc[baseName].push(item);
+return acc;
+},{});
+// 處理只有一個節點的情況
+for(const key in t){
+if(t[key].length===1){
+// 去掉序號並保留 name= 後綴
+t[key][0].name=`${key} ${FNAME}`.trim();
+}else{
+// 確保多個節點時只有一個 name= 後綴
+t[key].forEach((node,index)=>{
+node.name=`${key} ${toSuperscript(String(index+1).padStart(2,"0"))} ${FNAME}`.trim();
+});
+}
+}
+return Object.values(t).flat();
+}
+
+// prettier-ignore
+function fampx(pro){const wis=[];const wnout=[];for(const proxy of pro){const fan=specialRegex.some(regex=>regex.test(proxy.name));if(fan){wis.push(proxy);}else{wnout.push(proxy);}}const sps=wis.map(proxy=>specialRegex.findIndex(regex=>regex.test(proxy.name)));wis.sort((a,b)=>sps[wis.indexOf(a)]-sps[wis.indexOf(b)]||a.name.localeCompare(b.name));wnout.sort((a,b)=>pro.indexOf(a)-pro.indexOf(b));return wnout.concat(wis);}
