@@ -350,8 +350,12 @@ function jxh(e) {
 }
 function oneP(e) {
   const t = e.reduce((acc, item) => {
-    // 移除序號但保留唯一的 `name=` 後綴
-    const baseName = item.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(new RegExp(`\\s${FNAME}$`), "").trim();
+    // 提取基礎名稱，去除序號並保留 `name=` 後綴
+    const baseName = item.name
+      .replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "")  // 去掉序號
+      .replace(new RegExp(`\\s${FNAME}$`), "")  // 去掉重複的 name= 後綴
+      .trim();
+      
     if (!acc[baseName]) {
       acc[baseName] = [];
     }
@@ -359,13 +363,13 @@ function oneP(e) {
     return acc;
   }, {});
 
-  // 處理只有一個節點的情況
+  // 處理唯一節點情況，移除序號
   for (const key in t) {
     if (t[key].length === 1) {
-      // 去掉唯一節點的序號，保留 `name=` 後綴
+      // 唯一節點情況，移除序號並保留 `name=` 後綴
       t[key][0].name = key + (FNAME ? ` ${FNAME}` : "");
     } else {
-      // 多個節點的處理，保留序號
+      // 多節點的情況下，保留序號和 `name=` 後綴
       t[key].forEach((node, index) => {
         node.name = `${key} ${toSuperscript(String(index + 1).padStart(2, "0"))} ${FNAME}`.trim();
       });
@@ -375,7 +379,7 @@ function oneP(e) {
   return Object.values(t).flat();
 }
 
-// fampx 函數，保持原有邏輯
+// fampx 函數保持不變
 function fampx(pro) {
   const wis = [];
   const wnout = [];
@@ -395,7 +399,7 @@ function fampx(pro) {
   return wnout.concat(wis);
 }
 
-// 主調用流程，先使用 oneP 函數進行唯一節點處理，後續交由 fampx 排序
+// 主調用流程
 function main(proxies) {
   const processedProxies = oneP(proxies);
   return fampx(processedProxies);
