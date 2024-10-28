@@ -332,7 +332,7 @@ function jxh(e) {
       t.count++;
       t.items.push({
         ...n,
-        name: `${n.name} ${toSuperscript(t.count.toString().padStart(2, "0"))}${FNAME}`
+        name: `${n.name} ${toSuperscript(t.count.toString().padStart(2, "0"))} ${FNAME}`
       });
     } else {
       e.push({
