@@ -36,13 +36,6 @@
  * [blockquic] blockquic=on 阻止; blockquic=off 不阻止
  */
 
-const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']; 
-
-// 将数字转换为上标的函数
-function toSuperscript(num) {
-    return String(num).split('').map(digit => superscriptMap[digit] || digit).join('');
-}
-
 const inArg = $arguments; // 接受脚本参数
 const nx = inArg.nx || false,
   bl = inArg.bl || false,
@@ -162,12 +155,18 @@ function getList(arg) {
   } 
 }
 
-// 主要的 `operator` 函数
+const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']; 
+
+// 將數字轉換為上標的函數
+function toSuperscript(num) {
+    return String(num).split('').map(digit => superscriptMap[digit] || digit).join('');
+}
+
+// 修改和整合的 operator 函數
 function operator(proxies) {
     const Allmap = {};
     const outList = getList(outputName);
-    let inputList = [],
-        retainKey = "";
+    let inputList = [], retainKey = "";
 
     if (inname !== "") {
         inputList = [getList(inname)];
@@ -181,21 +180,21 @@ function operator(proxies) {
         });
     });
 
-    // 用于记录每个名称的出现次数
+    // 用於記錄每個名稱的出現次數
     const nameCount = {};
 
     proxies.forEach((proxy) => {
         let e = proxy;
-        const originalName = e.name || ''; 
+        const originalName = e.name || '';
 
-        // 初始化当前名称的计数
+        // 初始化當前名稱的計數
         if (!nameCount[originalName]) {
             nameCount[originalName] = 0;
         }
-        nameCount[originalName] += 1; 
 
-        const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; 
-        const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; 
+        nameCount[originalName] += 1;
+        const prefix = inArg.Pname ? decodeURI(inArg.Pname) : '';
+        const suffix = inArg.Sname ? decodeURI(inArg.Sname) : '';
         const superscript = nameCount[originalName] > 1 ? toSuperscript(nameCount[originalName]) : '';
 
         e.name = `${prefix}${originalName}${superscript}${suffix}`.trim();
