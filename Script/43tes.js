@@ -351,30 +351,32 @@ return e;
 }
 
 // prettier-ignore
-function oneP(e){
-const t=e.reduce((acc,item)=>{
-// 移除序號和多餘的後綴，但保留唯一的 name= 後綴
-const baseName=item.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/,"").replace(new RegExp(`\\s${FNAME}$`),"").trim();
-if(!acc[baseName]){
-acc[baseName]=[];
+function oneP(e) {
+    const t = e.reduce((acc, item) => {
+        // 移除序號和多餘的後綴，但保留唯一的 name= 後綴
+        const baseName = item.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(new RegExp(`\\s${FNAME}$`), "").trim();
+        if (!acc[baseName]) {
+            acc[baseName] = [];
+        }
+        acc[baseName].push(item);
+        return acc;
+    }, {});
+
+    // 處理只有一個節點的情況
+    for (const key in t) {
+        if (t[key].length === 1) {
+            // 去掉序號並保留 name= 後綴
+            t[key][0].name = `${key} ${FNAME}`.trim();
+        } else {
+            // 確保多個節點時只有一個 name= 後綴
+            t[key].forEach((node, index) => {
+                node.name = `${key} ${toSuperscript(String(index + 1).padStart(2, "0"))} ${FNAME}`.trim();
+            });
+        }
+    }
+    return Object.values(t).flat();
 }
-acc[baseName].push(item);
-return acc;
-},{});
-// 處理只有一個節點的情況
-for(const key in t){
-if(t[key].length===1){
-// 去掉序號並保留 name= 後綴
-t[key][0].name=`${key} ${FNAME}`.trim();
-}else{
-// 確保多個節點時只有一個 name= 後綴
-t[key].forEach((node,index)=>{
-node.name=`${key} ${toSuperscript(String(index+1).padStart(2,"0"))} ${FNAME}`.trim();
-});
-}
-}
-return Object.values(t).flat();
-}
+
 
 // prettier-ignore
 function fampx(pro){const wis=[];const wnout=[];for(const proxy of pro){const fan=specialRegex.some(regex=>regex.test(proxy.name));if(fan){wis.push(proxy);}else{wnout.push(proxy);}}const sps=wis.map(proxy=>specialRegex.findIndex(regex=>regex.test(proxy.name)));wis.sort((a,b)=>sps[wis.indexOf(a)]-sps[wis.indexOf(b)]||a.name.localeCompare(b.name));wnout.sort((a,b)=>pro.indexOf(a)-pro.indexOf(b));return wnout.concat(wis);}
