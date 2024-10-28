@@ -314,42 +314,10 @@ function operator(pro) {
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
 // prettier-ignore
-function jxh(e) { const n = e.reduce((e, n) => { const t = e.find((e) => e.name === n.name); if (t) { t.count++; t.items.push({ ...n, name: `${n.name}${XHFGF}${t.count.toString().padStart(2, "0")}`, }); } else { e.push({ name: n.name, count: 1, items: [{ ...n, name: `${n.name}${XHFGF}01` }], }); } return e; }, []);const t=(typeof Array.prototype.flatMap==='function'?n.flatMap((e) => e.items):n.reduce((acc, e) => acc.concat(e.items),[])); e.splice(0, e.length, ...t); return e;}
+function jxh(e) { const n = e.reduce((e, n) => { const t = e.find((e) => e.name === n.name); if (t) { t.count++; t.items.push({ ...n, name: `${t.count.toString().padStart(2, "0")}${XHFGF}${n.name}`
+, }); } else { e.push({ name: n.name, count: 1, items: [{ ...n, name: `01${XHFGF}${n.name}`
+ }], }); } return e; }, []);const t=(typeof Array.prototype.flatMap==='function'?n.flatMap((e) => e.items):n.reduce((acc, e) => acc.concat(e.items),[])); e.splice(0, e.length, ...t); return e;}
 // prettier-ignore
 function oneP(e) { const t = e.reduce((e, t) => { const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+\d+$/, ""); if (!e[n]) { e[n] = []; } e[n].push(t); return e; }, {}); for (const e in t) { if (t[e].length === 1 && t[e][0].name.endsWith("01")) {/* const n = t[e][0]; n.name = e;*/ t[e][0].name= t[e][0].name.replace(/[^.]01/, "") } } return e; }
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
-// Superscript map for number conversion
-const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
-
-// Convert a number to superscript format
-function toSuperscript(num) {
-    return String(num).split('').map(digit => superscriptMap[digit]).join('');
-}
-
-// Modify operator function to add prefix, suffix, and superscript for name counts
-async function operator(proxies = []) {
-    const _ = lodash;
-    const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // Suffix from Sname
-    const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // Prefix from Pname
-
-    // Track occurrences of each name
-    const nameCount = {};
-
-    return proxies.map((p = {}) => {
-        const name = _.get(p, 'name') || ''; // Retrieve proxy name
-
-        // Initialize count for current name if not already done
-        if (!nameCount[name]) {
-            nameCount[name] = 0;
-        }
-        nameCount[name] += 1; // Increment name count
-
-        // Generate superscript for count display if count is greater than 1
-        const superscript = nameCount[name] > 1 ? ' ' + toSuperscript(nameCount[name]) : '';
-
-        // Set new name with prefix, original name, optional superscript, and suffix
-        _.set(p, 'name', `${prefix} ${name}${superscript} ${suffix}`.trim());
-        return p;
-    });
-}
