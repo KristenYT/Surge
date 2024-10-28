@@ -351,7 +351,7 @@ function jxh(e) {
 // prettier-ignore
 function oneP(e) {
     const t = e.reduce((e, t) => {
-        const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+\d+$/, "");
+        const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+(\d+|[⁰¹²³⁴⁵⁶⁷⁸⁹]+)$/, "");
         if (!e[n]) {
             e[n] = [];
         }
@@ -359,13 +359,10 @@ function oneP(e) {
         return e;
     }, {});
 
-    // 上標數字對應
-    const superscript01 = '⁰¹';
-
     for (const e in t) {
-        if (t[e].length === 1 && (t[e][0].name.endsWith("01") || t[e][0].name.endsWith(superscript01))) {
-            // 移除末尾的 "01" 或其上標形式
-            t[e][0].name = t[e][0].name.replace(/01$|⁰¹$/, "");
+        if (t[e].length === 1) {
+            // 移除末尾的普通數字 "01" 或上標數字 "⁰¹"
+            t[e][0].name = t[e][0].name.replace(/(\s0?1|\s?[⁰¹])$/, "");
         }
     }
     return e;
