@@ -360,16 +360,10 @@ function oneP(e) {
     }, {});
 
     // 更新以識別上標 "01"
-    const superscriptMap = {
-        '0': '⁰', '1': '¹'
-    };
-
-    const superscript01 = superscriptMap['0'] + superscriptMap['1'];
-
     for (const e in t) {
-        if (t[e].length === 1 && (t[e][0].name.endsWith("01") || t[e][0].name.endsWith(superscript01))) {
+        if (t[e].length === 1 && (t[e][0].name.endsWith("¹") || t[e][0].name.endsWith("01"))) {
             // 移除末尾的 "01" 或其上標形式
-            t[e][0].name = t[e][0].name.replace(/[^.]01|[^.]\u2070\u00B9/, "");
+            t[e][0].name = t[e][0].name.replace(/[^.]01|[^.]¹/, "");
         }
     }
     return e;
