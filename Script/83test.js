@@ -319,3 +319,36 @@ function jxh(e) { const n = e.reduce((e, n) => { const t = e.find((e) => e.name 
 function oneP(e) { const t = e.reduce((e, t) => { const n = t.name.replace(/[^A-Za-z0-9\u00C0-\u017F\u4E00-\u9FFF]+\d+$/, ""); if (!e[n]) { e[n] = []; } e[n].push(t); return e; }, {}); for (const e in t) { if (t[e].length === 1 && t[e][0].name.endsWith("01")) {/* const n = t[e][0]; n.name = e;*/ t[e][0].name= t[e][0].name.replace(/[^.]01/, "") } } return e; }
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
+
+const superscriptMap = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']; 
+
+// 定义函数，将数字转换成上标格式
+function toSuperscript(num) {
+    return String(num).split('').map(digit => superscriptMap[digit] || digit).join('');
+}
+
+// 更新后的 operator 函数，支持前缀、后缀和上标处理
+function operator(proxies = []) {
+    const suffix = inArg.Sname ? decodeURI(inArg.Sname) : ''; // 使用 Sname 作为后缀，如果没有则为空
+    const prefix = inArg.Pname ? decodeURI(inArg.Pname) : ''; // 使用 Pname 作为前缀，如果没有则为空
+
+    // 用于记录每个名称的出现次数
+    const nameCount = {};
+
+    return proxies.map((p = {}) => {
+        const name = p.name || ''; // 获取代理名称
+
+        // 初始化当前名称的计数
+        if (!nameCount[name]) {
+            nameCount[name] = 0;
+        }
+        nameCount[name] += 1; // 增加该名称的计数
+
+        // 生成上标序号：第一次出现为¹，重名显示²、³
+        const superscript = nameCount[name] === 1 ? toSuperscript(1) : toSuperscript(nameCount[name]);
+
+        // 拼接名称、序号和后缀，确保在重名情况下正确显示上标
+        p.name = `${prefix}${name}${nameCount[name] > 1 ? superscript : ''}${suffix}`.trim(); 
+        return p;
+    });
+}
