@@ -280,7 +280,7 @@ function operator(pro) {
     } else {
       nNames = FNAME;
     }
-    if (findKey?.[1]) {
+    if (findKey?.[1] && out === "zh") {
       const findKeyValue = findKey[1];
       let keyover = [],
         usflag = "";
@@ -288,7 +288,7 @@ function operator(pro) {
         const index = outList.indexOf(findKeyValue);
         if (index !== -1) {
           usflag = FG[index];
-          usflag = usflag === "🇹🇼" ? "🇹🇼" : usflag;
+          usflag = usflag === "🇹🇼" ? "🇼🇸" : usflag;
         }
       }
       keyover = keyover
