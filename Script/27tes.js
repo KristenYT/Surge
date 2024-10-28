@@ -350,7 +350,7 @@ function jxh(e) {
 }
 function oneP(e) {
   const t = e.reduce((acc, item) => {
-    // 去除序號但保留 `name=` 後綴
+    // 移除序號但保留唯一的 `name=` 後綴
     const baseName = item.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(new RegExp(`\\s${FNAME}$`), "").trim();
     if (!acc[baseName]) {
       acc[baseName] = [];
@@ -359,13 +359,13 @@ function oneP(e) {
     return acc;
   }, {});
 
-  // 針對只有一個節點的情況
+  // 處理只有一個節點的情況
   for (const key in t) {
     if (t[key].length === 1) {
-      // 去掉唯一節點的序號並保留 `name=` 後綴
+      // 去掉唯一節點的序號，保留 `name=` 後綴
       t[key][0].name = key + (FNAME ? ` ${FNAME}` : "");
     } else {
-      // 多個節點的處理
+      // 多個節點的處理，保留序號
       t[key].forEach((node, index) => {
         node.name = `${key} ${toSuperscript(String(index + 1).padStart(2, "0"))} ${FNAME}`.trim();
       });
@@ -373,4 +373,30 @@ function oneP(e) {
   }
 
   return Object.values(t).flat();
+}
+
+// fampx 函數，保持原有邏輯
+function fampx(pro) {
+  const wis = [];
+  const wnout = [];
+  for (const proxy of pro) {
+    const fan = specialRegex.some((regex) => regex.test(proxy.name));
+    if (fan) {
+      wis.push(proxy);
+    } else {
+      wnout.push(proxy);
+    }
+  }
+  const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)));
+  wis.sort(
+    (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name)
+  );
+  wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b));
+  return wnout.concat(wis);
+}
+
+// 主調用流程，先使用 oneP 函數進行唯一節點處理，後續交由 fampx 排序
+function main(proxies) {
+  const processedProxies = oneP(proxies);
+  return fampx(processedProxies);
 }
