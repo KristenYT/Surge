@@ -314,10 +314,6 @@ function operator(pro) {
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
 // prettier-ignore
-// 將序號轉換為上標數字的函數
-// 將序號轉換為上標數字的函數
-// 將序號轉換為上標數字的函數
-// 將序號轉換為上標數字的函數
 function toSuperscript(numStr) {
   const superscriptMap = {
     '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
@@ -350,5 +346,26 @@ function jxh(e) {
   }, []);
   const t = Array.prototype.flatMap ? n.flatMap(e => e.items) : n.reduce((acc, e) => acc.concat(e.items), []);
   e.splice(0, e.length, ...t);
+  return e;
+}
+function oneP(e) {
+  const t = e.reduce((e, t) => {
+    // 保留 baseName，不包含序號但保留 name= 後綴
+    const baseName = t.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").trim();
+    if (!e[baseName]) {
+      e[baseName] = [];
+    }
+    e[baseName].push(t);
+    return e;
+  }, {});
+
+  // 針對只有一個節點的情況進行處理
+  for (const key in t) {
+    if (t[key].length === 1) {
+      // 去掉唯一節點的序號但保留 name= 後綴
+      t[key][0].name = `${key} ${FNAME}`.trim();
+    }
+  }
+
   return e;
 }
