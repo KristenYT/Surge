@@ -314,7 +314,7 @@ function operator(pro) {
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
 // prettier-ignore
-function jxh(e) { const n = e.reduce((e, n) => { const t = e.find((e) => e.name === n.name); if (t) { t.count++; t.items.push({ ...n, name: `${n.name} ${t.count.toString().padStart(2, "0")} ${FNAME}`
+function jxh(e) { const n = e.reduce((e, n) => { const t = e.find((e) => e.name === n.name); if (t) { t.count++; t.items.push({ ...n, name: `${n.name} ${t.count.toString().padStart(2, "0")}`
 , }); } else { e.push({ name: n.name, count: 1, items: [{ ...n, name: `${n.name} 01 ${FNAME}`
  }], }); } return e; }, []);const t=(typeof Array.prototype.flatMap==='function'?n.flatMap((e) => e.items):n.reduce((acc, e) => acc.concat(e.items),[])); e.splice(0, e.length, ...t); return e;}
 // prettier-ignore
