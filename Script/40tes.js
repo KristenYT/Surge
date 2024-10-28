@@ -360,20 +360,20 @@ function oneP(e, inArg) {
     return acc;
   }, {});
 
+  // 檢查 name 參數是否存在
   const nameParamExists = inArg.name !== undefined && inArg.name.trim() !== "";
 
   // 確保只有一個節點的情況
   for (const key in t) {
     if (t[key].length === 1) {
-      // 唯一節點且沒有 name 參數時去掉序號
+      // 唯一節點
       if (!nameParamExists) {
+        // 放置唯一名稱，去掉序號
         t[key][0].name = key;  // 直接使用 key
-      } else {
-        // 有 name 參數，保留原始名稱
-        t[key][0].name = t[key][0].name; // 或者保持原始未改動
       }
+      // 如果有 name 參數, 保持原始名稱
     } else {
-      // 多個節點時，保留序號
+      // 多個節點，保留序號
       t[key].forEach((node, index) => {
         node.name = `${key} ${toSuperscript(String(index + 1).padStart(2, "0"))} ${FNAME}`.trim();
       });
