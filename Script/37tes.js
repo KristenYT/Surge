@@ -351,7 +351,7 @@ function jxh(e) {
 // prettier-ignore
 function oneP(e) {
   const t = e.reduce((acc, item) => {
-    // 移除序號和多餘的後綴，但保留唯一的 name= 後綴
+    // 將序號去除，並保留唯一的 name= 後綴
     const baseName = item.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(new RegExp(`\\s${FNAME}$`), "").trim();
     if (!acc[baseName]) {
       acc[baseName] = [];
@@ -360,7 +360,7 @@ function oneP(e) {
     return acc;
   }, {});
 
-  // 處理只有一個節點的情況
+  // 確保只有一個節點的情況
   for (const key in t) {
     if (t[key].length === 1) {
       // 去掉序號並保留 name= 後綴
