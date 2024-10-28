@@ -294,7 +294,15 @@ function operator(pro) {
       keyover = keyover
         .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys, nNames)
         .filter((k) => k !== "");
-      e.name = keyover.join(FGF);
+    e.name = keyover.join(FGF);
+    } else {
+      if (nm) {
+        e.name = e.name;
+      } else {
+        e.name = null;
+      }
+    }
+  });
 
   pro = pro.filter((e) => e.name !== null);
   jxh(pro);
