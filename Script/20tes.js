@@ -316,6 +316,7 @@ function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return 
 // prettier-ignore
 // 將序號轉換為上標數字的函數
 // 將序號轉換為上標數字的函數
+// 將序號轉換為上標數字的函數
 function toSuperscript(numStr) {
   const superscriptMap = {
     '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
@@ -351,10 +352,10 @@ function jxh(e) {
   return e;
 }
 
-// 修改 oneP 函數，忽略 &name= 參數
+// 修改 oneP 函數，完全去除 &name= 參數影響
 function oneP(e) {
   const t = e.reduce((e, t) => {
-    // 刪除序號並去除 name 後綴的檢測
+    // 剝離序號和 name 後綴，僅保留基礎名稱進行判斷
     const baseName = t.name.replace(/[\s⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(FNAME, "").trim();
     if (!e[baseName]) {
       e[baseName] = [];
@@ -366,7 +367,7 @@ function oneP(e) {
   // 處理只有一個節點的情況
   for (const key in t) {
     if (t[key].length === 1) {
-      t[key][0].name = key.trim() + FNAME;
+      t[key][0].name = key.trim() + (FNAME ? ` ${FNAME}` : "");
     }
   }
   return e;
