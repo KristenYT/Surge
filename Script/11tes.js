@@ -292,18 +292,18 @@ function operator(pro) {
         }
       }
 
-  keyover = keyover
-    .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys, nNames)
-    .filter((k) => k !== "");
-
-  e.name = keyover.join(FGF); // 合併部分
-
-  if (nm) {
-    e.name = FGF + e.name; // 這裡的 FGF 是用於作為前綴
-  } else {
-    e.name = null; // 當 nm 為 false 時，將 e.name 設為 null
-  }
-
+ keyover = keyover
+        .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys, nNames)
+        .filter((k) => k !== "");
+      e.name = keyover.join(FGF);
+    } else {
+      if (nm) {
+        e.name =  FGF + e.name;
+      } else {
+        e.name = null;
+      }
+    }
+  });
   pro = pro.filter((e) => e.name !== null);
   jxh(pro);
   numone && oneP(pro);
