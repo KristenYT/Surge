@@ -352,7 +352,7 @@ function jxh(e) {
 function oneP(e) {
   const t = e.reduce((acc, item) => {
     // 移除序號和多餘的後綴，但保留唯一的 name= 後綴
-    const baseName = item.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(new RegExp(`\\s${FNAME}$`), "").trim();
+    ㄜconst baseName = item.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(new RegExp(`\\s${FNAME}$`), "").trim();
     if (!acc[baseName]) {
       acc[baseName] = [];
     }
@@ -375,6 +375,15 @@ function oneP(e) {
 
   return Object.values(t).flat();
 }
+const urlParams = new URLSearchParams(window.location.hash.substring(1));
+const oneParam = urlParams.get('one');
+const nameParams = urlParams.getAll('name');
+
+if (oneParam) {
+    // 處理 #one 的邏輯
+}
+
+// 確保其他邏輯不影響 #one
 
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
