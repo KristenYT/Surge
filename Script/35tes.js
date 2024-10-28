@@ -361,8 +361,8 @@ function oneP(e) {
 
     for (const e in t) {
         if (t[e].length === 1) {
-            // 移除末尾的普通數字 "01" 或上標數字 "⁰¹"
-            t[e][0].name = t[e][0].name.replace(/(\s0?1|\s?[⁰¹])$/, "");
+            // 移除末尾的普通數字或上標數字
+            t[e][0].name = t[e][0].name.replace(/(\s\d+|\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+)$/, "");
         }
     }
     return e;
