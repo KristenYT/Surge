@@ -21,11 +21,10 @@
  * [fgf=]   节点名前缀或国旗分隔符，默认为空格；
  * [sn=]    设置国家与序号之间的分隔符，默认为空格；
  * 序号参数
- * [one]    清理只有一个节点的地区的01
  * [flag]   给节点前面加国旗
  *
  *** 後缀参数
- * [name=]  节点添加机场名称後缀；
+ * [name=]  ➟节点添加机场名称後缀；
  * [nf]     把 name= 的後缀值放在最前面便前綴
  *** 保留参数
  * [blkey=iplc+gpt+NF+IPLC] 用+号添加多个关键词 保留节点名的自定义字段 需要区分大小写!
@@ -109,7 +108,7 @@ const rurekey = {
   "Taiwan TW 台湾 🇹🇼": /(台|Tai\s?wan|TPW|TW).*?🇨🇳|🇨🇳.*?(台|Tai\s?wan|TPE|TW)/g,
   "United States": /USA|Los Angeles|San Jose|Silicon Valley|LAX|Michigan/g,
   澳大利亚: /澳洲|墨尔本|悉尼|土澳|(深|沪|呼|京|广|杭)澳/g,
-  德国: /(深|沪|呼|京|广|杭)德(?!.*(I|线))|法兰克福|滬德/g,
+  德国: /(深|沪|呼|京|广|杭)德(?!.*(I|线))|法兰克福|滬德|HAM/g,
   香港: /(深|沪|呼|京|广|杭)港(?!.*(I|线))/g,
   日本: /(深|沪|呼|京|广|杭|中|辽)日(?!.*(I|线))|东京|NRT|大坂/g,
   新加坡: /狮城|SIN|(深|沪|呼|京|广|杭)新/g,
@@ -120,7 +119,7 @@ const rurekey = {
   阿联酋: /迪拜|阿拉伯联合酋长国/g,
   孟加拉国: /孟加拉/g,
   捷克: /捷克共和国/g,
-  台湾: /新台|新北|TPE|KHH|台(?!.*线)/g,
+  台湾: /新台|臺(?!.*线)|新北|TPE|KHH|台(?!.*线)/g,
   Taiwan: /Taipei/g,
   韩国: /春川|韩|ICN|首尔/g,
   Japan: /Tokyo|Osaka/g,
@@ -128,7 +127,7 @@ const rurekey = {
   India: /Mumbai/g,
   Germany: /Frankfurt/g,
   Switzerland: /Zurich/g,
-  俄罗斯: /莫斯科|LED|KLD|SVO/g,
+  俄罗斯: /莫斯科|LED|KLD|SVO|DME/g,
   荷兰: /AMS/g,
   加拿大: /YYZ/g,
   土耳其: /伊斯坦布尔/g,
@@ -159,8 +158,9 @@ const rurekey = {
   時間: /时间/gi,
   國際: /国际/gi,
   解鎖: /解锁/gi,
+  家寬: /家宽/gi,
   "☁️CloudFlare": /CFnat/g,
-  移動: /CMCC/gi,
+  移動CC: /CMCC/gi,
 };
 
 let GetK = false, AMK = []
