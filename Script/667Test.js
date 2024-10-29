@@ -322,29 +322,37 @@ function toSuperscript(numStr) {
 }
 
 function jxh(e) {
-  const n = e.reduce((acc, n) => {
-    const existingNode = acc.find(item => item.name === n.name);
-    if (existingNode) {
-      existingNode.count++;
-      existingNode.items.push({
-        ...n,
-        name: `${n.name} ${toSuperscript(existingNode.count.toString().padStart(2, "0"))} ${FNAME}`
+  const groups = e.reduce((acc, currentItem) => {
+    const existingGroup = acc.find(group => group.name === currentItem.name);
+    if (existingGroup) {
+      existingGroup.count++;
+      existingGroup.items.push({
+        ...currentItem,
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${FNAME}`
       });
     } else {
       acc.push({
-        name: n.name,
+        name: currentItem.name,
         count: 1,
         items: [{
-          ...n,
-          name: `${n.name} ${FNAME}`
+          ...currentItem,
+          name: `${currentItem.name} ${FNAME}`
         }],
       });
     }
     return acc;
   }, []);
+  
+  // 遍历所有的组，并根据组的count重新命名最初的那个节点
+  groups.forEach(group => {
+    if (group.count > 1) {
+      // 更新第一个元素的名称以包含序号“01”
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`;
+    }
+  });
 
-  const t = Array.prototype.flatMap ? n.flatMap(item => item.items) : n.reduce((flat, item) => flat.concat(item.items), []);
-  e.splice(0, e.length, ...t);
+  const result = Array.prototype.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
+  e.splice(0, e.length, ...result);
   return e;
 }
 
