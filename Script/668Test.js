@@ -146,6 +146,15 @@ const rurekey = {
   瑞典: /ARN/g,
   澳大利亚: /SYD/g,
   Esnc: /esnc/gi,
+  距離: /距离/gi,
+  剩餘: /剩余/gi,
+  專線: /专线/gi,
+  流媒體: /流媒体/gi,
+  餘額: /余额/gi,
+  標準: /标准/gi,
+  時間: /时间/gi,
+  CMCC: /CMCC/gi,
+  CT: /CT/gi,
 };
 
 let GetK = false, AMK = []
