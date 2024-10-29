@@ -148,7 +148,8 @@ const rurekey = {
   澳大利亚: /SYD/g,
   Esnc: /esnc/gi,
 };
-text = text.replace(rurekey.G, "$1G"); 
+let text = "100 GB";  // 定義並初始化 text
+text = text.replace(rurekey.G, "$1G");
 /**
  * 用于处理文本并提取匹配的代号和数字
  * @param {string} text - 输入的字符串
