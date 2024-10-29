@@ -145,7 +145,7 @@ const rurekey = {
   波兰: /WAW/g,
   瑞典: /ARN/g,
   澳大利亚: /SYD/g,
-  阿拉伯: /阿布扎比/g,
+  沙特阿拉伯: /阿布扎比/g,
   罗马尼亚: /罗马利亚/g,
   乌克兰: /KBP/g,
   Esnc: /esnc/gi,
