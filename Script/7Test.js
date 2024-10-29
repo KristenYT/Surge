@@ -100,7 +100,7 @@ const keyb =
   /(((1|2|3|4)\d)|(香港|Hong|HK) 0[5-9]|((新加坡|SG|Singapore|日本|Japan|JP|美国|United States|US|韩|土耳其|TR|Turkey|Korea|KR) 0[3-9]))/i;
 const rurekey = {
   GB: /UK/g,
-  G: /(\d+)\s?GB/gi,
+  G: /\d\s?GB/gi,
   "B-G-P": /BGP/g,
   "Russia Moscow": /Moscow|LED/g,
   "Korea Chuncheon": /Chuncheon|ICN|Seoul/g,
@@ -147,19 +147,15 @@ const rurekey = {
   瑞典: /ARN/g,
   澳大利亚: /SYD/g,
   Esnc: /esnc/gi,
-};
-let text = "100 GB";  // 定義並初始化 text
-text = text.replace(rurekey.G, "$1G");
-/**
- * 用于处理文本并提取匹配的代号和数字
- * @param {string} text - 输入的字符串
- * @returns {string} - 返回重命名后的字符串
- */
-function extractAndReplace(text) {
-  return text.replace(rurekey.G, (match, number) => {
-    return number + 'G'; // 返回原始数字和代号G
-  });
-}
+};let nodes = [
+  { name: " GB" },
+];
+
+// 對每個節點的名稱進行替換操作，保留數字部分
+nodes.forEach(node => {
+  node.name = node.name.replace(rurekey.G, "$1G");  // 使用 $1 保留捕獲的數字
+  console.log(node.name);  // 檢查替換結果
+});
 
 let GetK = false, AMK = []
 function ObjKA(i) {
