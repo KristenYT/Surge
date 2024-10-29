@@ -1,6 +1,6 @@
 /**
  * 作者:Keywos
- * 更新日期：2024-10-25 
+ * 更新日期：2024-10-29 
  * 用法：Sub-Store 脚本操作添加
  * rename.js 以下是此脚本支持的参数，必须以 # 为开头多个参数使用"&"连接，参考上述地址为例使用参数。 禁用缓存url#noCache
  *
@@ -87,7 +87,7 @@ const specialRegex = [
   /IPLC|IEPL|Kern|Edge|Pro|Std|Exp|Biz|Fam|Game|Buy|Zx|LB|Game/,
 ];
 const nameclear =
-  /(官方|网址|群|客服|网站|获取|官址|联系|邮箱|工单|学术|USE|USED|EMAIL)/i;
+  /(加入|关注|频道|付费|购买|注册|官网|官方|网址|群|客服|网站|获取|官址|联系|邮箱|工单|学术|EMAIL|GMAIL|COM)/i;
 // prettier-ignore
 const regexArray=[/ˣ²/, /ˣ³/, /ˣ⁴/, /ˣ⁵/, /ˣ⁶/, /ˣ⁷/, /ˣ⁸/, /ˣ⁹/, /ˣ¹⁰/, /ˣ²⁰/, /ˣ³⁰/, /ˣ⁴⁰/, /ˣ⁵⁰/, /IPLC/i, /IEPL/i, /核心/, /边缘/, /高级/, /标准/, /实验/, /商宽/, /家宽/, /游戏|game/i, /购物/, /专线/, /LB/, /cloudflare/i, /\budp\b/i, /\bgpt\b/i,/udpn\b/];
 // prettier-ignore
@@ -99,6 +99,8 @@ const keya =
 const keyb =
   /(((1|2|3|4)\d)|(香港|Hong|HK) 0[5-9]|((新加坡|SG|Singapore|日本|Japan|JP|美国|United States|US|韩|土耳其|TR|Turkey|Korea|KR) 0[3-9]))/i;
 const rurekey = {
+  GB: /UK/g,
+  G: /\d\s?GB/gi,
   "B-G-P": /BGP/g,
   "Russia Moscow": /Moscow|LED/g,
   "Korea Chuncheon": /Chuncheon|ICN|Seoul/g,
@@ -112,7 +114,7 @@ const rurekey = {
   香港: /(深|沪|呼|京|广|杭)港(?!.*(I|线))/g,
   日本: /(深|沪|呼|京|广|杭|中|辽)日(?!.*(I|线))|东京|NRT|大坂/g,
   新加坡: /狮城|SIN|(深|沪|呼|京|广|杭)新/g,
-  美国: /(深|沪|呼|京|广|杭)美|波特兰|芝加哥|哥伦布|纽约|硅谷|俄勒冈|西雅图|LAX|IAD|CMH|DEN|芝加哥/g,
+  美国: /(深|沪|呼|京|广|杭)美|波特兰|芝加哥|哥伦布|纽约|硅谷|俄勒冈|西雅图|LAX|IAD|CMH|DEN|SJC|芝加哥/g,
   波斯尼亚和黑塞哥维那: /波黑共和国/g,
   印尼: /印度尼西亚|雅加达/g,
   印度: /孟买/g,
@@ -127,7 +129,7 @@ const rurekey = {
   India: /Mumbai/g,
   Germany: /Frankfurt/g,
   Switzerland: /Zurich/g,
-  俄罗斯: /莫斯科|LED|KLD/g,
+  俄罗斯: /莫斯科|LED|KLD|SVO/g,
   荷兰: /AMS/g,
   土耳其: /伊斯坦布尔/g,
   泰国: /泰國|曼谷/g,
@@ -346,33 +348,25 @@ function jxh(e) {
   e.splice(0, e.length, ...t);
   return e;
 }
-// prettier-ignore
-function oneP(e) {
-  const t = e.reduce((acc, item) => {
-    // 移除序號和多餘的後綴，但保留唯一的 name= 後綴
-    const baseName = item.name.replace(/\s[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(new RegExp(`\\s${FNAME}$`), "").trim();
-    if (!acc[baseName]) {
-      acc[baseName] = [];
-    }
-    acc[baseName].push(item);
-    return acc;
-  }, {});
 
+// 修改 oneP 函數，使其在節點只有一個時去掉序號
+function oneP(e) {
+  const t = e.reduce((e, t) => {
+    // 刪除上標數字檢測
+    const baseName = t.name.replace(/[\s⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "");
+    if (!e[baseName]) {
+      e[baseName] = [];
+    }
+    e[baseName].push(t);
+    return e;
+  }, {});
   // 處理只有一個節點的情況
   for (const key in t) {
     if (t[key].length === 1) {
-      // 去掉序號並保留 name= 後綴
-      t[key][0].name = `${key} ${FNAME}`.trim();
-    } else {
-      // 確保多個節點時只有一個 name= 後綴
-      t[key].forEach((node, index) => {
-        node.name = `${key} ${toSuperscript(String(index + 1).padStart(2, "0"))} ${FNAME}`.trim();
-      });
+      t[key][0].name = key;
     }
   }
-
-  return Object.values(t).flat();
+  return e;
 }
-
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
