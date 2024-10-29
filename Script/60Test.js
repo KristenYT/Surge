@@ -351,7 +351,6 @@ function jxh(e) {
 // 修改 oneP 函數，使其在節點只有一個時去掉序號
 function oneP(e) {
   const t = e.reduce((e, t) => {
-    // 刪除上標數字檢測
     const baseName = t.name.replace(/[\s⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "");
     if (!e[baseName]) {
       e[baseName] = [];
@@ -359,10 +358,11 @@ function oneP(e) {
     e[baseName].push(t);
     return e;
   }, {});
+
   // 處理只有一個節點的情況
   for (const key in t) {
     if (t[key].length === 1) {
-      t[key][0].name = key;
+      t[key][0].name = key;  // 將名稱設置為基本名稱
     }
   }
   return e;
