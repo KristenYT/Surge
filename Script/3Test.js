@@ -100,7 +100,7 @@ const keyb =
   /(((1|2|3|4)\d)|(香港|Hong|HK) 0[5-9]|((新加坡|SG|Singapore|日本|Japan|JP|美国|United States|US|韩|土耳其|TR|Turkey|Korea|KR) 0[3-9]))/i;
 const rurekey = {
   GB: /UK/g,
-  G: /(\d)\s?GB/gi,
+  G: /(\d+(?:\.\d+)?)\s?GB/gi,
   "B-G-P": /BGP/g,
   "Russia Moscow": /Moscow|LED/g,
   "Korea Chuncheon": /Chuncheon|ICN|Seoul/g,
@@ -149,9 +149,14 @@ const rurekey = {
   Esnc: /esnc/gi,
 };
 
+/**
+ * 用于处理文本并提取匹配的代号和数字
+ * @param {string} text - 输入的字符串
+ * @returns {string} - 返回重命名后的字符串
+ */
 function extractAndReplace(text) {
   return text.replace(rurekey.G, (match, number) => {
-    return `${number} G`; // 保留数字，并添加代号
+    return `${number}G`; // 返回重命名后的格式，保留数字的小数部分
   });
 }
 
