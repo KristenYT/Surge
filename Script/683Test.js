@@ -130,6 +130,7 @@ const rurekey = {
   Switzerland: /Zurich/g,
   俄罗斯: /莫斯科|LED|KLD|SVO/g,
   荷兰: /AMS/g,
+  加拿大: /YYZ/g,
   土耳其: /伊斯坦布尔/g,
   泰国: /泰國|曼谷/g,
   法国: /巴黎|FRA|CDG/g,
@@ -158,7 +159,7 @@ const rurekey = {
   時間: /时间/gi,
   國際: /国际/gi,
   解鎖: /解锁/gi,
-  "CF Worker": /CFnat/g,
+  "☁️CloudFlare": /CFnat/g,
   移動: /CMCC/gi,
 };
 
