@@ -312,8 +312,7 @@ function operator(pro) {
 
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
-// prettier-ignore
-function toSuperscript(numStr) {
+// prettier-ignorefunction toSuperscript(numStr) {
   const superscriptMap = {
     '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
     '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
@@ -321,7 +320,6 @@ function toSuperscript(numStr) {
   return numStr.replace(/\d/g, match => superscriptMap[match] || match);
 }
 
-// 更新序號生成的地方以支持上標
 function jxh(e) {
   const n = e.reduce((e, n) => {
     const t = e.find((e) => e.name === n.name);
@@ -337,35 +335,17 @@ function jxh(e) {
         count: 1,
         items: [{
           ...n,
-          name: `${n.name} ${toSuperscript("01")} ${FNAME}`
+          name: `${n.name} ${FNAME}`
         }],
       });
     }
     return e;
   }, []);
+  
   const t = Array.prototype.flatMap ? n.flatMap(e => e.items) : n.reduce((acc, e) => acc.concat(e.items), []);
   e.splice(0, e.length, ...t);
   return e;
 }
 
-// 修改 oneP 函數，使其在節點只有一個時去掉序號
-function oneP(e) {
-  const t = e.reduce((e, t) => {
-    const baseName = t.name.replace(/[\s⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "");
-    if (!e[baseName]) {
-      e[baseName] = [];
-    }
-    e[baseName].push(t);
-    return e;
-  }, {});
-
-  // 處理只有一個節點的情況
-  for (const key in t) {
-    if (t[key].length === 1) {
-      t[key][0].name = key;  // 將名稱設置為基本名稱
-    }
-  }
-  return e;
-}
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
