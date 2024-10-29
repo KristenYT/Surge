@@ -156,7 +156,7 @@ const rurekey = {
  */
 function extractAndReplace(text) {
   return text.replace(rurekey.G, (match, number) => {
-    return `${number}G`; // 返回重命名后的格式，保留数字的小数部分
+    return number + 'G'; // 返回原始数字和代号G
   });
 }
 
