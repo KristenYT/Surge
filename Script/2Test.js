@@ -100,7 +100,7 @@ const keyb =
   /(((1|2|3|4)\d)|(香港|Hong|HK) 0[5-9]|((新加坡|SG|Singapore|日本|Japan|JP|美国|United States|US|韩|土耳其|TR|Turkey|Korea|KR) 0[3-9]))/i;
 const rurekey = {
   GB: /UK/g,
-  G: /\d\s?GB/gi,
+  G: /(\d)\s?GB/gi,
   "B-G-P": /BGP/g,
   "Russia Moscow": /Moscow|LED/g,
   "Korea Chuncheon": /Chuncheon|ICN|Seoul/g,
@@ -148,6 +148,12 @@ const rurekey = {
   澳大利亚: /SYD/g,
   Esnc: /esnc/gi,
 };
+
+function extractAndReplace(text) {
+  return text.replace(rurekey.G, (match, number) => {
+    return `${number} G`; // 保留数字，并添加代号
+  });
+}
 
 let GetK = false, AMK = []
 function ObjKA(i) {
