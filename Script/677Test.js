@@ -155,6 +155,8 @@ const rurekey = {
   時間: /时间/gi,
   國際: /国际/gi,
   解鎖: /解锁/gi,
+  "CF Worker": /CFnat/gi,
+  移動: /CMCC/gi,
 };
 
 let GetK = false, AMK = []
