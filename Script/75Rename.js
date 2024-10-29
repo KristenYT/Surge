@@ -201,35 +201,38 @@ function operator(pro) {
   const BLKEYS = BLKEY ? BLKEY.split("+") : "";
 
   pro.forEach((e) => {
-    let bktf = false, ens = e.name
-    // 预处理 防止预判或遗漏
+    let bktf = false, ens = e.name;
+    let BLKEY_REPLACE = "", re = false; // 移到外層，以便在內部賦值後保留
+
+    // 預處理 防止預判或遺漏
     Object.keys(rurekey).forEach((ikey) => {
-      if (rurekey[ikey].test(e.name)) {
-        e.name = e.name.replace(rurekey[ikey], ikey);
-      if (BLKEY) {
-        bktf = true
-        let BLKEY_REPLACE = "",
-        re = false;
-      BLKEYS.forEach((i) => {
-        if (i.includes(">") && ens.includes(i.split(">")[0])) {
-          if (rurekey[ikey].test(i.split(">")[0])) {
-              e.name += " " + i.split(">")[0]
-            }
-          if (i.split(">")[1]) {
-            BLKEY_REPLACE = i.split(">")[1];
-            re = true;
-          }
-        } else {
-          if (ens.includes(i)) {
-             e.name += " " + i
+        if (rurekey[ikey].test(e.name)) {
+            e.name = e.name.replace(rurekey[ikey], ikey);
+            bktf = true; // 如果 `rurekey` 有匹配，設置 `bktf` 為 `true`
+
+            if (BLKEY) { // 處理 `blkey` 參數
+                BLKEYS.forEach((i) => {
+                    // 如果包含 ">"，進行替換
+                    if (i.includes(">") && ens.includes(i.split(">")[0])) {
+                        e.name += " " + i.split(">")[0];
+                        if (i.split(">")[1]) {
+                            BLKEY_REPLACE = i.split(">")[1];
+                            re = true;
+                        }
+                    } else {
+                        // 直接包含的情況
+                        if (ens.includes(i)) {
+                            e.name += " " + i;
+                        }
+                    }
+                });
             }
         }
-        retainKey = re
-        ? BLKEY_REPLACE
-        : BLKEYS.filter((items) => e.name.includes(items));
-      });}
-      }
     });
+
+    // 如果 `re` 為 true，表示 `BLKEY_REPLACE` 有賦值，否則使用 `BLKEYS` 中匹配的項
+    retainKey = re ? BLKEY_REPLACE : BLKEYS.filter((item) => e.name.includes(item)).join(" ");
+});
     if (blockquic == "on") {
       e["block-quic"] = "on";
     } else if (blockquic == "off") {
