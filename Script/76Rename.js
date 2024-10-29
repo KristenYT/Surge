@@ -231,8 +231,8 @@ function operator(pro) {
     });
 
     // 如果 `re` 為 true，表示 `BLKEY_REPLACE` 有賦值，否則使用 `BLKEYS` 中匹配的項
-    retainKey = re ? BLKEY_REPLACE : BLKEYS.filter((item) => e.name.includes(item)).join(" ");
-});
+    let retainKey = re ? BLKEY_REPLACE : BLKEYS.filter((item) => e.name.includes(item)).join(" ");
+    });
     if (blockquic == "on") {
       e["block-quic"] = "on";
     } else if (blockquic == "off") {
