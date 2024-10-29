@@ -147,7 +147,9 @@ const rurekey = {
   瑞典: /ARN/g,
   澳大利亚: /SYD/g,
   Esnc: /esnc/gi,
-};let nodes = [
+};
+
+let nodes = [
   { name: " GB" },
 ];
 
