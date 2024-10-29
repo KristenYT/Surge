@@ -232,7 +232,7 @@ function operator(pro) {
 
     // 如果 `re` 為 true，表示 `BLKEY_REPLACE` 有賦值，否則使用 `BLKEYS` 中匹配的項
     let retainKey = re ? BLKEY_REPLACE : BLKEYS.filter((item) => e.name.includes(item)).join(" ");
-    });
+}); // 確保這一行為 forEach 的結束
     if (blockquic == "on") {
       e["block-quic"] = "on";
     } else if (blockquic == "off") {
