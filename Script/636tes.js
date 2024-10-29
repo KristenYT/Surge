@@ -99,7 +99,6 @@ const keya =
 const keyb =
   /(((1|2|3|4)\d)|(香港|Hong|HK) 0[5-9]|((新加坡|SG|Singapore|日本|Japan|JP|美国|United States|US|韩|土耳其|TR|Turkey|Korea|KR) 0[3-9]))/i;
 const rurekey = {
-  GB: /UK/g,
   "B-G-P": /BGP/g,
   "Russia Moscow": /Moscow|LED/g,
   "Korea Chuncheon": /Chuncheon|ICN|Seoul/g,
