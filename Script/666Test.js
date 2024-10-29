@@ -313,6 +313,7 @@ function operator(pro) {
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
 // prettier-ignorefunction toSuperscript(numStr) {
+function toSuperscript(numStr) {
   const superscriptMap = {
     '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
     '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
@@ -321,16 +322,16 @@ function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return 
 }
 
 function jxh(e) {
-  const n = e.reduce((e, n) => {
-    const t = e.find((e) => e.name === n.name);
-    if (t) {
-      t.count++;
-      t.items.push({
+  const n = e.reduce((acc, n) => {
+    const existingNode = acc.find(item => item.name === n.name);
+    if (existingNode) {
+      existingNode.count++;
+      existingNode.items.push({
         ...n,
-        name: `${n.name} ${toSuperscript(t.count.toString().padStart(2, "0"))} ${FNAME}`
+        name: `${n.name} ${toSuperscript(existingNode.count.toString().padStart(2, "0"))} ${FNAME}`
       });
     } else {
-      e.push({
+      acc.push({
         name: n.name,
         count: 1,
         items: [{
@@ -339,10 +340,10 @@ function jxh(e) {
         }],
       });
     }
-    return e;
+    return acc;
   }, []);
-  
-  const t = Array.prototype.flatMap ? n.flatMap(e => e.items) : n.reduce((acc, e) => acc.concat(e.items), []);
+
+  const t = Array.prototype.flatMap ? n.flatMap(item => item.items) : n.reduce((flat, item) => flat.concat(item.items), []);
   e.splice(0, e.length, ...t);
   return e;
 }
