@@ -336,7 +336,7 @@ function toSuperscript(numStr) {
   return numStr.replace(/\d/g, match => superscriptMap[match] || match);
 }
 
-function jxh(e, BLKEY_REPLACE) { {
+function jxh(e, BLKEY_REPLACE) {
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
     if (existingGroup) {
