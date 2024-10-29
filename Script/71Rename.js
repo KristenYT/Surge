@@ -318,7 +318,7 @@ function operator(pro) {
     }
   });
   pro = pro.filter((e) => e.name !== null);
-  jxh(pro);
+  jxh(pro, retainKey);;
   numone && oneP(pro);
   blpx && (pro = fampx(pro));
   key && (pro = pro.filter((e) => !keyb.test(e.name)));
@@ -336,14 +336,14 @@ function toSuperscript(numStr) {
   return numStr.replace(/\d/g, match => superscriptMap[match] || match);
 }
 
-function jxh(e) {
+function jxh(e, BLKEY_REPLACE) { {
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
     if (existingGroup) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${FNAME}`
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${BLKEY_REPLACE} ${FNAME}`
       });
     } else {
       acc.push({
@@ -351,7 +351,7 @@ function jxh(e) {
         count: 1,
         items: [{
           ...currentItem,
-          name: `${currentItem.name} ${FNAME}`
+          name: `${currentItem.name} ${BLKEY_REPLACE} ${FNAME}`
         }],
       });
     }
@@ -362,7 +362,7 @@ function jxh(e) {
   groups.forEach(group => {
     if (group.count > 1) {
       // 更新第一个元素的名称以包含序号“01”
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`;
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${BLKEY_REPLACE} ${FNAME}`;
     }
   });
 
