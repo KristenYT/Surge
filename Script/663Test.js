@@ -155,7 +155,6 @@ const rurekey = {
   時間: /时间/gi,
   國際: /国际/gi,
   解鎖: /解锁/gi
-  "CFnat": /"CFnat"/gi,
   CMCC: /CMCC/gi,
   CT: /CT/gi,
 };
