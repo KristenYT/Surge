@@ -343,7 +343,8 @@ function jxh(e) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${FNAME}`
+      name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${BLKEY} ${FNAME}`
+
       });
     } else {
       acc.push({
