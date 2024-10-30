@@ -328,20 +328,14 @@ function operator(pro) {
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
 // prettier-ignorefunction toSuperscript(numStr) {
-function jxh(e) { 
-  const blkeyKeywords = BLKEY ? BLKEY.split("+") : [];
+function jxh(e, blkey) { // blkey参数传递
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
-
-    // 使用正則表達式來匹配 BLKEY 中的關鍵詞
-    const blkeyMatched = blkeyKeywords.some(keyword => new RegExp(keyword, 'i').test(currentItem.name));
-    const blkeyPart = blkeyMatched ? `${BLKEY} ` : ""; // 只在匹配時添加 BLKEY
-
     if (existingGroup) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${blkeyPart}${FNAME}`.trim()
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${blkey} ${FNAME}`
       });
     } else {
       acc.push({
@@ -349,26 +343,23 @@ function jxh(e) {
         count: 1,
         items: [{
           ...currentItem,
-          name: `${currentItem.name} ${toSuperscript("01")} ${blkeyPart}${FNAME}`.trim()
+          name: `${currentItem.name} ${blkey} ${FNAME}`
         }],
       });
     }
     return acc;
   }, []);
-
-  // 確保每組的首項正確顯示 "01" 序號和 BLKEY
+  
   groups.forEach(group => {
-    const blkeyPart = blkeyKeywords.some(keyword => new RegExp(keyword, 'i').test(group.name)) ? `${BLKEY} ` : "";
     if (group.count > 1) {
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${blkeyPart}${FNAME}`.trim();
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${blkey} ${FNAME}`;
     }
   });
 
-  const result = groups.flatMap(group => group.items);
+  const result = Array.prototype.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
   e.splice(0, e.length, ...result);
   return e;
 }
-
 function toSuperscript(numStr) {
   const superscriptMap = {
     '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
