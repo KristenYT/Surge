@@ -359,7 +359,7 @@ function jxh(e, blkey) {
   // 遍歷所有的組，並根據組的 count 重新命名
   groups.forEach(group => {
     if (group.count > 1) {
-      group.items[0].name = `${group.name} ${toSuperscript("01")}`;
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`;
     }
   });
 
