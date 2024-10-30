@@ -345,7 +345,7 @@ function jxh(e, blkey) {
 
     // 構建名稱格式：只在匹配到關鍵字時插入該關鍵字
     const formattedName = matchedKeyword
-      ? `${currentItem.name} ${toSuperscript(existingGroup ? existingGroup.count.toString().padStart(2, "0")} ${matchedKeyword} ${FNAME}`
+      ? `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${matchedKeyword} ${FNAME}`
       : `${currentItem.name} ${matchedKeyword} ${FNAME}`;
 
     if (existingGroup) {
