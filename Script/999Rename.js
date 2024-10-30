@@ -294,24 +294,16 @@ function operator(pro) {
     } else {
       nNames = FNAME;
     }
-if (findKey?.[1]) {
-  const findKeyValue = findKey[1];
-  let keyover = [],
-    usflag = "";
-  
-  if (addflag) {
-    const index = outList.indexOf(findKeyValue);
-    if (index !== -1) {
-      usflag = FG[index];
-      
-      // 確保 outputName 已經定義
-      if (typeof outputName !== "undefined" && outputName === "zh") {
-        // 檢查 outputName 是否為 "zh"，僅在此情況下執行國旗判斷
-        usflag = usflag === "🇹🇼" ? "🇼🇸" : usflag;
+    if (findKey?.[1]) {
+      const findKeyValue = findKey[1];
+      let keyover = [],
+        usflag = "";
+      if (addflag) {
+        const index = outList.indexOf(findKeyValue);
+        if (index !== -1) {
+          usflag = FG[index];
+        }
       }
-    }
-  }
-}
       keyover = keyover
         .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
         .filter((k) => k !== "");
