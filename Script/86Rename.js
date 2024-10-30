@@ -328,14 +328,14 @@ function operator(pro) {
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
 // prettier-ignorefunction toSuperscript(numStr) {
-function jxh(e) {
+function jxh(e) { 
   const blkeyKeywords = BLKEY ? BLKEY.split("+") : [];
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
+    
+    // 確保在名稱中匹配到 BLKEY 中的任意關鍵詞
     const blkeyMatched = blkeyKeywords.some(keyword => currentItem.name.includes(keyword));
-
-    // 確保 BLKEY 正常添加到名稱中
-    const blkeyPart = blkeyMatched ? `${BLKEY} ` : "";
+    const blkeyPart = blkeyMatched ? `${BLKEY} ` : ""; // 只在匹配到時添加 BLKEY 部分
 
     if (existingGroup) {
       existingGroup.count++;
@@ -356,14 +356,16 @@ function jxh(e) {
     return acc;
   }, []);
 
+  // 確保首項的名稱正確顯示 "01" 序號和匹配 BLKEY
   groups.forEach(group => {
+    const blkeyPart = blkeyKeywords.some(keyword => group.name.includes(keyword)) ? `${BLKEY} ` : "";
     if (group.count > 1) {
-      const blkeyPart = blkeyKeywords.some(keyword => group.name.includes(keyword)) ? `${BLKEY} ` : "";
       group.items[0].name = `${group.name} ${toSuperscript("01")} ${blkeyPart}${FNAME}`.trim();
     }
   });
 
-  const result = Array.prototype.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
+  // 展平結果並替換原陣列內容
+  const result = groups.flatMap(group => group.items);
   e.splice(0, e.length, ...result);
   return e;
 }
