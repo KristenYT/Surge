@@ -332,10 +332,10 @@ function jxh(e) {
   const blkeyKeywords = BLKEY ? BLKEY.split("+") : [];
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
-    
-    // 確保在名稱中匹配到 BLKEY 中的任意關鍵詞
-    const blkeyMatched = blkeyKeywords.some(keyword => currentItem.name.includes(keyword));
-    const blkeyPart = blkeyMatched ? `${BLKEY} ` : ""; // 只在匹配到時添加 BLKEY 部分
+
+    // 使用正則表達式來匹配 BLKEY 中的關鍵詞
+    const blkeyMatched = blkeyKeywords.some(keyword => new RegExp(keyword, 'i').test(currentItem.name));
+    const blkeyPart = blkeyMatched ? `${BLKEY} ` : ""; // 只在匹配時添加 BLKEY
 
     if (existingGroup) {
       existingGroup.count++;
@@ -356,19 +356,19 @@ function jxh(e) {
     return acc;
   }, []);
 
-  // 確保首項的名稱正確顯示 "01" 序號和匹配 BLKEY
+  // 確保每組的首項正確顯示 "01" 序號和 BLKEY
   groups.forEach(group => {
-    const blkeyPart = blkeyKeywords.some(keyword => group.name.includes(keyword)) ? `${BLKEY} ` : "";
+    const blkeyPart = blkeyKeywords.some(keyword => new RegExp(keyword, 'i').test(group.name)) ? `${BLKEY} ` : "";
     if (group.count > 1) {
       group.items[0].name = `${group.name} ${toSuperscript("01")} ${blkeyPart}${FNAME}`.trim();
     }
   });
 
-  // 展平結果並替換原陣列內容
   const result = groups.flatMap(group => group.items);
   e.splice(0, e.length, ...result);
   return e;
 }
+
 
 function toSuperscript(numStr) {
   const superscriptMap = {
