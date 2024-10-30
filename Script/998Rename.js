@@ -294,7 +294,7 @@ function operator(pro) {
     } else {
       nNames = FNAME;
     }
- if (findKey?.[1]) {
+if (findKey?.[1]) {
   const findKeyValue = findKey[1];
   let keyover = [],
     usflag = "";
@@ -304,8 +304,9 @@ function operator(pro) {
     if (index !== -1) {
       usflag = FG[index];
       
-      // 只在 out=zh 時生效
-      if (outputName === "zh") {
+      // 確保 outputName 已經定義
+      if (typeof outputName !== "undefined" && outputName === "zh") {
+        // 檢查 outputName 是否為 "zh"，僅在此情況下執行國旗判斷
         usflag = usflag === "🇹🇼" ? "🇼🇸" : usflag;
       }
     }
