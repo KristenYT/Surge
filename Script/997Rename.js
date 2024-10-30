@@ -294,22 +294,35 @@ function operator(pro) {
     } else {
       nNames = FNAME;
     }
-    if (findKey?.[1]) {
-      const findKeyValue = findKey[1];
-      let keyover = [],
-        usflag = "";
-      if (addflag) {
-        const index = outList.indexOf(findKeyValue);
-        if (index !== -1) {
-          usflag = FG[index];
-          usflag = usflag === "🇹🇼" ? "🇹🇼" : usflag;
-        }
-      }
-      keyover = keyover
-        .concat(firstName, usflag, findKeyValue, ikey, ikeys)
-        .filter((k) => k !== "");
-e.name = `${keyover.join(FGF)} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${retainKey} ${FNAME}`;
+ if (findKey?.[1]) {
+  const findKeyValue = findKey[1];
+  let keyover = [],
+    usflag = "";
+  
+  if (addflag) {
+    const index = outList.indexOf(findKeyValue);
+    if (index !== -1) {
+      usflag = FG[index];
       
+      // 只在 out=zh 時生效
+      if (outputName === "zh") {
+        usflag = usflag === "🇹🇼" ? "🇼🇸" : usflag;
+      }
+    }
+  }
+}
+      keyover = keyover
+        .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
+        .filter((k) => k !== "");
+      e.name = keyover.join(FGF);
+    } else {
+      if (nm) {
+        e.name =  e.name;
+      } else {
+        e.name = null;
+      }
+    }
+  });
   pro = pro.filter((e) => e.name !== null);
   jxh(pro);
   numone && oneP(pro);
