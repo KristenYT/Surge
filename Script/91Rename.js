@@ -328,31 +328,38 @@ function operator(pro) {
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
 // prettier-ignorefunction toSuperscript(numStr) {
-function jxh(e, blkey) { // blkey参数传递
+function jxh(e, blkey) {
+  const keywords = blkey ? blkey.split('+') : []; // 分割blkey關鍵字列表
+
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
+    const matchedKeyword = keywords.find(key => currentItem.name.includes(key)) || ""; // 找到匹配的關鍵字
+
+    // 構建名稱格式：只在匹配到關鍵字時插入該關鍵字
+    const formattedName = matchedKeyword
+      ? `${currentItem.name} ${toSuperscript(existingGroup ? existingGroup.count.toString().padStart(2, "0")} ${matchedKeyword} ${FNAME}`
+      : `${currentItem.name} ${matchedKeyword} ${FNAME}`;
+
     if (existingGroup) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${blkey} ${FNAME}`
+        name: formattedName
       });
     } else {
       acc.push({
         name: currentItem.name,
         count: 1,
-        items: [{
-          ...currentItem,
-          name: `${currentItem.name} ${blkey} ${FNAME}`
-        }],
+        items: [{ ...currentItem, name: formattedName }],
       });
     }
     return acc;
   }, []);
-  
+
+  // 遍歷所有的組，並根據組的 count 重新命名
   groups.forEach(group => {
     if (group.count > 1) {
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${blkey} ${FNAME}`;
+      group.items[0].name = `${group.name} ${toSuperscript("01")}`;
     }
   });
 
@@ -360,6 +367,7 @@ function jxh(e, blkey) { // blkey参数传递
   e.splice(0, e.length, ...result);
   return e;
 }
+
 function toSuperscript(numStr) {
   const superscriptMap = {
     '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
