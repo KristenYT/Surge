@@ -337,19 +337,16 @@ function toSuperscript(numStr) {
 }
 
 function jxh(e) {
-  const blkeyKeywords = BLKEY ? BLKEY.split("+") : []; // 將 BLKEY 參數分割成關鍵詞數組
-
+  const blkeyKeywords = BLKEY ? BLKEY.split("+") : [];
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
-    const blkeyMatched = blkeyKeywords.some(keyword => currentItem.name.includes(keyword)); // 檢查是否包含 BLKEY 中的任意關鍵詞
-    const nameSuffix = `${blkeyMatched ? `${BLKEY} ` : ""}${FNAME}`.trim();
+    const blkeyMatched = blkeyKeywords.some(keyword => currentItem.name.includes(keyword));
 
     if (existingGroup) {
       existingGroup.count++;
-      const countSuffix = toSuperscript(existingGroup.count.toString().padStart(2, "0"));
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${countSuffix} ${nameSuffix}`.trim()
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${blkeyMatched ? `${BLKEY} ` : ""}${FNAME}`.trim()
       });
     } else {
       acc.push({
@@ -357,25 +354,31 @@ function jxh(e) {
         count: 1,
         items: [{
           ...currentItem,
-          name: `${currentItem.name} ${nameSuffix}`.trim()
+          name: `${currentItem.name} ${blkeyMatched ? `${BLKEY} ` : ""} ${FNAME}`.trim()
         }],
       });
     }
     return acc;
   }, []);
-  
-  // 確保對每組的首項使用 "01" 序號並添加後綴
+
   groups.forEach(group => {
     if (group.count > 1) {
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${nameSuffix}`.trim();
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`.trim();
     }
   });
 
-  const result = groups.flatMap(group => group.items);
+  const result = Array.prototype.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
   e.splice(0, e.length, ...result);
   return e;
 }
 
+function toSuperscript(numStr) {
+  const superscriptMap = {
+    '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+    '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
+  };
+  return numStr.replace(/\d/g, match => superscriptMap[match] || match);
+}
 
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
