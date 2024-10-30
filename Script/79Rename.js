@@ -337,14 +337,18 @@ function toSuperscript(numStr) {
 }
 
 function jxh(e) {
+  const blkeyKeywords = BLKEY ? BLKEY.split("+") : []; // 將 BLKEY 參數分割成關鍵詞數組
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
+    const blkeyMatched = blkeyKeywords.some(keyword => currentItem.name.includes(keyword)); // 檢查是否包含 BLKEY 中的任意關鍵詞
+
+    // 生成名稱，只有當匹配到關鍵詞時才將 BLKEY 添加到名稱
+    const nameSuffix = blkeyMatched ? `${BLKEY} ${FNAME}` : `${FNAME}`;
     if (existingGroup) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-      name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${BLKEY} ${FNAME}`
-
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${nameSuffix}`
       });
     } else {
       acc.push({
@@ -352,7 +356,7 @@ function jxh(e) {
         count: 1,
         items: [{
           ...currentItem,
-          name: `${currentItem.name} ${FNAME}`
+          name: `${currentItem.name} ${nameSuffix}`
         }],
       });
     }
@@ -362,8 +366,7 @@ function jxh(e) {
   // 遍历所有的组，并根据组的count重新命名最初的那个节点
   groups.forEach(group => {
     if (group.count > 1) {
-      // 更新第一个元素的名称以包含序号“01”
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`;
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${nameSuffix}`;
     }
   });
 
@@ -371,6 +374,7 @@ function jxh(e) {
   e.splice(0, e.length, ...result);
   return e;
 }
+
 
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
