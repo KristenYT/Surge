@@ -327,7 +327,15 @@ function operator(pro) {
 
 // prettier-ignore
 function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
-// prettier-ignorefunction toSuperscript(numStr) {
+// prettier-ignorefunction 
+function toSuperscript(numStr) {
+  const superscriptMap = {
+    '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+    '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
+  };
+  return numStr.replace(/\d/g, match => superscriptMap[match] || match);
+}
+
 function jxh(e, blkey) {
   const keywords = blkey ? blkey.split('+') : []; // 分割blkey關鍵字列表
 
@@ -368,12 +376,5 @@ function jxh(e, blkey) {
   return e;
 }
 
-function toSuperscript(numStr) {
-  const superscriptMap = {
-    '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
-    '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
-  };
-  return numStr.replace(/\d/g, match => superscriptMap[match] || match);
-}
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
