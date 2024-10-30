@@ -336,40 +336,49 @@ function toSuperscript(numStr) {
   return numStr.replace(/\d/g, match => superscriptMap[match] || match);
 }
 
-function jxh(e) {
-    const groups = e.reduce((acc, currentItem) => {
-        const existingGroup = acc.find(group => group.name === currentItem.name);
-        if (existingGroup) {
-            existingGroup.count++;
-            existingGroup.items.push({
-                ...currentItem,
-                // 將 BLKEY 插入到序號後面，FNAME 前面
-                name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${BLKEY} ${FNAME}`
-            });
-        } else {
-            acc.push({
-                name: currentItem.name,
-                count: 1,
-                items: [{
-                    ...currentItem,
-                    // 初次生成名稱時也插入 BLKEY
-                    name: `${currentItem.name} ${BLKEY} ${FNAME}`
-                }],
-            });
-        }
-        return acc;
-    }, []);
-    
-    // 更新第一個元素的名稱以包含序號“01”
-    groups.forEach(group => {
-        if (group.count > 1) {
-            group.items[0].name = `${group.name} ${toSuperscript("01")} ${BLKEY} ${FNAME}`;
-        }
-    });
+function jxh(e, blkey) {
+  const keywords = blkey ? blkey.split('+') : []; // 分割 blkey 關鍵字列表
 
-    const result = Array.prototype.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
-    e.splice(0, e.length, ...result);
-    return e;
+  const groups = e.reduce((acc, currentItem) => {
+    const existingGroup = acc.find(group => group.name === currentItem.name);
+    const count = existingGroup ? existingGroup.count + 1 : 1;
+    const superscriptCount = toSuperscript(count.toString().padStart(2, "0"));
+
+    // 找到名称中匹配的第一个关键字
+    const matchedKeyword = keywords.find(key => currentItem.name.includes(key)) || "";
+
+    // 构建格式化名称：仅在匹配到关键字时添加，其他情况下保持格式
+    const formattedName = matchedKeyword
+      ? `${currentItem.name.replace(matchedKeyword, "").trim()} ${superscriptCount} ${matchedKeyword} ${FNAME}`.trim()
+      : `${currentItem.name} ${matchedKeyword} ${FNAME}`.trim();
+
+    if (existingGroup) {
+      existingGroup.count++;
+      existingGroup.items.push({
+        ...currentItem,
+        name: formattedName
+      });
+    } else {
+      acc.push({
+        name: currentItem.name,
+        count: 1,
+        items: [{ ...currentItem, name: formattedName }],
+      });
+    }
+    return acc;
+  }, []);
+
+  // 遍历所有组，并重新命名组的第一个项目
+  groups.forEach(group => {
+    if (group.count > 1) {
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`.trim();
+    }
+  });
+
+  const result = Array.prototype.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
+  e.splice(0, e.length, ...result);
+  return e;
 }
+
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
