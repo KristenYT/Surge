@@ -342,13 +342,15 @@ function jxh(e) {
     const existingGroup = acc.find(group => group.name === currentItem.name);
     const blkeyMatched = blkeyKeywords.some(keyword => currentItem.name.includes(keyword)); // 檢查是否包含 BLKEY 中的任意關鍵詞
 
-    // 生成名稱，只有當匹配到關鍵詞時才將 BLKEY 添加到名稱
-    const nameSuffix = blkeyMatched ? `${BLKEY} ${FNAME}` : `${FNAME}`;
+    // 構建名稱後綴，包含序號和後綴
+    const baseSuffix = `${toSuperscript(existingGroup ? existingGroup.count.toString().padStart(2, "0") : "01")}`;
+    const nameSuffix = `${blkeyMatched ? `${BLKEY} ` : ""}${FNAME}`;
+
     if (existingGroup) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${nameSuffix}`
+        name: `${currentItem.name} ${baseSuffix} ${nameSuffix}`.trim()
       });
     } else {
       acc.push({
@@ -356,17 +358,17 @@ function jxh(e) {
         count: 1,
         items: [{
           ...currentItem,
-          name: `${currentItem.name} ${nameSuffix}`
+          name: `${currentItem.name} ${baseSuffix} ${nameSuffix}`.trim()
         }],
       });
     }
     return acc;
   }, []);
   
-  // 遍历所有的组，并根据组的count重新命名最初的那个节点
+  // 遍歷所有的組，為第一個項目添加“01”序號
   groups.forEach(group => {
     if (group.count > 1) {
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${nameSuffix}`;
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${nameSuffix}`.trim();
     }
   });
 
@@ -374,7 +376,5 @@ function jxh(e) {
   e.splice(0, e.length, ...result);
   return e;
 }
-
-
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
