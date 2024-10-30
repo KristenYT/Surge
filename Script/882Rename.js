@@ -304,6 +304,11 @@ function operator(pro) {
           usflag = FG[index];
         }
       }
+
+      if (outputName === "zh") {
+        usflag = usflag === "🇹🇼" ? "🇼🇸" : usflag;
+      }
+      
       keyover = keyover
         .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
         .filter((k) => k !== "");
