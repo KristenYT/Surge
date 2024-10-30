@@ -341,14 +341,15 @@ function jxh(e) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${blkeyPart}${FNAME}`
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${blkeyPart}${FNAME}`.trim()
+      });
     } else {
       acc.push({
         name: currentItem.name,
         count: 1,
         items: [{
           ...currentItem,
-          name: `${currentItem.name} ${blkeyPart}${FNAME}`
+          name: `${currentItem.name} ${toSuperscript("01")} ${blkeyPart}${FNAME}`.trim()
         }],
       });
     }
@@ -359,7 +360,7 @@ function jxh(e) {
   groups.forEach(group => {
     const blkeyPart = blkeyKeywords.some(keyword => new RegExp(keyword, 'i').test(group.name)) ? `${BLKEY} ` : "";
     if (group.count > 1) {
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${blkeyPart}${FNAME}`;
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${blkeyPart}${FNAME}`.trim();
     }
   });
 
@@ -367,7 +368,6 @@ function jxh(e) {
   e.splice(0, e.length, ...result);
   return e;
 }
-
 
 function toSuperscript(numStr) {
   const superscriptMap = {
