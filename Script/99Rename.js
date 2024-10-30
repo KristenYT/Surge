@@ -344,13 +344,11 @@ function jxh(e, blkey) {
     const count = existingGroup ? existingGroup.count + 1 : 1;
     const superscriptCount = toSuperscript(count.toString().padStart(2, "0"));
 
-    // 检查名称中是否包含任何关键字
+    // 查找匹配的关键字，如果没有匹配则为空字符串
     const matchedKeyword = keywords.find(key => currentItem.name.includes(key)) || "";
 
-    // 构建格式化名称
-    const formattedName = matchedKeyword
-      ? `${currentItem.name} ${superscriptCount} ${matchedKeyword} ${FNAME}`
-      : `${currentItem.name} ${matchedKeyword} ${FNAME}`;
+    // 构建格式化名称，将序号、匹配关键字和 FNAME 始终正确添加
+    const formattedName = `${currentItem.name} ${superscriptCount} ${matchedKeyword} ${FNAME}`.trim();
 
     if (existingGroup) {
       existingGroup.count++;
@@ -379,7 +377,6 @@ function jxh(e, blkey) {
   e.splice(0, e.length, ...result);
   return e;
 }
-
 
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
