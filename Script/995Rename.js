@@ -337,17 +337,23 @@ function toSuperscript(numStr) {
 }
 
 function jxh(e, blkey) {
-  const keywords = blkey ? blkey.split('+') : []; // 分割 blkey 關鍵字列表
+  const keywords = blkey ? blkey.split('+') : []; // 分割 blkey 关键字列表
 
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
     const count = existingGroup ? existingGroup.count + 1 : 1;
     const superscriptCount = toSuperscript(count.toString().padStart(2, "0"));
 
-    // 找到名称中匹配的第一个关键字
-    const matchedKeyword = keywords.find(key => currentItem.name.includes(key)) || "";
+    // 检查名称中是否包含任一 blkey 关键字
+    let matchedKeyword = "";
+    for (let key of keywords) {
+      if (currentItem.name.includes(key)) {
+        matchedKeyword = key;
+        break;
+      }
+    }
 
-    // 构建格式化名称：仅在匹配到关键字时添加，其他情况下保持格式
+    // 如果找到关键字，将其放置在序号后面
     const formattedName = matchedKeyword
       ? `${currentItem.name.replace(matchedKeyword, "").trim()} ${superscriptCount} ${matchedKeyword} ${FNAME}`.trim()
       : `${currentItem.name} ${matchedKeyword} ${FNAME}`.trim();
@@ -371,7 +377,7 @@ function jxh(e, blkey) {
   // 遍历所有组，并重新命名组的第一个项目
   groups.forEach(group => {
     if (group.count > 1) {
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`.trim();
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`;
     }
   });
 
