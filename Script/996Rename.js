@@ -308,15 +308,8 @@ function operator(pro) {
       keyover = keyover
         .concat(firstName, usflag, findKeyValue, ikey, ikeys)
         .filter((k) => k !== "");
-      e.name = keyover.join(FGF);
-    } else {
-      if (nm) {
-        e.name =  e.name;
-      } else {
-        e.name = null;
-      }
-    }
-  });
+e.name = `${keyover.join(FGF)} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${retainKey} ${FNAME}`;
+      
   pro = pro.filter((e) => e.name !== null);
   jxh(pro);
   numone && oneP(pro);
@@ -336,47 +329,32 @@ function toSuperscript(numStr) {
   return numStr.replace(/\d/g, match => superscriptMap[match] || match);
 }
 
-function jxh(e, blkey) {
-  const keywords = blkey ? blkey.split('+') : []; // 分割 blkey 关键字列表
-
+function jxh(e) {
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
-    const count = existingGroup ? existingGroup.count + 1 : 1;
-    const superscriptCount = toSuperscript(count.toString().padStart(2, "0"));
-
-    // 检查名称中是否包含任一 blkey 关键字
-    let matchedKeyword = "";
-    for (let key of keywords) {
-      if (currentItem.name.includes(key)) {
-        matchedKeyword = key;
-        break;
-      }
-    }
-
-    // 如果找到关键字，将其放置在序号后面
-    const formattedName = matchedKeyword
-      ? `${currentItem.name.replace(matchedKeyword, "").trim()} ${superscriptCount} ${matchedKeyword} ${FNAME}`.trim()
-      : `${currentItem.name} ${matchedKeyword} ${FNAME}`.trim();
-
     if (existingGroup) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: formattedName
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${FNAME}`
       });
     } else {
       acc.push({
         name: currentItem.name,
         count: 1,
-        items: [{ ...currentItem, name: formattedName }],
+        items: [{
+          ...currentItem,
+          name: `${currentItem.name} ${FNAME}`
+        }],
       });
     }
     return acc;
   }, []);
-
-  // 遍历所有组，并重新命名组的第一个项目
+  
+  // 遍历所有的组，并根据组的count重新命名最初的那个节点
   groups.forEach(group => {
     if (group.count > 1) {
+      // 更新第一个元素的名称以包含序号“01”
       group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`;
     }
   });
