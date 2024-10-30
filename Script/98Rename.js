@@ -341,11 +341,15 @@ function jxh(e, blkey) {
 
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
-    const matchedKeyword = keywords.find(key => currentItem.name.includes(key)) || ""; // 找到匹配的關鍵字
+    const count = existingGroup ? existingGroup.count + 1 : 1;
+    const superscriptCount = toSuperscript(count.toString().padStart(2, "0"));
 
-    // 構建名稱格式：只在匹配到關鍵字時插入該關鍵字
+    // 检查名称中是否包含任何关键字
+    const matchedKeyword = keywords.find(key => currentItem.name.includes(key)) || "";
+
+    // 构建格式化名称
     const formattedName = matchedKeyword
-      ? `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${matchedKeyword} ${FNAME}`
+      ? `${currentItem.name} ${superscriptCount} ${matchedKeyword} ${FNAME}`
       : `${currentItem.name} ${matchedKeyword} ${FNAME}`;
 
     if (existingGroup) {
@@ -364,7 +368,7 @@ function jxh(e, blkey) {
     return acc;
   }, []);
 
-  // 遍歷所有的組，並根據組的 count 重新命名
+  // 遍历所有组，并重新命名组的第一个项目
   groups.forEach(group => {
     if (group.count > 1) {
       group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`;
@@ -375,6 +379,7 @@ function jxh(e, blkey) {
   e.splice(0, e.length, ...result);
   return e;
 }
+
 
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
