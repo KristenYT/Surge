@@ -55,7 +55,7 @@ const nx = inArg.nx || false,
   nm = inArg.nm || false;
 
 const FGF = inArg.fgf == undefined ? " " : decodeURI(inArg.fgf),
-  XHFGF = inArg.sn == undefined ? "-" : decodeURI(inArg.sn),
+  XHFGF = inArg.sn == undefined ? " " : decodeURI(inArg.sn),
   FNAME = inArg.name == undefined ? "" : decodeURI(inArg.name),
   BLKEY = inArg.blkey == undefined ? "" : decodeURI(inArg.blkey),
   blockquic = inArg.blockquic == undefined ? "" : decodeURI(inArg.blockquic),
@@ -208,7 +208,7 @@ function operator(pro) {
         e.name = e.name.replace(rurekey[ikey], ikey);
       if (BLKEY) {
         bktf = true
-        let BLKEY_REPLACE = "-",
+        let BLKEY_REPLACE = "",
         re = false;
       BLKEYS.forEach((i) => {
         if (i.includes(">") && ens.includes(i.split(">")[0])) {
@@ -308,21 +308,25 @@ function operator(pro) {
         usflag = "🇼🇸";
       }
 
-  keyover = keyover
-  .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
-  .filter((k) => k !== "");
+data.forEach((e) => {
+  if (e && e.keyover) {
+    let keyover = e.keyover;
+    // 在 retainKey 前添加 XHFGF
+    retainKey = `XHFGF${retainKey}`;
+    
+    keyover = keyover
+      .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
+      .filter((k) => k !== "");
+    e.name = keyover.join(FGF);
+  } else {
+    if (nm) {
+      e.name = e.name;
+    } else {
+      e.name = null;
+    }
+  }
+});
 
-if (keyover.length > 0) {
-  e.name = keyover;
-} else if (nm) {
-  e.name = e.name || null;
-} else if (BLKEY) {
-  e.name = XHFGF + (e.name || "");
-} else if (addflag) {
-  e.name = FGF + (e.name || "");
-} else {
-  e.name = null;
-}
   pro = pro.filter((e) => e.name !== null);
   jxh(pro);
   numone && oneP(pro);
