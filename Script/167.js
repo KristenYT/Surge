@@ -304,12 +304,12 @@ function operator(pro) {
           usflag = FG[index];
         }
       }
-      if (inArg.key === '台湾' && usflag === "🇹🇼") {
+      if (findKeyValue === '台湾' && usflag === "🇹🇼") {
         usflag = "🇼🇸";
       }
 
   keyover = keyover
-        .concat(firstName, retainKey, usflag, findKeyValue, ikey, ikeys)
+        .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
         .filter((k) => k !== "");
       e.name = keyover.join(FGF);
     } else {
