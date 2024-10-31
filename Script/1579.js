@@ -198,7 +198,7 @@ function operator(pro) {
     });
   }
 
-  const BLKEYS = BLKEY ? BLKEY.split("+") : "";
+const BLKEYS = BLKEY ? BLKEY.split("+") : "";
 
 pro.forEach((e) => {
   let bktf = false, ens = e.name;
@@ -215,7 +215,7 @@ pro.forEach((e) => {
         BLKEYS.forEach((i) => {
           if (i.includes(">") && ens.includes(i.split(">")[0])) {
             if (rurekey[ikey].test(i.split(">")[0])) {
-              e.name += " " + i.split(">")[0];
+              e.name += "-" + i.split(">")[0]; // 在匹配到BLKEY时添加"-"
             }
             if (i.split(">")[1]) {
               BLKEY_REPLACE = i.split(">")[1];
@@ -223,14 +223,14 @@ pro.forEach((e) => {
             }
           } else {
             if (ens.includes(i)) {
-              e.name += " " + i;
+              e.name += "-" + i; // 在匹配到BLKEY时添加"-"
             }
           }
         });
 
         retainKey = re
-          ? "-" + BLKEY_REPLACE
-          : "-" + BLKEYS.filter((items) => e.name.includes(items));
+          ? BLKEY_REPLACE
+          : BLKEYS.filter((items) => e.name.includes(items));
       }
     }
   });
@@ -258,8 +258,8 @@ pro.forEach((e) => {
     });
 
     retainKey = re
-      ? "-" + BLKEY_REPLACE
-      : "-" + BLKEYS.filter((items) => e.name.includes(items));
+      ? BLKEY_REPLACE
+      : BLKEYS.filter((items) => e.name.includes(items));
   }
 
   let ikey = "",
@@ -331,7 +331,6 @@ pro.forEach((e) => {
     }
   }
 });
-
 
   pro = pro.filter((e) => e.name !== null);
   jxh(pro);
