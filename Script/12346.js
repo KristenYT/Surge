@@ -225,8 +225,8 @@ function operator(pro) {
             }
         }
         retainKey = re
-        ? BLKEY_REPLACE
-        : BLKEYS.filter((items) => e.name.includes(items));
+        ? "-" + BLKEY_REPLACE
+        : "-" + BLKEYS.filter((items) => e.name.includes(items));
       });}
       }
     });
