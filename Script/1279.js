@@ -318,11 +318,11 @@ pro.forEach((e) => {
       usflag = "🇼🇸";
     }
 
-    keyover = keyover
-      .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
-      .filter((k) => k !== "");
+ keyover = keyover
+  .concat(firstName, usflag ? usflag + " " : "", findKeyValue, retainKey, ikey, ikeys)
+  .filter((k) => k !== "");
 
-    e.name = keyover.join(FGF);
+e.name = keyover.join("");
   } else {
     if (nm) {
       e.name = e.name;
