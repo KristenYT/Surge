@@ -209,28 +209,24 @@ pro.forEach((e) => {
       e.name = e.name.replace(rurekey[ikey], ikey);
       if (BLKEY) {
         bktf = true;
-        let BLKEY_REPLACE = "",
-          re = false;
 
         BLKEYS.forEach((i) => {
-          if (i.includes(">") && ens.includes(i.split(">")[0])) {
-            if (rurekey[ikey].test(i.split(">")[0])) {
-              e.name += " " + i.split(">")[0];
-            }
-            if (i.split(">")[1]) {
-              BLKEY_REPLACE = i.split(">")[1];
-              re = true;
+          if (i.includes(">")) {
+            const [keyPart, replacePart] = i.split(">");
+            if (ens.includes(keyPart)) {
+              if (rurekey[ikey].test(keyPart)) {
+                e.name += ` -${keyPart}`; // 匹配到BLKEY时添加"-"
+              }
+              if (replacePart) {
+                e.name += ` -${replacePart}`; // 匹配到BLKEY的替换部分时也添加"-"
+              }
             }
           } else {
             if (ens.includes(i)) {
-              e.name += " " + i;
+              e.name += ` -${i}`; // 匹配到BLKEY时添加"-"
             }
           }
         });
-
-        retainKey = re
-          ? "-" + BLKEY_REPLACE
-          : BLKEYS.filter((items) => e.name.includes(items));
       }
     }
   });
@@ -245,21 +241,18 @@ pro.forEach((e) => {
 
   // 自定义
   if (!bktf && BLKEY) {
-    let BLKEY_REPLACE = "",
-      re = false;
-
     BLKEYS.forEach((i) => {
-      if (i.includes(">") && e.name.includes(i.split(">")[0])) {
-        if (i.split(">")[1]) {
-          BLKEY_REPLACE = i.split(">")[1];
-          re = true;
+      if (i.includes(">")) {
+        const [keyPart, replacePart] = i.split(">");
+        if (e.name.includes(keyPart)) {
+          e.name += ` -${replacePart}`; // 匹配到BLKEY的替换部分时添加"-"
+        }
+      } else {
+        if (e.name.includes(i)) {
+          e.name += ` -${i}`; // 匹配到BLKEY时添加"-"
         }
       }
     });
-
-    retainKey = re
-      ? "-" + BLKEY_REPLACE
-      : BLKEYS.filter((items) => e.name.includes(items));
   }
 
   let ikey = "",
@@ -331,6 +324,7 @@ pro.forEach((e) => {
     }
   }
 });
+
 
   pro = pro.filter((e) => e.name !== null);
   jxh(pro);
