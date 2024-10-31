@@ -309,33 +309,20 @@ function operator(pro) {
       }
 
   keyover = keyover
-        .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
-        .filter((k) => k !== "");
-      e.name = keyover;
-    } else {
-      if (nm) {
-        e.name = e.name;
-      } else {
-        e.name = null;
-       } else {
-      if (BLKEY) {
-        e.name = XHFGF + e.name;
-      } else {
-        e.name = null;
-     } else {
-      if (addflag) {
-        e.name = FGF + e.name;
-      } else {
-        e.name = null;
-                 }
-               }
-             }
-           }
-         }
-        }
-      }
-    }
-  });
+  .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
+  .filter((k) => k !== "");
+
+if (keyover.length > 0) {
+  e.name = keyover;
+} else if (nm) {
+  e.name = e.name || null;
+} else if (BLKEY) {
+  e.name = XHFGF + (e.name || "");
+} else if (addflag) {
+  e.name = FGF + (e.name || "");
+} else {
+  e.name = null;
+}
   pro = pro.filter((e) => e.name !== null);
   jxh(pro);
   numone && oneP(pro);
