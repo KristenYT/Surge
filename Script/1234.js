@@ -251,8 +251,8 @@ function operator(pro) {
         }
       });
       retainKey = re
-        ? BLKEY_REPLACE
-        : BLKEYS.filter((items) => e.name.includes(items));
+        ? "-" + BLKEY_REPLACE
+        : "-" + BLKEYS.filter((items) => e.name.includes(items));
     }
 
     let ikey = "",
@@ -342,12 +342,11 @@ function toSuperscript(numStr) {
 function jxh(e) {
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
-    let keyPart = retainKey ? `${retainKey}` : "";
     if (existingGroup) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${keyPart} ${FNAME}`
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${FNAME}`
       });
     } else {
       acc.push({
@@ -355,7 +354,7 @@ function jxh(e) {
         count: 1,
         items: [{
           ...currentItem,
-          name: `${currentItem.name} ${keyPart} ${FNAME}`
+          name: `${currentItem.name} ${FNAME}`
         }],
       });
     }
