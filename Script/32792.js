@@ -230,7 +230,7 @@ pro.forEach((e) => {
 
         retainKey = re
           ? BLKEY_REPLACE
-          : "-" + BLKEYS.filter((items) => e.name.includes(items));
+          : BLKEYS.filter((items) => e.name.includes(items));
       }
     }
   });
@@ -258,8 +258,8 @@ pro.forEach((e) => {
     });
 
     retainKey = re
-      ? BLKEY_REPLACE
-      : BLKEYS.filter((items) => e.name.includes(items));
+      ? "-" + BLKEY_REPLACE
+      : "-" + BLKEYS.filter((items) => e.name.includes(items));
   }
 
   let ikey = "",
