@@ -377,9 +377,6 @@ function jxh(e) {
     }
   });
 
-  return groups.flatMap(group => group.items);
-}
-
   const result = Array.prototype.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
   e.splice(0, e.length, ...result);
   return e;
