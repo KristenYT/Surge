@@ -309,7 +309,7 @@ function operator(pro) {
       }
 
   keyover = keyover
-        .concat(firstName, usflag, findKeyValue, ikey, ikeys)
+        .concat(firstName, retainKey, usflag, findKeyValue, ikey, ikeys)
         .filter((k) => k !== "");
       e.name = keyover.join(FGF);
     } else {
@@ -341,54 +341,38 @@ function toSuperscript(numStr) {
 
 function jxh(e) {
   const groups = e.reduce((acc, currentItem) => {
-    // 查找是否已有同名分组
-    let existingGroup = acc.find(group => group.name === currentItem.name);
-    
-    // 生成 retainKey 内容
-    let reKey = "";
-    if (BLKEYS && BLKEYS.length > 0) {
-      reKey = BLKEYS.filter(item => currentItem.name.includes(item)).join(" ");
-    }
-
-    // 如果找到了同名分组，更新组内内容
+    const existingGroup = acc.find(group => group.name === currentItem.name);
     if (existingGroup) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${reKey} ${FNAME}`.trim()
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${FNAME}`
       });
-    } 
-    // 如果没有找到同名分组，创建新的分组
-    else {
+    } else {
       acc.push({
         name: currentItem.name,
         count: 1,
         items: [{
           ...currentItem,
-          name: `${currentItem.name} ${reKey} ${FNAME}`.trim()
-        }]
+          name: `${currentItem.name} ${FNAME}`
+        }],
       });
     }
     return acc;
   }, []);
-
-  // 更新重复分组的第一个元素名称以包含序号“01”
+  
+  // 遍历所有的组，并根据组的count重新命名最初的那个节点
   groups.forEach(group => {
     if (group.count > 1) {
-      let reKey = "";
-      if (BLKEYS && BLKEYS.length > 0) {
-        reKey = BLKEYS.filter(item => group.name.includes(item)).join(" ");
-      }
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${reKey} ${FNAME}`.trim();
+      // 更新第一个元素的名称以包含序号“01”
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`;
     }
   });
 
-  // 扁平化结果并替换原数组内容
-  const result = groups.reduce((acc, group) => acc.concat(group.items), []);
+  const result = Array.prototype.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
   e.splice(0, e.length, ...result);
   return e;
 }
-
 
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
