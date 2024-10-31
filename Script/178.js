@@ -308,10 +308,6 @@ function operator(pro) {
         usflag = "🇼🇸";
       }
 
-data.forEach((e) => {
-  if (e && e.keyover) {
-    let keyover = e.keyover;
-    
     keyover = keyover
       .concat(firstName, usflag, findKeyValue, `XHFGF${retainKey}`, ikey, ikeys)
       .filter((k) => k !== "");
