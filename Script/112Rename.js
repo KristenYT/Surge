@@ -294,24 +294,21 @@ function operator(pro) {
     } else {
       nNames = FNAME;
     }
-if (findKey?.[1]) { 
+if (findKey?.[1]) {
   const findKeyValue = findKey[1];
   let keyover = [],
-      usflag = "";
+    usflag = "";
   if (addflag) {
     const index = outList.indexOf(findKeyValue);
     if (index !== -1) {
       usflag = FG[index];
+      if (inArg.out === 'zh' && usflag === "🇹🇼") {
+        usflag = "🇼🇸";
+      }
     }
   }
-  
-// 假設 params 是由查詢字符串解析而來
-// 確保 params 已經被定義和解析
-if (typeof params !== 'undefined' && params.out === 'zh') {
-    nodeName = nodeName.replace('🇹🇼', '🇼🇸');
 }
 
-  
   keyover = keyover
         .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
         .filter((k) => k !== "");
