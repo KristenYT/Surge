@@ -311,11 +311,9 @@ function operator(pro) {
 data.forEach((e) => {
   if (e && e.keyover) {
     let keyover = e.keyover;
-    // 在 retainKey 前添加 XHFGF
-    retainKey = `XHFGF${retainKey}`;
     
     keyover = keyover
-      .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
+      .concat(firstName, usflag, findKeyValue, `XHFGF${retainKey}`, ikey, ikeys)
       .filter((k) => k !== "");
     e.name = keyover.join(FGF);
   } else {
@@ -326,6 +324,7 @@ data.forEach((e) => {
     }
   }
 });
+
 
   pro = pro.filter((e) => e.name !== null);
   jxh(pro);
