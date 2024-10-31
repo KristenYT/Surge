@@ -343,14 +343,17 @@ function jxh(e) {
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
 
-    // 生成 retainKey 内容
-    const retainKey = BLKEYS.filter((items) => currentItem.name.includes(items)).join(" ");
+    // 生成 retainKey 内容，如果有 BLKEYS 则获取相关参数
+    let retainKey = "";
+    if (BLKEYS && BLKEYS.length > 0) {
+      retainKey = BLKEYS.filter((item) => currentItem.name.includes(item)).join(" ");
+    }
 
     if (existingGroup) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${retainKey} ${FNAME}`
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${retainKey} ${FNAME}`.trim()
       });
     } else {
       acc.push({
@@ -358,20 +361,24 @@ function jxh(e) {
         count: 1,
         items: [{
           ...currentItem,
-          name: `${currentItem.name} ${retainKey} ${FNAME}`
+          name: `${currentItem.name} ${retainKey} ${FNAME}`.trim()
         }],
       });
     }
     return acc;
   }, []);
-  
-  // 遍历所有的组，并根据组的count重新命名最初的那个节点
+
+  // 更新 groups 中重复元素的名称
   groups.forEach(group => {
     if (group.count > 1) {
       // 更新第一个元素的名称以包含序号“01”
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${retainKey} ${FNAME}`;
+      const retainKey = BLKEYS.filter((item) => group.name.includes(item)).join(" ");
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${retainKey} ${FNAME}`.trim();
     }
   });
+
+  return groups.flatMap(group => group.items);
+}
 
   const result = Array.prototype.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
   e.splice(0, e.length, ...result);
