@@ -305,7 +305,7 @@ if (findKey?.[1]) {
     }
   }
 
-if (out === "zh" && usflag === "🇹🇼") {
+if (out.trim() === "zh" && usflag.trim() === "🇹🇼") {
   usflag = "🇼🇸";
 }
 
