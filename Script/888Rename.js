@@ -305,10 +305,6 @@ if (findKey?.[1]) {
     }
   }
 
-if (out.trim() === "zh" && usflag.trim() === "🇹🇼") {
-  usflag = "🇼🇸";
-}
-
   keyover = keyover
         .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
         .filter((k) => k !== "");
