@@ -371,13 +371,18 @@ function jxh(e) {
   // 更新 groups 中重复元素的名称
   groups.forEach(group => {
     if (group.count > 1) {
+      // 生成 retainKey 内容，如果有 BLKEYS 则获取相关参数
+      let retainKey = "";
+      if (BLKEYS && BLKEYS.length > 0) {
+        retainKey = BLKEYS.filter((item) => group.name.includes(item)).join(" ");
+      }
       // 更新第一个元素的名称以包含序号“01”
-      const retainKey = BLKEYS.filter((item) => group.name.includes(item)).join(" ");
       group.items[0].name = `${group.name} ${toSuperscript("01")} ${retainKey} ${FNAME}`.trim();
     }
   });
 
-  const result = Array.prototype.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
+  // 扁平化结果并替换原数组
+  const result = groups.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
   e.splice(0, e.length, ...result);
   return e;
 }
