@@ -302,6 +302,7 @@ if (findKey?.[1]) {
     const index = outList.indexOf(findKeyValue);
     if (index !== -1) {
       usflag = FG[index];
+      // 只有在 out=zh 时才进行替换
       if (inArg.out === 'zh' && usflag === "🇹🇼") {
         usflag = "🇼🇸";
       }
