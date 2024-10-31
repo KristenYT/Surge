@@ -308,13 +308,18 @@ function operator(pro) {
         usflag = "🇼🇸";
       }
 
-    keyover = keyover
-      .concat(firstName, usflag, findKeyValue,`-${retainKey}`, ikey, ikeys)
-      .filter((k) => k !== "");
-    e.name = keyover.join(FGF);
-  } else {
+keyover = keyover
+        .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
+        .filter((k) => k !== "");
+      e.name = keyover;
+    } else {
     if (nm) {
       e.name = e.name;
+    } else {
+      e.name = null;
+    }
+    if (retainKey) {
+      e.name = XHFGF + e.name;
     } else {
       e.name = null;
     }
