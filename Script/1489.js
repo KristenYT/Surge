@@ -318,7 +318,7 @@ keyover = keyover
     } else {
       e.name = null;
     }
-    if (BLKEY) {
+    if (blkey) {
       e.name = XHFGF + e.name;
     } else {
       e.name = null;
