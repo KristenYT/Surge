@@ -55,7 +55,7 @@ const nx = inArg.nx || false,
   nm = inArg.nm || false;
 
 const FGF = inArg.fgf == undefined ? " " : decodeURI(inArg.fgf),
-  XHFGF = inArg.sn == undefined ? " " : decodeURI(inArg.sn),
+  XHFGF = inArg.sn == undefined ? "-" : decodeURI(inArg.sn),
   FNAME = inArg.name == undefined ? "" : decodeURI(inArg.name),
   BLKEY = inArg.blkey == undefined ? "" : decodeURI(inArg.blkey),
   blockquic = inArg.blockquic == undefined ? "" : decodeURI(inArg.blockquic),
@@ -304,7 +304,7 @@ function operator(pro) {
           usflag = FG[index];
         }
       }
-      if (inArg.out === 'zh' && usflag === "🇹🇼") {
+      if (inArg.key === '台湾' && usflag === "🇹🇼") {
         usflag = "🇼🇸";
       }
 
