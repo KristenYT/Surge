@@ -341,51 +341,54 @@ function toSuperscript(numStr) {
 
 function jxh(e) {
   const groups = e.reduce((acc, currentItem) => {
-    const existingGroup = acc.find(group => group.name === currentItem.name);
-
-    // 生成 retainKey 内容，如果有 BLKEYS 则获取相关参数
+    // 查找是否已有同名分组
+    let existingGroup = acc.find(group => group.name === currentItem.name);
+    
+    // 生成 retainKey 内容
     let retainKey = "";
     if (BLKEYS && BLKEYS.length > 0) {
-      retainKey = BLKEYS.filter((item) => currentItem.name.includes(item)).join(" ");
+      retainKey = BLKEYS.filter(item => currentItem.name.includes(item)).join(" ");
     }
 
+    // 如果找到了同名分组，更新组内内容
     if (existingGroup) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
         name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${retainKey} ${FNAME}`.trim()
       });
-    } else {
+    } 
+    // 如果没有找到同名分组，创建新的分组
+    else {
       acc.push({
         name: currentItem.name,
         count: 1,
         items: [{
           ...currentItem,
           name: `${currentItem.name} ${retainKey} ${FNAME}`.trim()
-        }],
+        }]
       });
     }
     return acc;
   }, []);
 
-  // 更新 groups 中重复元素的名称
+  // 更新重复分组的第一个元素名称以包含序号“01”
   groups.forEach(group => {
     if (group.count > 1) {
-      // 生成 retainKey 内容，如果有 BLKEYS 则获取相关参数
       let retainKey = "";
       if (BLKEYS && BLKEYS.length > 0) {
-        retainKey = BLKEYS.filter((item) => group.name.includes(item)).join(" ");
+        retainKey = BLKEYS.filter(item => group.name.includes(item)).join(" ");
       }
-      // 更新第一个元素的名称以包含序号“01”
       group.items[0].name = `${group.name} ${toSuperscript("01")} ${retainKey} ${FNAME}`.trim();
     }
   });
 
-  // 扁平化结果并替换原数组
-  const result = groups.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
+  // 扁平化结果并替换原数组内容
+  const result = groups.reduce((acc, group) => acc.concat(group.items), []);
   e.splice(0, e.length, ...result);
   return e;
 }
+
 
 // prettier-ignore
 function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}
