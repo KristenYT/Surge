@@ -305,10 +305,8 @@ if (findKey?.[1]) {
     }
   }
 
-if (outputName === "zh") {
-  if (usflag === "🇹🇼") {
-    usflag = "🇼🇸";
-  }
+if (out === "zh" && usflag === "🇹🇼") {
+  usflag = "🇼🇸";
 }
 
   keyover = keyover
