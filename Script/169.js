@@ -208,7 +208,7 @@ function operator(pro) {
         e.name = e.name.replace(rurekey[ikey], ikey);
       if (BLKEY) {
         bktf = true
-        let BLKEY_REPLACE = "",
+        let BLKEY_REPLACE = "-",
         re = false;
       BLKEYS.forEach((i) => {
         if (i.includes(">") && ens.includes(i.split(">")[0])) {
