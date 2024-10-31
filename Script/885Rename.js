@@ -305,9 +305,11 @@ if (findKey?.[1]) {
     }
   }
 
-  if (outputName === "zh") {
-    usflag = usflag === "🇹🇼" ? "🇼🇸" : usflag;
+if (outputName === "zh") {
+  if (usflag === "🇹🇼") {
+    usflag = "🇼🇸";
   }
+}
 
   keyover = keyover
         .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
