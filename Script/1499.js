@@ -321,7 +321,7 @@ keyover = keyover
     if (blkey) {
       e.name = XHFGF + e.name;
     } else {
-      e.name = null;
+      e.name = e.name;
     }
   }
 });
