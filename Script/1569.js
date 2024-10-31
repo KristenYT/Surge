@@ -200,124 +200,132 @@ function operator(pro) {
 
   const BLKEYS = BLKEY ? BLKEY.split("+") : "";
 
-  pro.forEach((e) => {
-    let bktf = false, ens = e.name
-    // 预处理 防止预判或遗漏
-    Object.keys(rurekey).forEach((ikey) => {
-      if (rurekey[ikey].test(e.name)) {
-        e.name = e.name.replace(rurekey[ikey], ikey);
+pro.forEach((e) => {
+  let bktf = false, ens = e.name;
+  
+  // 预处理 防止预判或遗漏
+  Object.keys(rurekey).forEach((ikey) => {
+    if (rurekey[ikey].test(e.name)) {
+      e.name = e.name.replace(rurekey[ikey], ikey);
       if (BLKEY) {
-        bktf = true
+        bktf = true;
         let BLKEY_REPLACE = "",
-        re = false;
-      BLKEYS.forEach((i) => {
-        if (i.includes(">") && ens.includes(i.split(">")[0])) {
-          if (rurekey[ikey].test(i.split(">")[0])) {
-              e.name += " " + i.split(">")[0]
+          re = false;
+
+        BLKEYS.forEach((i) => {
+          if (i.includes(">") && ens.includes(i.split(">")[0])) {
+            if (rurekey[ikey].test(i.split(">")[0])) {
+              e.name += " " + i.split(">")[0];
             }
-          if (i.split(">")[1]) {
-            BLKEY_REPLACE = i.split(">")[1];
-            re = true;
+            if (i.split(">")[1]) {
+              BLKEY_REPLACE = i.split(">")[1];
+              re = true;
+            }
+          } else {
+            if (ens.includes(i)) {
+              e.name += " " + i;
+            }
           }
-        } else {
-          if (ens.includes(i)) {
-             e.name += " " + i
-            }
-        }
+        });
+
         retainKey = re
-        ? BLKEY_REPLACE
-        : BLKEYS.filter((items) => e.name.includes(items));
-      });}
+          ? "-" + BLKEY_REPLACE
+          : "-" + BLKEYS.filter((items) => e.name.includes(items));
+      }
+    }
+  });
+
+  if (blockquic == "on") {
+    e["block-quic"] = "on";
+  } else if (blockquic == "off") {
+    e["block-quic"] = "off";
+  } else {
+    delete e["block-quic"];
+  }
+
+  // 自定义
+  if (!bktf && BLKEY) {
+    let BLKEY_REPLACE = "",
+      re = false;
+
+    BLKEYS.forEach((i) => {
+      if (i.includes(">") && e.name.includes(i.split(">")[0])) {
+        if (i.split(">")[1]) {
+          BLKEY_REPLACE = i.split(">")[1];
+          re = true;
+        }
       }
     });
-    if (blockquic == "on") {
-      e["block-quic"] = "on";
-    } else if (blockquic == "off") {
-      e["block-quic"] = "off";
-    } else {
-      delete e["block-quic"];
-    }
 
-    // 自定义
-    if (!bktf && BLKEY) {
-      let BLKEY_REPLACE = "",
-        re = false;
-      BLKEYS.forEach((i) => {
-        if (i.includes(">") && e.name.includes(i.split(">")[0])) {
-          if (i.split(">")[1]) {
-            BLKEY_REPLACE = i.split(">")[1];
-            re = true;
-          }
-        }
-      });
-      retainKey = re
-        ? BLKEY_REPLACE
-        : BLKEYS.filter((items) => e.name.includes(items));
-    }
+    retainKey = re
+      ? "-" + BLKEY_REPLACE
+      : "-" + BLKEYS.filter((items) => e.name.includes(items));
+  }
 
-    let ikey = "",
-      ikeys = "";
-    // 保留固定格式 倍率
-    if (blgd) {
-      regexArray.forEach((regex, index) => {
-        if (regex.test(e.name)) {
-          ikeys = valueArray[index];
-        }
-      });
-    }
+  let ikey = "",
+    ikeys = "";
+  
+  // 保留固定格式 倍率
+  if (blgd) {
+    regexArray.forEach((regex, index) => {
+      if (regex.test(e.name)) {
+        ikeys = valueArray[index];
+      }
+    });
+  }
 
-    // 正则 匹配倍率
-    if (bl) {
-      const match = e.name.match(
-        /((倍率|X|x|×)\D?((\d{1,3}\.)?\d+)\D?)|((\d{1,3}\.)?\d+)(倍|X|x|×)/
-      );
-      if (match) {
-        const rev = match[0].match(/(\d[\d.]*)/)[0];
-        if (rev !== "1") {
-          const newValue = rev + "×";
-          ikey = newValue;
-        }
+  // 正则 匹配倍率
+  if (bl) {
+    const match = e.name.match(
+      /((倍率|X|x|×)\D?((\d{1,3}\.)?\d+)\D?)|((\d{1,3}\.)?\d+)(倍|X|x|×)/
+    );
+    if (match) {
+      const rev = match[0].match(/(\d[\d.]*)/)[0];
+      if (rev !== "1") {
+        const newValue = rev + "×";
+        ikey = newValue;
+      }
+    }
+  }
+
+  !GetK && ObjKA(Allmap);
+
+  // 匹配 Allkey 地区
+  const findKey = AMK.find(([key]) => e.name.includes(key));
+  
+  let firstName = "",
+    nNames = "";
+
+  if (nf) {
+    firstName = FNAME;
+  } else {
+    nNames = FNAME;
+  }
+
+  if (findKey?.[1]) {
+    const findKeyValue = findKey[1];
+    let keyover = [],
+      usflag = "";
+
+    if (addflag) {
+      const index = outList.indexOf(findKeyValue);
+      if (index !== -1) {
+        usflag = FG[index];
       }
     }
 
-    !GetK && ObjKA(Allmap)
-    // 匹配 Allkey 地区
-    const findKey = AMK.find(([key]) =>
-      e.name.includes(key)
-    )
-    
-    let firstName = "",
-      nNames = "";
-
-    if (nf) {
-      firstName = FNAME;
-    } else {
-      nNames = FNAME;
+    if (findKeyValue === '台湾' && usflag === "🇹🇼") {
+      usflag = "🇼🇸";
     }
-    if (findKey?.[1]) {
-      const findKeyValue = findKey[1];
-      let keyover = [],
-        usflag = "";
-      if (addflag) {
-        const index = outList.indexOf(findKeyValue);
-        if (index !== -1) {
-          usflag = FG[index];
-        }
-      }
-      if (findKeyValue === '台湾' && usflag === "🇹🇼") {
-        usflag = "🇼🇸";
-      }
 
-keyover = keyover
-        .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
-        .filter((k) => k !== "");
-      e.name = keyover.join(FGF);
-    } else {
+    keyover = keyover
+      .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
+      .filter((k) => k !== "");
+
+    e.name = keyover.join(FGF);
+  } else {
     if (nm) {
       e.name = e.name;
-    }
-    if (blkey) {
-      e.name = XHFGF + keyover;
     } else {
       e.name = null;
     }
