@@ -345,9 +345,9 @@ function jxh(e) {
     let existingGroup = acc.find(group => group.name === currentItem.name);
     
     // 生成 retainKey 内容
-    let retainKey = "";
+    let reKey = "";
     if (BLKEYS && BLKEYS.length > 0) {
-      retainKey = BLKEYS.filter(item => currentItem.name.includes(item)).join(" ");
+      reKey = BLKEYS.filter(item => currentItem.name.includes(item)).join(" ");
     }
 
     // 如果找到了同名分组，更新组内内容
@@ -355,7 +355,7 @@ function jxh(e) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${retainKey} ${FNAME}`.trim()
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${reKey} ${FNAME}`.trim()
       });
     } 
     // 如果没有找到同名分组，创建新的分组
@@ -365,7 +365,7 @@ function jxh(e) {
         count: 1,
         items: [{
           ...currentItem,
-          name: `${currentItem.name} ${retainKey} ${FNAME}`.trim()
+          name: `${currentItem.name} ${reKey} ${FNAME}`.trim()
         }]
       });
     }
@@ -375,11 +375,11 @@ function jxh(e) {
   // 更新重复分组的第一个元素名称以包含序号“01”
   groups.forEach(group => {
     if (group.count > 1) {
-      let retainKey = "";
+      let reKey = "";
       if (BLKEYS && BLKEYS.length > 0) {
-        retainKey = BLKEYS.filter(item => group.name.includes(item)).join(" ");
+        reKey = BLKEYS.filter(item => group.name.includes(item)).join(" ");
       }
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${retainKey} ${FNAME}`.trim();
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${reKey} ${FNAME}`.trim();
     }
   });
 
