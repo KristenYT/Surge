@@ -294,21 +294,19 @@ function operator(pro) {
     } else {
       nNames = FNAME;
     }
-if (findKey?.[1]) {
-  const findKeyValue = findKey[1];
-  let keyover = [],
-    usflag = "";
-  if (addflag) {
-    const index = outList.indexOf(findKeyValue);
-    if (index !== -1) {
-      usflag = FG[index];
-      // 只有在 out=zh 时才进行替换
+    if (findKey?.[1]) {
+      const findKeyValue = findKey[1];
+      let keyover = [],
+        usflag = "";
+      if (addflag) {
+        const index = outList.indexOf(findKeyValue);
+        if (index !== -1) {
+          usflag = FG[index];
+        }
+      }
       if (inArg.out === 'zh' && usflag === "🇹🇼") {
         usflag = "🇼🇸";
       }
-    }
-  }
-}
 
   keyover = keyover
         .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
