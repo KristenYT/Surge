@@ -315,13 +315,11 @@ keyover = keyover
     } else {
     if (nm) {
       e.name = e.name;
-    } else {
-      e.name = null;
     }
     if (blkey) {
-      e.name = XHFGF + e.name;
+      e.name = XHFGF + keyover;
     } else {
-      e.name = e.name;
+      e.name = null;
     }
   }
 });
