@@ -304,7 +304,11 @@ if (findKey?.[1]) {
       usflag = FG[index];
     }
   }
-
+  
+if (params.out === 'zh') {
+    nodeName = nodeName.replace('🇹🇼', '🇼🇸');
+}
+  
   keyover = keyover
         .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
         .filter((k) => k !== "");
