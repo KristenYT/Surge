@@ -305,9 +305,12 @@ if (findKey?.[1]) {
     }
   }
   
-if (params.out === 'zh') {
+// 假設 params 是由查詢字符串解析而來
+// 確保 params 已經被定義和解析
+if (typeof params !== 'undefined' && params.out === 'zh') {
     nodeName = nodeName.replace('🇹🇼', '🇼🇸');
 }
+
   
   keyover = keyover
         .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
