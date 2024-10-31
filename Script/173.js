@@ -54,8 +54,8 @@ const nx = inArg.nx || false,
   addflag = inArg.flag || false,
   nm = inArg.nm || false;
 
-const FGF = inArg.fgf == undefined ? "-" : decodeURI(inArg.fgf),
-  XHFGF = inArg.sn == undefined ? "" : decodeURI(inArg.sn),
+const FGF = inArg.fgf == undefined ? " " : decodeURI(inArg.fgf),
+  XHFGF = inArg.sn == undefined ? "-" : decodeURI(inArg.sn),
   FNAME = inArg.name == undefined ? "" : decodeURI(inArg.name),
   BLKEY = inArg.blkey == undefined ? "" : decodeURI(inArg.blkey),
   blockquic = inArg.blockquic == undefined ? "" : decodeURI(inArg.blockquic),
@@ -311,10 +311,20 @@ function operator(pro) {
   keyover = keyover
         .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
         .filter((k) => k !== "");
-      e.name = keyover.join(FGF);
+      e.name = keyover;
     } else {
       if (nm) {
         e.name = e.name;
+      } else {
+        e.name = null;
+       } else {
+      if (BLKEY) {
+        e.name = XHFGF + e.name;
+      } else {
+        e.name = null;
+     } else {
+      if (addflag) {
+        e.name = FGF + e.name;
       } else {
         e.name = null;
       }
