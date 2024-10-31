@@ -365,7 +365,7 @@ function jxh(e) {
   groups.forEach(group => {
     if (group.count > 1) {
       // 更新第一个元素的名称以包含序号“01”
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${keyPart} ${FNAME}`;
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`;
     }
   });
 
