@@ -320,7 +320,7 @@ retainKey = re || BLKEYS.some((item) => e.name.includes(item))
     }
 
  keyover = keyover
-  .concat(firstName, usflag ? usflag + " " : "", findKeyValue, retainKey,  ikey ? "~" + ikey : "",  ikeys ? "~" + ikeys : "")
+  .concat(firstName, usflag ? usflag + " " : "", findKeyValue, retainKey ? "『" + retainKey + "』" : "",  ikey ? "~" + ikey : "",  ikeys ? "~" + ikeys : "")
   .filter((k) => k !== "");
 
 e.name = keyover.join("");
