@@ -367,7 +367,7 @@ function jxh(e) {
         count: 1,
         items: [{
           ...currentItem,
-          name: `${currentItem.name} ${FNAME}`
+          name: `${currentItem.name} ${BLKEY_REPLACE || BLKEYS.filter((item) => e.name.includes(item)).join('')} ${FNAME}`
         }],
       });
     }
@@ -378,7 +378,7 @@ function jxh(e) {
   groups.forEach(group => {
     if (group.count > 1) {
       // 更新第一个元素的名称以包含序号“01”
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${FNAME}`;
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${BLKEY_REPLACE || BLKEYS.filter((item) => e.name.includes(item)).join('')} ${FNAME}`;
     }
   });
 
