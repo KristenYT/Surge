@@ -231,7 +231,7 @@ pro.forEach((e) => {
           }
         });
    retainKey = re || BLKEYS.some((item) => e.name.includes(item)) 
-              ? `-『${BLKEY_REPLACE || BLKEYS.filter((item) => e.name.includes(item)).join('')}』`
+              ? ${BLKEY_REPLACE || BLKEYS.filter((item) => e.name.includes(item)).join('')}
               : "";
       }
     }
@@ -259,7 +259,7 @@ pro.forEach((e) => {
       }
     });
 retainKey = re || BLKEYS.some((item) => e.name.includes(item)) 
-              ? `-『${BLKEY_REPLACE || BLKEYS.filter((item) => e.name.includes(item)).join('')}』`
+              ? ${BLKEY_REPLACE || BLKEYS.filter((item) => e.name.includes(item)).join('')}
               : "";
   }
 
