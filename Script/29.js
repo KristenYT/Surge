@@ -263,7 +263,10 @@ pro.forEach((e) => {
         : BLKEYS.filter((items) => e.name.includes(items));
   }
 
-  let retainKey = "KeyName"
+  let retainKey = ""
+  if (blkey) {
+    retainKey = KeyName;
+  } 
   let ikey = "",
     ikeys = "";
   
