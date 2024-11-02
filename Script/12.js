@@ -230,9 +230,9 @@ pro.forEach((e) => {
             }
           }
         });
-   retainKey = re || BLKEYS.some((item) => e.name.includes(item)) 
-              ? `-${BLKEY_REPLACE || BLKEYS.filter((item) => e.name.includes(item)).join('')}`
-              : "";
+    retainKey = re
+        ? BLKEY_REPLACE
+        : BLKEYS.filter((items) => e.name.includes(items));
       }
     }
   });
@@ -258,9 +258,9 @@ pro.forEach((e) => {
         }
       }
     });
-retainKey = re || BLKEYS.some((item) => e.name.includes(item)) 
-              ? `-${BLKEY_REPLACE || BLKEYS.filter((item) => e.name.includes(item)).join('')}`
-              : "";
+    retainKey = re
+        ? BLKEY_REPLACE
+        : BLKEYS.filter((items) => e.name.includes(items));
   }
 
   let ikey = "",
@@ -320,7 +320,7 @@ retainKey = re || BLKEYS.some((item) => e.name.includes(item))
     }
 
  keyover = keyover
-  .concat(firstName, usflag ? usflag + " " : "", findKeyValue, retainKey ? "『" + retainKey + "』" : "",  ikey ? "~" + ikey : "",  ikeys ? "~" + ikeys : "")
+  .concat(firstName, usflag ? usflag + " " : "", findKeyValue, retainKey ? "-『" + retainKey + "』" : "",  ikey ? "~" + ikey : "",  ikeys ? "~" + ikeys : "")
   .filter((k) => k !== "");
 
 e.name = keyover.join("");
