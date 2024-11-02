@@ -359,7 +359,7 @@ function jxh(e) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${BLKEY_REPLACE : BLKEYS.filter((items) => e.name.includes(items))} ${FNAME}`
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${retainKey} ${FNAME}`
       });
     } else {
       acc.push({
@@ -367,7 +367,7 @@ function jxh(e) {
         count: 1,
         items: [{
           ...currentItem,
-          name: `${currentItem.name} ${BLKEY_REPLACE : BLKEYS.filter((items) => e.name.includes(items))} ${FNAME}`
+          name: `${currentItem.name} ${retainKey} ${FNAME}`
         }],
       });
     }
@@ -378,7 +378,7 @@ function jxh(e) {
   groups.forEach(group => {
     if (group.count > 1) {
       // 更新第一个元素的名称以包含序号“01”
-      group.items[0].name = `${group.name} ${toSuperscript("01")} ${BLKEY_REPLACE : BLKEYS.filter((items) => e.name.includes(items))}`;
+      group.items[0].name = `${group.name} ${toSuperscript("01")} ${retainKey} ${FNAME}`;
     }
   });
 
