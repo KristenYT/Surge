@@ -227,7 +227,9 @@ pro.forEach((e) => {
             }
           }
         });
-      retainKey = re ? `${BLKEY_REPLACE}` : `${BLKEYS.filter((items) => e.name.includes(items))}`;
+   retainKey = re || BLKEYS.some((item) => e.name.includes(item)) 
+              ? `-${BLKEY_REPLACE || BLKEYS.filter((item) => e.name.includes(item)).join('')}`
+              : "";
       }
     }
   });
@@ -253,7 +255,9 @@ pro.forEach((e) => {
         }
       }
     });
-retainKey = re ? `-${BLKEY_REPLACE}` : `-${BLKEYS.filter((items) => e.name.includes(items))}`;
+retainKey = re || BLKEYS.some((item) => e.name.includes(item)) 
+              ? `-${BLKEY_REPLACE || BLKEYS.filter((item) => e.name.includes(item)).join('')}`
+              : "";
   }
 
   let ikey = "",
