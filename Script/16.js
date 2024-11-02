@@ -320,7 +320,7 @@ retainKey = re || BLKEYS.some((item) => e.name.includes(item))
     }
 
  keyover = keyover
-  .concat(firstName, usflag ? usflag + " " : "", findKeyValue, retainKey,  ikey ? " *" + ikey : "",  ikeys ? " " + ikeys : "")
+  .concat(firstName, usflag ? usflag + " " : "", findKeyValue,   ikey ? " *" + ikey : "",  ikeys ? " " + ikeys : "")
   .filter((k) => k !== "");
 
 e.name = keyover.join("");
@@ -359,7 +359,7 @@ function jxh(e) {
       existingGroup.count++;
       existingGroup.items.push({
         ...currentItem,
-        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${FNAME}`
+        name: `${currentItem.name} ${toSuperscript(existingGroup.count.toString().padStart(2, "0"))} ${BLKEY_REPLACE || BLKEYS.filter((item) => e.name.includes(item)).join('')} ${FNAME}`
       });
     } else {
       acc.push({
