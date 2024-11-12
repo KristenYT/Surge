@@ -174,7 +174,7 @@ async function check_chatgpt() {
 
         return check_result;
     } catch (error) {
-        return `ChatGPT➟  N/A    `;
+        return `ChatGPT➟ \u2009N/A    `;
     }
 }
 
