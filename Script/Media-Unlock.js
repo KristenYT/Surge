@@ -273,14 +273,14 @@ async function check_netflix() {
         })
     }
 
-    let netflix_check_result = 'Netflix ➟ '
+    let netflix_check_result = 'Netflix ➟'
 
     await inner_check(81280792)
         .then((code) => {
         if (code === 'Not Found') {
             return inner_check(80018499)
         }
-        netflix_check_result += '\u2611\u2009' + code
+        netflix_check_result += ' \u2611\u2009' + code
         return Promise.reject('BreakSignal')
     })
         .then((code) => {
@@ -288,7 +288,7 @@ async function check_netflix() {
             return Promise.reject('Not Available')
         }
 
-        netflix_check_result += '⚠\u2009' + code
+        netflix_check_result += '\u2009⚠\u2009' + code
         return Promise.reject('BreakSignal')
     })
         .catch((error) => {
@@ -296,10 +296,10 @@ async function check_netflix() {
             return
         }
         if (error === 'Not Available') {
-            netflix_check_result += '\u2612'
+            netflix_check_result += ' \u2612'
             return
         }
-        netflix_check_result += 'N/A'
+        netflix_check_result += ' N/A'
     })
 
     return netflix_check_result
