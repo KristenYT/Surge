@@ -1,0 +1,12 @@
+#!name=媒體解鎖檢測
+#!desc=Netflix, Disney+, YouTube, ChatGPT Unlock
+#!author=@iam_Kristen ,腳本模塊參考.修改自@CyWr110,@githubdulong,@Saga
+#!category=Panel
+#!arguments=UPDATE_INTERVAL:7200,TITLE:解鎖檢測,ICON:play.tv.fill,COLOR:#FF2D55
+#!arguments-desc=[參數設置]\n1. UPDATE_INTERVAL: 自定義面板的刷新間隔時間,單位為秒,默認每7200秒刷新一次;\n2. TITLE: 自定義面板標題,默認為"解鎖檢測";\n3. ICON: 自定義面板圖標,默認為"play.tv.fill";\n4. COLOR: 自定義圖標顏色,默認為"#FF2D55";\n\n[模塊描述]\n▎本模塊用於檢測Netflix,Disney+,YouTubePremium,ChatGPT的解鎖狀態查詢\n\n▎五種狀態顯示\n"☑"表示支持完整解鎖\n"️️️⚠"表示Netflix僅解鎖自制劇 / ChatGPT僅解鎖網頁端\n"☒"表示不支持解鎖\n"≈"即將登陸該地區\n"ɴ/ᴀ"表示檢測超時或異常\n\n▎地區代碼縮寫表示解鎖之地區
+
+[Panel]
+Panel = script-name=解鎖檢測,update-interval={{{UPDATE_INTERVAL}}}
+
+[Script]
+解鎖檢測 = type=generic,timeout=120,script-path=https://raw.githubusercontent.com/KristenYT/Surge/main/Script/32792.js,script-update-interval=0,argument=title={{{TITLE}}}&icon={{{ICON}}}&color={{{COLOR}}}
