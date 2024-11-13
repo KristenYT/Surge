@@ -49,7 +49,7 @@ let args = getArgs();
         if (status == STATUS_COMING) {
             disney_result = 'Disney\u2009➟ \u2009≈ ' + region
         } else if (status == STATUS_AVAILABLE){
-            disney_result = 'Disney\u2009➟ \u2611 ' + region
+            disney_result = 'Disney\u2009➟ \u2611\u2009' + region
         } else if (status == STATUS_NOT_AVAILABLE) {
             disney_result = 'Disney\u2009➟ \u2612'
         } else if (status == STATUS_TIMEOUT) {
