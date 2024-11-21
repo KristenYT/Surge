@@ -1,4 +1,3 @@
-// 獲取節點名稱的語法
 let nodeName = "N/A"; // 默认值
 
 // 定义获取节点名称的函数
@@ -10,12 +9,21 @@ async function getNodeName() {
     // 针对 Surge 使用内部 API 获取节点名称
     if (typeof $httpAPI !== "undefined") {
         try {
+            await refreshPolicy(); // 强制刷新策略
+
             const policies = await httpAPI('/v1/policies', 'GET');
-            const activePolicy = policies["proxy"];
+            let activePolicy = policies["proxy"];
+
+            // 过滤掉 QUIC-BLOCK，显示为 DIRECT
+            if (activePolicy === "QUIC-BLOCK") {
+                activePolicy = "DIRECT";
+            }
+
             if (activePolicy && activePolicy !== "DIRECT") {
                 return activePolicy;
             }
 
+            // 如果策略是 DIRECT，则通过 /v1/requests/recent 查找备用节点名
             const { requests } = await httpAPI('/v1/requests/recent', 'GET');
             const recentRequest = requests.find(req => req.policyName && req.policyName !== "DIRECT");
             return recentRequest ? recentRequest.policyName : "DIRECT";
