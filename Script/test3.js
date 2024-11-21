@@ -167,8 +167,11 @@ const rurekey = {
   移動CC: /CMCC/gi,
 };
 
-// 假设已有的脚本框架如下
 function operator(proxies) {
+  if (!proxies || !Array.isArray(proxies)) {
+    throw new Error("proxies 未定义或不是数组");
+  }
+
   // 定义正则排序规则
   const sortOrder = [
     /流量/i,
@@ -191,16 +194,13 @@ function operator(proxies) {
       return (aIndex === -1 ? Infinity : aIndex) - (bIndex === -1 ? Infinity : bIndex);
     }
 
-    // 如果匹配一致，按字典顺序排序
+    // 如果正则匹配一致，按名称字典顺序排序
     return a.name.localeCompare(b.name);
   });
 
   // 返回排序后的节点列表
   return proxies;
 }
-
-// 运行操作
-operator(proxies);
 
 let GetK = false, AMK = []
 function ObjKA(i) {
