@@ -1,42 +1,27 @@
-let nodeName = "N/A"; // 默认值
-
 // 定义获取节点名称的函数
-async function getNodeName() {
+async function getSurgeNodeName() {
     if (typeof $environment !== "undefined" && $environment.params) {
-        return $environment.params;
+        return $environment.params; // 若 $environment.params 存在，优先使用
     }
 
-    // 针对 Surge 使用内部 API 获取节点名称
     if (typeof $httpAPI !== "undefined") {
         try {
-            await refreshPolicy(); // 强制刷新策略
-
-            const policies = await httpAPI('/v1/policies', 'GET');
-            let activePolicy = policies["proxy"];
-
-            // 过滤掉 QUIC-BLOCK，显示为 DIRECT
-            if (activePolicy === "QUIC-BLOCK") {
-                activePolicy = "DIRECT";
-            }
-
-            if (activePolicy && activePolicy !== "DIRECT") {
-                return activePolicy;
-            }
-
-            // 如果策略是 DIRECT，则通过 /v1/requests/recent 查找备用节点名
             const { requests } = await httpAPI('/v1/requests/recent', 'GET');
             const recentRequest = requests.find(req => req.policyName && req.policyName !== "DIRECT");
-            return recentRequest ? recentRequest.policyName : "DIRECT";
+            return recentRequest ? recentRequest.policyName : "DIRECT"; // 返回代理策略名称或 DIRECT
         } catch (e) {
             console.log("获取节点名称失败：", e);
+            return "未知節點";
         }
     }
-    return "未知節點";
+
+    return "未知節點"; // 默认值
 }
 
-// 调用获取节点名称的函数
+// 主逻辑整合
 (async () => {
-    nodeName = await getNodeName();
+    const nodeName = await getSurgeNodeName(); // 调用获取节点名称的函数
+
 
     // 第一步：獲取外部 IP 地址信息
     $httpClient.get({ url: "http://ip-api.com/json/" }, function (error, response, data) {
