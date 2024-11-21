@@ -353,27 +353,6 @@ function toSuperscript(numStr) {
   return numStr.replace(/\d/g, match => superscriptMap[match] || match);
 }
 
-function operator(proxies = [], targetPlatform, context) {
-    const priority = {
-        '流量': 1,
-        '到期': 2,
-        '重置': 3,
-        '🇺🇸': 4,
-        '🇯🇵': 5,
-        '🇸🇬': 6,
-        '🇬🇧': 7,
-        '🇭🇰': 8
-    };
-
-    proxies.sort((a, b) => {
-        const aKey = Object.keys(priority).find(key => a.name.includes(key)) || 'Z';
-        const bKey = Object.keys(priority).find(key => b.name.includes(key)) || 'Z';
-        return (priority[aKey] || 99) - (priority[bKey] || 99);
-    });
-
-    return proxies;
-}
-
 function jxh(e) {
   const groups = e.reduce((acc, currentItem) => {
     const existingGroup = acc.find(group => group.name === currentItem.name);
@@ -407,6 +386,27 @@ function jxh(e) {
   const result = Array.prototype.flatMap ? groups.flatMap(group => group.items) : groups.reduce((acc, group) => acc.concat(group.items), []);
   e.splice(0, e.length, ...result);
   return e;
+}
+
+function operator(proxies = [], targetPlatform, context) {
+    const priority = {
+        '流量': 1,
+        '到期': 2,
+        '重置': 3,
+        '🇺🇸': 4,
+        '🇯🇵': 5,
+        '🇸🇬': 6,
+        '🇬🇧': 7,
+        '🇭🇰': 8
+    };
+
+    proxies.sort((a, b) => {
+        const aKey = Object.keys(priority).find(key => a.name.includes(key)) || 'Z';
+        const bKey = Object.keys(priority).find(key => b.name.includes(key)) || 'Z';
+        return (priority[aKey] || 99) - (priority[bKey] || 99);
+    });
+
+    return proxies;
 }
 
 // prettier-ignore
