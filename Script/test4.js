@@ -167,39 +167,25 @@ const rurekey = {
   移動CC: /CMCC/gi,
 };
 
-function operator(proxies) {
-  if (!proxies || !Array.isArray(proxies)) {
-    throw new Error("proxies 未定义或不是数组");
-  }
+function operator(proxies = [], targetPlatform, context) {
+    const priority = {
+        '流量': 1,
+        '到期': 2,
+        '重置': 3,
+        '🇺🇸': 4,
+        '🇯🇵': 5,
+        '🇸🇬': 6,
+        '🇬🇧': 7,
+        '🇭🇰': 8
+    };
 
-  // 定义正则排序规则
-  const sortOrder = [
-    /流量/i,
-    /到期/i,
-    /重置/i,
-    /🇺🇸/i,
-    /🇯🇵/i,
-    /🇸🇬/i,
-    /🇬🇧/i,
-    /🇭🇰/i,
-  ];
+    proxies.sort((a, b) => {
+        const aKey = Object.keys(priority).find(key => a.name.includes(key)) || 'Z';
+        const bKey = Object.keys(priority).find(key => b.name.includes(key)) || 'Z';
+        return (priority[aKey] || 99) - (priority[bKey] || 99);
+    });
 
-  // 排序逻辑
-  proxies.sort((a, b) => {
-    const aIndex = sortOrder.findIndex((regex) => regex.test(a.name));
-    const bIndex = sortOrder.findIndex((regex) => regex.test(b.name));
-
-    // 如果匹配到的正则不一致，则按顺序排序
-    if (aIndex !== bIndex) {
-      return (aIndex === -1 ? Infinity : aIndex) - (bIndex === -1 ? Infinity : bIndex);
-    }
-
-    // 如果正则匹配一致，按名称字典顺序排序
-    return a.name.localeCompare(b.name);
-  });
-
-  // 返回排序后的节点列表
-  return proxies;
+    return proxies;
 }
 
 let GetK = false, AMK = []
