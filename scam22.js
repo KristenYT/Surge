@@ -1,6 +1,17 @@
-// 定义获取节点名称的函数
+// SCAM21.JS: 加入節點名稱檢測功能
 
-    // 第一步：获取外部 IP 地址信息
+(async () => {
+    // 節點名稱檢測
+    const groupName = "Your-Group-Name"; // 替換為你的策略組名稱
+    const selectedNode = (await httpAPI(`/v1/policy_groups/select?group_name=${encodeURIComponent(groupName)}`)).policy;
+
+    if (selectedNode) {
+        console.log(`檢測到當前節點名稱：${selectedNode}`);
+    } else {
+        console.log("無法檢測到節點名稱，請確認策略組名稱是否正確。");
+    }
+
+    // 原始 SCAM21.JS 功能
     $httpClient.get({ url: "http://ip-api.com/json/" }, function (error, response, data) {
         if (error) {
             console.log("获取 IP 信息失败:", error);
@@ -40,7 +51,7 @@
         const isp = ipInfo.isp || "未知 ISP";
         const as = ipInfo.as || "未知 ASN";
 
-        // 第二步：查询 Scamalytics 信息
+        // 查询 Scamalytics 信息
         $httpClient.get({ url: `https://scamalytics.com/search?ip=${ipValue}` }, function (error, response, data) {
             if (error) {
                 console.log("查询 Scamalytics 信息失败:", error);
@@ -79,7 +90,7 @@
             const riskInfo = riskMap[risk] || { emoji: "⚪", desc: "未知风险" };
 
             const content = `
-节点名称：${nodeName}
+节点名称：${selectedNode || "無法檢測到"}
 IP 地址：${ipValue}
 城市：${city}
 国家：${country}
