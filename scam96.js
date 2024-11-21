@@ -2,6 +2,7 @@
 let arg = $argument || "";
 let args = Object.fromEntries(new URLSearchParams(arg).entries());
 let nodeName = args.nodeName || "未知節點";
+const nodeName = $environment?.params || "未知節點";
 
 // 第一步：獲取外部 IP 地址信息
 $httpClient.get({ url: "http://ip-api.com/json/" }, function (error, response, data) {
