@@ -4,24 +4,24 @@
  * 更新日期：2024年11月22日
  **********/
 
-// 獲取節點名稱
+// 初始化節點和策略相關變數
 let nodeName = "未知節點";
+let proxyPolicy = "Direct";
 
-if (typeof $environment !== "undefined") {
-    // 在 Surge 環境下獲取節點名稱
-    if ($environment.params) {
-        nodeName = $environment.params; // Surge 面板參數
-    } else {
-        $httpAPI("GET", "/v1/policy_groups/select", null, (result) => {
-            // 從策略組中獲取當前節點名稱
-            for (const group in result) {
-                if (result[group]) {
-                    nodeName = result[group];
-                    break;
-                }
+// 根據工具環境設置策略名稱的前綴
+const policyPrefix = typeof $environment !== "undefined" && ($environment.surge || $environment.stash) ? "代理策略: " : "節點: ";
+
+// 使用 $httpAPI 獲取當前策略名稱（適用於 Surge 和 Stash）
+if (typeof $httpAPI === "function") {
+    $httpAPI("GET", "/v1/policy_groups/select", null, (result) => {
+        for (const group in result) {
+            if (result[group]) {
+                proxyPolicy = `${policyPrefix}${result[group]}`;
+                nodeName = result[group];
+                break;
             }
-        });
-    }
+        }
+    });
 }
 
 // 第一步：獲取外部 IP 地址信息
