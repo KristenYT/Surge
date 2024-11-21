@@ -1,15 +1,17 @@
-/********** 
- * Scamalytics IP 欺诈评分查询
- * 修改作者：基于原始代码优化
- * 更新时间：2024年11月22日
- **********/
+// 定义获取节点名称的函数
+async function getNodeName() {
+    try {
+        const { requests } = await httpAPI('/v1/requests/recent', 'GET');
+        const targetRequest = requests.find(req => req.policyName); // 查找带有策略名称的请求
+        return targetRequest ? targetRequest.policyName : "未知节点";
+    } catch (e) {
+        console.log("获取节点名称失败:", e);
+        return "未知节点";
+    }
+}
 
-var inputParams = $environment.params || {};
-var nodeName = $surge.nodeName || "N/A";  // Get node name using $surge.nodeName
-
-$httpClient.get({
-    url: "http://ip-api.com/json/",
-}, function (error, response, data) {
+// 第一步：获取外部 IP 地址信息
+$httpClient.get({ url: "http://ip-api.com/json/" }, async function (error, response, data) {
     if (error) {
         console.log("获取 IP 信息失败:", error);
         return $done({
@@ -48,11 +50,11 @@ $httpClient.get({
     const isp = ipInfo.isp || "未知 ISP";
     const as = ipInfo.as || "未知 ASN";
 
-    const requestParams = {
-        url: `https://scamalytics.com/search?ip=${ipValue}`,
-    };
+    // 获取节点名称
+    const nodeName = await getNodeName();
 
-    $httpClient.get(requestParams, function (error, response, data) {
+    // 第二步：查询 Scamalytics 信息
+    $httpClient.get({ url: `https://scamalytics.com/search?ip=${ipValue}` }, function (error, response, data) {
         if (error) {
             console.log("查询 Scamalytics 信息失败:", error);
             return $done({
@@ -108,3 +110,16 @@ IP 欺诈分数：${score}
         });
     });
 });
+
+// 定义 httpAPI 函数，用于访问 Surge 内部 API
+function httpAPI(path, method = 'GET', body = null) {
+    return new Promise((resolve, reject) => {
+        $httpAPI(method, path, body, result => {
+            if (result.error) {
+                reject(result.error);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
