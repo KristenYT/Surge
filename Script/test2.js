@@ -167,9 +167,9 @@ const rurekey = {
   移動CC: /CMCC/gi,
 };
 
-// 改用 ES6 语法导出函数
-export default (proxies) => {
-  // 定义正则匹配顺序
+// 假设已有的脚本框架如下
+function operator(proxies) {
+  // 定义正则排序规则
   const sortOrder = [
     /流量/i,
     /到期/i,
@@ -181,20 +181,26 @@ export default (proxies) => {
     /🇭🇰/i,
   ];
 
-  // 排序逻辑：按照正则匹配顺序进行排序
-  return proxies.sort((a, b) => {
+  // 排序逻辑
+  proxies.sort((a, b) => {
     const aIndex = sortOrder.findIndex((regex) => regex.test(a.name));
     const bIndex = sortOrder.findIndex((regex) => regex.test(b.name));
 
     // 如果匹配到的正则不一致，则按顺序排序
     if (aIndex !== bIndex) {
-      return aIndex - bIndex;
+      return (aIndex === -1 ? Infinity : aIndex) - (bIndex === -1 ? Infinity : bIndex);
     }
 
-    // 如果正则匹配一致，按原始顺序排序
+    // 如果匹配一致，按字典顺序排序
     return a.name.localeCompare(b.name);
   });
-};
+
+  // 返回排序后的节点列表
+  return proxies;
+}
+
+// 运行操作
+operator(proxies);
 
 let GetK = false, AMK = []
 function ObjKA(i) {
