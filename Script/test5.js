@@ -167,27 +167,6 @@ const rurekey = {
   移動CC: /CMCC/gi,
 };
 
-function operator(proxies = [], targetPlatform, context) {
-    const priority = {
-        '流量': 1,
-        '到期': 2,
-        '重置': 3,
-        '🇺🇸': 4,
-        '🇯🇵': 5,
-        '🇸🇬': 6,
-        '🇬🇧': 7,
-        '🇭🇰': 8
-    };
-
-    proxies.sort((a, b) => {
-        const aKey = Object.keys(priority).find(key => a.name.includes(key)) || 'Z';
-        const bKey = Object.keys(priority).find(key => b.name.includes(key)) || 'Z';
-        return (priority[aKey] || 99) - (priority[bKey] || 99);
-    });
-
-    return proxies;
-}
-
 let GetK = false, AMK = []
 function ObjKA(i) {
   GetK = true
@@ -372,6 +351,27 @@ function toSuperscript(numStr) {
     '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
   };
   return numStr.replace(/\d/g, match => superscriptMap[match] || match);
+}
+
+function operator(proxies = [], targetPlatform, context) {
+    const priority = {
+        '流量': 1,
+        '到期': 2,
+        '重置': 3,
+        '🇺🇸': 4,
+        '🇯🇵': 5,
+        '🇸🇬': 6,
+        '🇬🇧': 7,
+        '🇭🇰': 8
+    };
+
+    proxies.sort((a, b) => {
+        const aKey = Object.keys(priority).find(key => a.name.includes(key)) || 'Z';
+        const bKey = Object.keys(priority).find(key => b.name.includes(key)) || 'Z';
+        return (priority[aKey] || 99) - (priority[bKey] || 99);
+    });
+
+    return proxies;
 }
 
 function jxh(e) {
