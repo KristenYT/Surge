@@ -95,7 +95,6 @@ $httpClient.get({ url: "http://ip-api.com/json/" }, function (error, response, d
 
         const content = `
 節點：${nodeName}
------------------------------------
 IP 地址：${ipValue}
 國家：${country}
 城市：${city}
