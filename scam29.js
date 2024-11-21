@@ -1,13 +1,21 @@
-// 定义获取节点名称的函数
+// 异步获取节点策略名称的函数
+async function getRequestInfo(regexp, PROXIES = []) {
+  let POLICY = '';
+  try {
+    const { requests } = await httpAPI('/v1/requests/recent', 'GET');
+    const request = requests.slice(0, 10).find(i => regexp.test(i.URL));
+    POLICY = request ? request.policyName : '未知策略'; // 获取节点策略名称
+  } catch (e) {
+    $.logErr(`从最近请求中获取 ${regexp} 发生错误: ${e.message || e}`);
+  }
+  return { POLICY };
+}
+
+// 获取节点名称的函数
 async function getNodeName() {
-    try {
-        const { requests } = await httpAPI('/v1/requests/recent', 'GET');
-        const targetRequest = requests.find(req => req.policyName); // 查找带有策略名称的请求
-        return targetRequest ? targetRequest.policyName : "未知节点";
-    } catch (e) {
-        console.log("获取节点名称失败:", e);
-        return "未知节点";
-    }
+    const nodeNameRegexp = /node\/([\w-]+)/;  // 正则表达式根据实际情况调整
+    const { POLICY } = await getRequestInfo(nodeNameRegexp);
+    return POLICY;
 }
 
 // 第一步：获取外部 IP 地址信息
@@ -110,16 +118,3 @@ IP 欺诈分数：${score}
         });
     });
 });
-
-// 定义 httpAPI 函数，用于访问 Surge 内部 API
-function httpAPI(path, method = 'GET', body = null) {
-    return new Promise((resolve, reject) => {
-        $httpAPI(method, path, body, result => {
-            if (result.error) {
-                reject(result.error);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-}
