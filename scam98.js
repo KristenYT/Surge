@@ -1,5 +1,8 @@
 // 獲取節點名稱的語法
-const nodeName = $environment?.params || "未知節點";
+let nodeName = "N/A"; // 默认值
+if (typeof $environment !== "undefined" && $environment.params) {
+    nodeName = $environment.params;
+}
 
 // 第一步：獲取外部 IP 地址信息
 $httpClient.get({ url: "http://ip-api.com/json/" }, function (error, response, data) {
