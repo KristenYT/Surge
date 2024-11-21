@@ -1,18 +1,5 @@
-/********** 
- * Scamalytics IP 欺詐評分查詢
- * 修改者：基於原始代碼優化
- * 更新日期：2024年11月22日
- **********/
-
 // 獲取節點名稱的語法
-let nodeName = "未知節點";
-if (typeof $environment !== "undefined") {
-    if ($environment.node) {
-        nodeName = $environment.node; // Surge 節點名稱
-    } else if (typeof $environment.params === "string") {
-        nodeName = $environment.params; // 其他可能的名稱
-    }
-}
+const nodeName = $environment?.params || "未知節點";
 
 // 第一步：獲取外部 IP 地址信息
 $httpClient.get({ url: "http://ip-api.com/json/" }, function (error, response, data) {
