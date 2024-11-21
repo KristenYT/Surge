@@ -6,7 +6,7 @@
  **********/
 
 // 獲取節點名稱的語法
-let nodeName = "未知節點";
+let nodeName = "🇺🇸 美國 ⁰¹ ➟xᴛʀᴇᴍᴇ";
 if (typeof $environment !== "undefined") {
     if ($environment.params) {
         nodeName = $environment.params; // Surge 節點名稱
@@ -95,6 +95,7 @@ $httpClient.get({ url: "http://ip-api.com/json/" }, function (error, response, d
 
         const content = `
 節點：${nodeName}
+-----------------------------------
 IP 地址：${ipValue}
 國家：${country}
 城市：${city}
