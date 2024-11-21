@@ -3,13 +3,11 @@ async function getSurgePolicy(regexp) {
     let POLICY = '';
 
     try {
-        if ($.isSurge()) {
-            const { requests } = await httpAPI('/v1/requests/recent', 'GET');
-            const request = requests.find(i => regexp.test(i.URL)); // 只取匹配的第一個請求
+        const { requests } = await httpAPI('/v1/requests/recent', 'GET');
+        const request = requests.find(i => regexp.test(i.URL)); // 只取匹配的第一個請求
 
-            if (request) {
-                POLICY = request.policyName;
-            }
+        if (request) {
+            POLICY = request.policyName || "未知策略";
         }
     } catch (e) {
         console.log(`獲取策略名稱時發生錯誤: ${e.message || e}`);
@@ -100,7 +98,7 @@ $httpClient.get({ url: "http://ip-api.com/json/" }, async function (error, respo
         const riskInfo = riskMap[risk] || { emoji: "⚪", desc: "未知风险" };
 
         const content = `
-策略名称：${POLICY}
+策略名称：${policy}
 IP 地址：${ipValue}
 城市：${city}
 国家：${country}
