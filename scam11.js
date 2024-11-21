@@ -2,22 +2,18 @@
 let nodeName = "N/A"; // 默认值
 
 // 定义获取节点名称的函数
-async function getNodeName() {
-    if (typeof $environment !== "undefined" && $environment.params) {
-        return $environment.params;
+async function getSurgeNodeName() {
+    try {
+        // 调用 /v1/policies 获取当前策略信息
+        const policies = await httpAPI('/v1/policies', 'GET');
+        
+        // 获取当前策略下的实际使用节点
+        const activePolicy = policies["proxy"];
+        return activePolicy || "未知節點";
+    } catch (e) {
+        console.log("获取节点名称失败：", e);
+        return "未知節點";
     }
-
-    // 针对 Surge 使用内部 API 获取节点名称
-    if (typeof $httpAPI !== "undefined") {
-        try {
-            const { requests } = await httpAPI('/v1/requests/recent', 'GET');
-            const recentRequest = requests.find(req => req.policyName); // 查找带有 policyName 的请求
-            return recentRequest ? recentRequest.policyName : "未知節點";
-        } catch (e) {
-            console.log("获取节点名称失败：", e);
-        }
-    }
-    return "未知節點";
 }
 
 // 调用获取节点名称的函数
