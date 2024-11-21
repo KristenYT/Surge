@@ -1,27 +1,7 @@
-// 定义获取节点名称的函数
-async function getSurgeNodeName() {
-    if (typeof $environment !== "undefined" && $environment.params) {
-        return $environment.params; // 若 $environment.params 存在，优先使用
-    }
-
-    if (typeof $httpAPI !== "undefined") {
-        try {
-            // 获取最近的请求信息，并直接提取策略名称
-            const { requests } = await httpAPI('/v1/requests/recent', 'GET');
-            const recentRequest = requests.find(req => req.policyName && req.policyName !== "DIRECT");
-            return recentRequest ? recentRequest.policyName : "DIRECT"; // 返回策略名称或 "DIRECT"
-        } catch (e) {
-            console.log("获取节点名称失败：", e);
-            return "未知節點";
-        }
-    }
-
-    return "未知節點"; // 默认值
+let nodeName = $environment["surge-selected-proxy"];
+if (!nodeName) {
+    nodeName = "未知节点"; // 如果未获取到节点名称，设置为“未知节点”
 }
-
-// 主逻辑整合
-(async () => {
-    const nodeName = await getSurgeNodeName(); // 调用获取节点名称的函数
 
     // 第一步：获取外部 IP 地址信息
     $httpClient.get({ url: "http://ip-api.com/json/" }, function (error, response, data) {
