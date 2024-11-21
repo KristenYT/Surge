@@ -167,6 +167,35 @@ const rurekey = {
   移動CC: /CMCC/gi,
 };
 
+// 示例：正则匹配排序节点名称
+module.exports.parse = (proxies) => {
+  // 定义正则匹配顺序
+  const sortOrder = [
+    /流量/i,
+    /到期/i,
+    /重置/i,
+    /🇺🇸/i,
+    /🇯🇵/i,
+    /🇸🇬/i,
+    /🇬🇧/i,
+    /🇭🇰/i,
+  ];
+
+  // 排序逻辑：按照正则匹配顺序进行排序
+  return proxies.sort((a, b) => {
+    const aIndex = sortOrder.findIndex((regex) => regex.test(a.name));
+    const bIndex = sortOrder.findIndex((regex) => regex.test(b.name));
+
+    // 如果匹配到的正则不一致，则按顺序排序
+    if (aIndex !== bIndex) {
+      return aIndex - bIndex;
+    }
+
+    // 如果正则匹配一致，按原始顺序排序
+    return a.name.localeCompare(b.name);
+  });
+};
+
 let GetK = false, AMK = []
 function ObjKA(i) {
   GetK = true
