@@ -1,30 +1,26 @@
-// 异步获取节点策略名称的函数
-async function getRequestInfo(regexp, PROXIES = []) {
-  let POLICY = '';
-  try {
-    const { requests } = await httpAPI('/v1/requests/recent', 'GET');
-    const request = requests.slice(0, 10).find(i => regexp.test(i.URL));
-    POLICY = request ? request.policyName : '未知策略'; // 获取节点策略名称
-  } catch (e) {
-    $.logErr(`从最近请求中获取 ${regexp} 发生错误: ${e.message || e}`);
-  }
-  return { POLICY };
+/**********
+ * Scamalytics IP 欺詐評分查詢
+ * 修改者：基於原始代碼優化
+ * 更新日期：2024年11月22日
+ **********/
+
+// 獲取節點名稱的語法
+let nodeName = "未知節點";
+if (typeof $environment !== "undefined") {
+    if ($environment.params) {
+        nodeName = $environment.params; // Surge 節點名稱
+    } else if ($environment.node) {
+        nodeName = $environment.node; // 其他工具中可能的名稱
+    }
 }
 
-// 获取节点名称的函数
-async function getNodeName() {
-    const nodeNameRegexp = /node\/([\w-]+)/;  // 正则表达式根据实际情况调整
-    const { POLICY } = await getRequestInfo(nodeNameRegexp);
-    return POLICY;
-}
-
-// 第一步：获取外部 IP 地址信息
-$httpClient.get({ url: "http://ip-api.com/json/" }, async function (error, response, data) {
+// 第一步：獲取外部 IP 地址信息
+$httpClient.get({ url: "http://ip-api.com/json/" }, function (error, response, data) {
     if (error) {
-        console.log("获取 IP 信息失败:", error);
+        console.log("獲取 IP 資訊失敗:", error);
         return $done({
-            title: "Scamalytics 查询失败",
-            content: "无法获取 IP 信息，请检查网络连接或稍后重试。",
+            title: "Scamalytics 查詢失敗",
+            content: "無法獲取 IP 資訊，請檢查網絡連線或稍後重試。",
             icon: "exclamationmark.triangle",
             "icon-color": "#FF9500",
         });
@@ -34,10 +30,10 @@ $httpClient.get({ url: "http://ip-api.com/json/" }, async function (error, respo
     try {
         ipInfo = JSON.parse(data);
     } catch (e) {
-        console.log("解析 IP 信息失败:", e);
+        console.log("解析 IP 資訊失敗:", e);
         return $done({
-            title: "Scamalytics 查询失败",
-            content: "无法解析 IP 信息，请稍后重试。",
+            title: "Scamalytics 查詢失敗",
+            content: "無法解析 IP 資訊，請稍後重試。",
             icon: "xmark.octagon",
             "icon-color": "#FF3B30",
         });
@@ -45,8 +41,8 @@ $httpClient.get({ url: "http://ip-api.com/json/" }, async function (error, respo
 
     if (ipInfo.status !== "success") {
         return $done({
-            title: "Scamalytics 查询失败",
-            content: "IP 信息无效，请稍后重试。",
+            title: "Scamalytics 查詢失敗",
+            content: "IP 資訊無效，請稍後重試。",
             icon: "xmark.octagon",
             "icon-color": "#FF3B30",
         });
@@ -54,20 +50,17 @@ $httpClient.get({ url: "http://ip-api.com/json/" }, async function (error, respo
 
     const ipValue = ipInfo.query;
     const city = ipInfo.city || "未知城市";
-    const country = ipInfo.country || "未知国家";
+    const country = ipInfo.country || "未知國家";
     const isp = ipInfo.isp || "未知 ISP";
     const as = ipInfo.as || "未知 ASN";
 
-    // 获取节点名称
-    const nodeName = await getNodeName();
-
-    // 第二步：查询 Scamalytics 信息
+    // 第二步：查詢 Scamalytics 資訊
     $httpClient.get({ url: `https://scamalytics.com/search?ip=${ipValue}` }, function (error, response, data) {
         if (error) {
-            console.log("查询 Scamalytics 信息失败:", error);
+            console.log("查詢 Scamalytics 資訊失敗:", error);
             return $done({
-                title: "Scamalytics 查询失败",
-                content: "无法查询 Scamalytics 信息，请稍后重试。",
+                title: "Scamalytics 查詢失敗",
+                content: "無法查詢 Scamalytics 資訊，請稍後重試。",
                 icon: "xmark.octagon",
                 "icon-color": "#FF3B30",
             });
@@ -86,32 +79,32 @@ $httpClient.get({ url: "http://ip-api.com/json/" }, async function (error, respo
                     score = parsedData.score || "未知";
                     risk = parsedData.risk || "未知";
                 } catch (e) {
-                    console.log("解析 JSON 信息失败:", e);
+                    console.log("解析 JSON 資訊失敗:", e);
                 }
             }
         }
 
         const riskMap = {
-            "very high": { emoji: "🔴", desc: "非常高风险" },
-            high: { emoji: "🟠", desc: "高风险" },
-            medium: { emoji: "🟡", desc: "中等风险" },
-            low: { emoji: "🟢", desc: "低风险" },
+            "very high": { emoji: "🔴", desc: "非常高風險" },
+            high: { emoji: "🟠", desc: "高風險" },
+            medium: { emoji: "🟡", desc: "中等風險" },
+            low: { emoji: "🟢", desc: "低風險" },
         };
-        const riskInfo = riskMap[risk] || { emoji: "⚪", desc: "未知风险" };
+        const riskInfo = riskMap[risk] || { emoji: "⚪", desc: "未知風險" };
 
         const content = `
-节点名称：${nodeName}
+節點名稱：${nodeName}
 IP 地址：${ipValue}
 城市：${city}
-国家：${country}
+國家：${country}
 ISP：${isp}
 ASN：${as}
-IP 欺诈分数：${score}
-风险等级：${riskInfo.emoji} ${riskInfo.desc}
+IP 欺詐分數：${score}
+風險等級：${riskInfo.emoji} ${riskInfo.desc}
         `.trim();
 
         $done({
-            title: "Scamalytics IP 查询",
+            title: "Scamalytics IP 查詢",
             content: content,
             icon: "shield.lefthalf.filled",
             "icon-color": risk === "very high" || risk === "high" ? "#FF3B30" : risk === "medium" ? "#FF9500" : "#34C759",
