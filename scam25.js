@@ -100,7 +100,7 @@ $httpClient.get({ url: "http://ip-api.com/json/" }, async function (error, respo
         const riskInfo = riskMap[risk] || { emoji: "⚪", desc: "未知风险" };
 
         const content = `
-策略名称：${policy}
+策略名称：${POLICY}
 IP 地址：${ipValue}
 城市：${city}
 国家：${country}
