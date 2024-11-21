@@ -167,8 +167,8 @@ const rurekey = {
   移動CC: /CMCC/gi,
 };
 
-// 示例：正则匹配排序节点名称
-module.exports.parse = (proxies) => {
+// 改用 ES6 语法导出函数
+export default (proxies) => {
   // 定义正则匹配顺序
   const sortOrder = [
     /流量/i,
