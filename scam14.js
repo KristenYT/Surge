@@ -10,9 +10,15 @@ async function getNodeName() {
     // 针对 Surge 使用内部 API 获取节点名称
     if (typeof $httpAPI !== "undefined") {
         try {
+            const policies = await httpAPI('/v1/policies', 'GET');
+            const activePolicy = policies["proxy"];
+            if (activePolicy && activePolicy !== "DIRECT") {
+                return activePolicy;
+            }
+
             const { requests } = await httpAPI('/v1/requests/recent', 'GET');
-            const recentRequest = requests.find(req => req.policyName); // 查找带有 policyName 的请求
-            return recentRequest ? recentRequest.policyName : "未知節點";
+            const recentRequest = requests.find(req => req.policyName && req.policyName !== "DIRECT");
+            return recentRequest ? recentRequest.policyName : "DIRECT";
         } catch (e) {
             console.log("获取节点名称失败：", e);
         }
