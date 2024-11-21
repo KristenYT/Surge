@@ -1,27 +1,17 @@
-/**********
+/********** 
  * Scamalytics IP 欺詐評分查詢
- * 修改者：基於 net-lsp-x.js 改進
+ * 修改者：基於原始代碼優化
  * 更新日期：2024年11月22日
  **********/
 
-// 初始化節點和策略相關變數
+// 獲取節點名稱的語法
 let nodeName = "未知節點";
-let proxyPolicy = "Direct";
-
-// 根據工具環境設置策略名稱的前綴
-const policyPrefix = typeof $environment !== "undefined" && ($environment.surge || $environment.stash) ? "代理策略: " : "節點: ";
-
-// 使用 $httpAPI 獲取當前策略名稱（適用於 Surge 和 Stash）
-if (typeof $httpAPI === "function") {
-    $httpAPI("GET", "/v1/policy_groups/select", null, (result) => {
-        for (const group in result) {
-            if (result[group]) {
-                proxyPolicy = `${policyPrefix}${result[group]}`;
-                nodeName = result[group];
-                break;
-            }
-        }
-    });
+if (typeof $environment !== "undefined") {
+    if ($environment.node) {
+        nodeName = $environment.node; // Surge 節點名稱
+    } else if (typeof $environment.params === "string") {
+        nodeName = $environment.params; // 其他可能的名稱
+    }
 }
 
 // 第一步：獲取外部 IP 地址信息
@@ -104,7 +94,6 @@ $httpClient.get({ url: "http://ip-api.com/json/" }, function (error, response, d
 
         const content = `
 節點名稱：${nodeName}
-${proxyPolicy ? `${proxyPolicy}\n` : ""}
 IP 地址：${ipValue}
 城市：${city}
 國家：${country}
