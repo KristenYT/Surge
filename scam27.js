@@ -1,23 +1,15 @@
-// 定义获取策略名称的函数
-async function getSurgePolicy(regexp) {
-    let POLICY = '';
+/********** 
+ * Scamalytics IP 欺诈评分查询
+ * 修改作者：基于原始代码优化
+ * 更新时间：2024年11月22日
+ **********/
 
-    try {
-        const { requests } = await httpAPI('/v1/requests/recent', 'GET');
-        const request = requests.find(i => regexp.test(i.URL)); // 只取匹配的第一個請求
+var inputParams = $environment.params || {};
+var nodeName = $surge.nodeName || "N/A";  // Get node name using $surge.nodeName
 
-        if (request) {
-            POLICY = request.policyName || "未知策略";
-        }
-    } catch (e) {
-        console.log(`獲取策略名稱時發生錯誤: ${e.message || e}`);
-    }
-
-    return POLICY;
-}
-
-// 第一步：获取外部 IP 地址信息
-$httpClient.get({ url: "http://ip-api.com/json/" }, async function (error, response, data) {
+$httpClient.get({
+    url: "http://ip-api.com/json/",
+}, function (error, response, data) {
     if (error) {
         console.log("获取 IP 信息失败:", error);
         return $done({
@@ -56,11 +48,11 @@ $httpClient.get({ url: "http://ip-api.com/json/" }, async function (error, respo
     const isp = ipInfo.isp || "未知 ISP";
     const as = ipInfo.as || "未知 ASN";
 
-    // 第二步：查询策略名称
-    const policy = await getSurgePolicy(/example\.com/); // 替换为实际的正则表达式
+    const requestParams = {
+        url: `https://scamalytics.com/search?ip=${ipValue}`,
+    };
 
-    // 第三步：查询 Scamalytics 信息
-    $httpClient.get({ url: `https://scamalytics.com/search?ip=${ipValue}` }, function (error, response, data) {
+    $httpClient.get(requestParams, function (error, response, data) {
         if (error) {
             console.log("查询 Scamalytics 信息失败:", error);
             return $done({
@@ -98,7 +90,7 @@ $httpClient.get({ url: "http://ip-api.com/json/" }, async function (error, respo
         const riskInfo = riskMap[risk] || { emoji: "⚪", desc: "未知风险" };
 
         const content = `
-策略名称：${policy}
+节点名称：${nodeName}
 IP 地址：${ipValue}
 城市：${city}
 国家：${country}
@@ -116,16 +108,3 @@ IP 欺诈分数：${score}
         });
     });
 });
-
-// 定义 httpAPI 函数，用于访问 Surge 内部 API
-function httpAPI(path, method = 'GET', body = null) {
-    return new Promise((resolve, reject) => {
-        $httpAPI(method, path, body, result => {
-            if (result.error) {
-                reject(result.error);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-}
