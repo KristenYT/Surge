@@ -100,7 +100,7 @@ IP 地址：${ipValue}
 城市：${city}
 ISP：${isp}
 ASN：${as}
-------------------------------------
+-----------------------------------
 IP 欺詐分數：${score}
 風險等級：${riskInfo.emoji} ${riskInfo.desc}
         `.trim();
