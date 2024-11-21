@@ -1,17 +1,26 @@
 /**********
  * Scamalytics IP 欺詐評分查詢
- * 修改者：iam_Kristen
- * 作者：@Sage 基於原始代碼優化
+ * 修改者：基於原始代碼優化
  * 更新日期：2024年11月22日
  **********/
 
-// 獲取節點名稱的語法
-let nodeName = "🇺🇸 美國 ⁰¹ ➟xᴛʀᴇᴍᴇ";
+// 獲取節點名稱
+let nodeName = "未知節點";
+
 if (typeof $environment !== "undefined") {
+    // 在 Surge 環境下獲取節點名稱
     if ($environment.params) {
-        nodeName = $environment.params; // Surge 節點名稱
-    } else if ($environment.node) {
-        nodeName = $environment.node; // 其他工具中可能的名稱
+        nodeName = $environment.params; // Surge 面板參數
+    } else {
+        $httpAPI("GET", "/v1/policy_groups/select", null, (result) => {
+            // 從策略組中獲取當前節點名稱
+            for (const group in result) {
+                if (result[group]) {
+                    nodeName = result[group];
+                    break;
+                }
+            }
+        });
     }
 }
 
@@ -94,13 +103,12 @@ $httpClient.get({ url: "http://ip-api.com/json/" }, function (error, response, d
         const riskInfo = riskMap[risk] || { emoji: "⚪", desc: "未知風險" };
 
         const content = `
-節點：${nodeName}
+節點名稱：${nodeName}
 IP 地址：${ipValue}
-國家：${country}
 城市：${city}
+國家：${country}
 ISP：${isp}
 ASN：${as}
------------------------------------
 IP 欺詐分數：${score}
 風險等級：${riskInfo.emoji} ${riskInfo.desc}
         `.trim();
