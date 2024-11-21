@@ -149,3 +149,13 @@ function httpAPI(path, method = 'GET', body = null) {
         });
     });
 }
+
+// 强制刷新策略函数
+async function refreshPolicy() {
+    try {
+        await httpAPI('/v1/policies', 'POST', {});
+        console.log("策略刷新成功");
+    } catch (e) {
+        console.log("策略刷新失败：", e);
+    }
+}
