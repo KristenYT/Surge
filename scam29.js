@@ -111,7 +111,7 @@ async function getNodeName() {
             const content = `
 節點 :${nodeName}
 IP：${ipValue}
-欺詐分數：⇨${score}
+欺詐分數： ⇨ ${score} ⇦
 風險等級：${riskInfo.emoji} ${riskInfo.desc}
 -----------------------------------
 國家：${country}
