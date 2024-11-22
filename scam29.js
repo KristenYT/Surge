@@ -109,12 +109,13 @@ async function getNodeName() {
             const riskInfo = riskMap[risk] || { emoji: "⚪", desc: "未知風險" };
 
             const content = `
-節點：${nodeName}
-IP 地址：${ipValue}
-IP 欺詐分數：${score}
+節點 :${nodeName}
+IP：${ipValue}
+欺詐分數：${score}
 風險等級：${riskInfo.emoji} ${riskInfo.desc}
 -----------------------------------
-地區：${country} , ${city}
+國家：${country}
+城市：${city}
 ISP：${isp}
 ASN：${as}
             `.trim();
