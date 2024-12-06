@@ -167,7 +167,7 @@ async function check_chatgpt() {
         if (webResult.status === 'Available' && iosResult === 'Client Available') {
             check_result += `\u2611\u2009${webResult.region}`; // Web 和 iOS 都可用
         } else if (webResult.status === 'Available' && iosResult === 'Client Not Available') {
-            check_result += `⚠\u2009${webResult.region}  `; // Web 可用，但 iOS 不可用
+            check_result += `⚠\u2009${webResult.region}`; // Web 可用，但 iOS 不可用
         } else {
             check_result += '\u2612     '; // 都不可用
         }
