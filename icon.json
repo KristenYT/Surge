@@ -1,5 +1,5 @@
 {
-    "name": "Surge Pro",
+    "name": "iCon",
     "icons": [
      { "name": "Surge_G", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Surge.png"},
      { "name": "SurgePro", "url": "https://raw.githubusercontent.com/Yu9191/-/main/icon/surgepro.png"},
@@ -29,5 +29,6 @@
      { "name": "Peach", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Peach.PNG"},
      { "name": "PAUL", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/PAUL.PNG"},
      { "name": "Paul", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Paul.PNG"},
+     { "name": "TeCar", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/TeCar.PNG"},
     ]
 }
