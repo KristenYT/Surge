@@ -23,7 +23,7 @@ WidgetMetadata = {
         params: [
             { 
                 name: "type", 
-                title: "型別", 
+                title: "類別", 
                 type: "enumeration", 
                 enumOptions: [
                     { title: "電影", value: "movie" },
@@ -67,7 +67,7 @@ WidgetMetadata = {
         params: [
             { 
                 name: "type", 
-                title: "型別", 
+                title: "類別", 
                 type: "enumeration", 
                 enumOptions: [
                     { title: "電影", value: "movie" },
@@ -83,7 +83,7 @@ WidgetMetadata = {
     // --- 平臺篩選模組---
     {
         title: "TMDB 播出平臺",
-        description: "按播出平臺和內容型別篩選劇集內容",
+        description: "按播出平臺和內容類別篩選劇集內容",
         requiresWebView: false,
         functionName: "tmdbDiscoverByNetwork",
         params: [
@@ -146,12 +146,12 @@ WidgetMetadata = {
             },
             {
                 name: "with_genres",
-                title: "內容型別",
+                title: "內容類別",
                 type: "enumeration",
-                description: "選擇要篩選的內容型別",
+                description: "選擇要篩選的內容類別",
                 value: "",
                 enumOptions: [
-                    { title: "全部型別", value: "" },
+                    { title: "全部類別", value: "" },
                     { title: "犯罪", value: "80" },
                     { title: "動畫", value: "16" },
                     { title: "喜劇", value: "35" },
@@ -213,12 +213,12 @@ WidgetMetadata = {
             },
             { 
                 name: "with_genres", 
-                title: "型別篩選", 
+                title: "類別篩選", 
                 type: "enumeration", 
-                description: "選擇電影型別", 
+                description: "選擇電影類別", 
                 value: "",
                 enumOptions: [ 
-                    { title: "任意型別", value: "" }, 
+                    { title: "任意類別", value: "" }, 
                     { title: "動作", value: "28" }, 
                     { title: "冒險", value: "12" },
                     { title: "動畫", value: "16" }, 
@@ -316,7 +316,7 @@ WidgetMetadata = {
       functionName: "loadDoubanItemsFromApi",
       params: [
         { name: "url", title: "🔗 列表網址", type: "constant", value: "https://m.douban.com/rexxar/api/v2/subject_collection/movie_real_time_hotest/items" },
-        { name: "type", title: "🎭 型別", type: "constant", value: "movie" },
+        { name: "type", title: "🎭 類別", type: "constant", value: "movie" },
         { name: "page", title: "頁碼", type: "page" },
         { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
       ]
@@ -328,7 +328,7 @@ WidgetMetadata = {
       functionName: "loadDoubanItemsFromApi",
       params: [
         { name: "url", title: "🔗 列表網址", type: "constant", value: "https://m.douban.com/rexxar/api/v2/subject_collection/tv_real_time_hotest/items" },
-        { name: "type", title: "🎭 型別", type: "constant", value: "tv" },
+        { name: "type", title: "🎭 類別", type: "constant", value: "tv" },
         { name: "page", title: "頁碼", type: "page" },
         { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
       ]
@@ -372,7 +372,7 @@ WidgetMetadata = {
     // --- 🎬 探索探索 ---
     {
       title: "豆瓣電影推薦",
-      description: "按分類、地區、型別標籤瀏覽豆瓣推薦電影",
+      description: "按分類、地區、類別標籤瀏覽豆瓣推薦電影",
       requiresWebView: false,
       functionName: "loadDoubanRecommendMovies",
       params: [
@@ -405,7 +405,7 @@ WidgetMetadata = {
         },
         {
           name: "tags", 
-          title: "🎭 型別  (僅當分類為'全部'時生效)", 
+          title: "🎭 類別  (僅當分類為'全部'時生效)", 
           type: "enumeration",
           description: "僅當分類為'全部'時生效", 
           value: "",
@@ -437,13 +437,13 @@ WidgetMetadata = {
     },
     {
       title: "豆瓣劇集推薦",
-      description: "按分類、型別瀏覽豆瓣推薦劇集",
+      description: "按分類、類別瀏覽豆瓣推薦劇集",
       requiresWebView: false,
       functionName: "loadDoubanRecommendShows",
       params: [
         {
           name: "type", 
-          title: "🎭 型別 (劇集)", 
+          title: "🎭 類別 (劇集)", 
           type: "enumeration",
             enumOptions: [
             { title: "綜合", value: "tv" }, 
