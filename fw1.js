@@ -13,7 +13,7 @@ WidgetMetadata = {
   version: "1.2.3",
   requiredVersion: "0.0.1",
   modules: [
-        // =============TMDB模組=============
+    // =============TMDB模組=============
     // --- 目前與趨勢模組 ---
     {
         title: "TMDB 正在熱映",
