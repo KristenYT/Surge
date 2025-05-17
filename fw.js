@@ -13,6 +13,160 @@ WidgetMetadata = {
   version: "1.2.3",
   requiredVersion: "0.0.1",
   modules: [
+    // =============豆瓣模組=============
+    // --- 🔥 實時熱點 ---
+    {
+      title: "豆瓣電影實時熱榜",
+      description: "來自豆瓣的目前熱門電影榜單",
+      requiresWebView: false,
+      functionName: "loadDoubanItemsFromApi",
+      params: [
+        { name: "url", title: "🔗 列表網址", type: "constant", value: "https://m.douban.com/rexxar/api/v2/subject_collection/movie_real_time_hotest/items" },
+        { name: "type", title: "🎭 型別", type: "constant", value: "movie" },
+        { name: "page", title: "頁碼", type: "page" },
+        { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
+      ]
+    },
+    {
+      title: "豆瓣劇集實時熱榜",
+      description: "來自豆瓣的目前熱門劇集榜單",
+      requiresWebView: false,
+      functionName: "loadDoubanItemsFromApi",
+      params: [
+        { name: "url", title: "🔗 列表網址", type: "constant", value: "https://m.douban.com/rexxar/api/v2/subject_collection/tv_real_time_hotest/items" },
+        { name: "type", title: "🎭 型別", type: "constant", value: "tv" },
+        { name: "page", title: "頁碼", type: "page" },
+        { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
+      ]
+    },
+
+    // --- 🏆 精選榜單 ---
+    {
+      title: "豆瓣 Top 250 電影",
+      description: "豆瓣評分最高的 250 部電影",
+      requiresWebView: false,
+      functionName: "loadDoubanCardItems",
+      params: [
+        { name: "url", title: "🔗 列表網址", type: "constant", value: "https://m.douban.com/subject_collection/movie_top250" },
+        { name: "page", title: "頁碼", type: "page" },
+        { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
+      ]
+    },
+    {
+      title: "豆瓣自訂片單",
+      description: "載入豆瓣官方榜單或使用者豆列 (需輸入 URL)",
+      requiresWebView: false,
+      functionName: "loadDoubanCardItems",
+      params: [
+        {
+          name: "url", 
+          title: "🔗 列表網址", 
+          type: "input", 
+          description: "輸入豆瓣片單或榜單網址 (subject_collection 或 doulist)",
+          placeholders: [
+            { title: "一週電影口碑榜", value: "https://m.douban.com/subject_collection/movie_weekly_best" },
+            { title: "一週華語口碑劇集榜", value: "https://m.douban.com/subject_collection/tv_chinese_best_weekly" },
+            { title: "一週全球口碑劇集榜", value: "https://m.douban.com/subject_collection/tv_global_best_weekly" },
+            { title: "第97屆奧斯卡 (2025)", value: "https://m.douban.com/subject_collection/EC7I7ZDRA?type=rank" }
+          ]
+        },
+        { name: "page", title: "頁碼", type: "page" },
+        { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
+      ]
+    },
+
+    // --- 🎬 探索探索 ---
+    {
+      title: "豆瓣電影推薦",
+      description: "按分類、地區、型別標籤瀏覽豆瓣推薦電影",
+      requiresWebView: false,
+      functionName: "loadDoubanRecommendMovies",
+      params: [
+        {
+          name: "category", 
+          title: "🏷️ 分類", 
+          type: "enumeration",
+          enumOptions: [ 
+            { title: "全部", value: "全部" }, 
+            { title: "熱門電影", value: "熱門" }, 
+            { title: "最新電影", value: "最新" }, 
+            { title: "豆瓣高分", value: "豆瓣高分" }, 
+            { title: "冷門佳片", value: "冷門佳片" } 
+          ],
+          value: "全部"
+        },
+        {
+          name: "type", 
+          title: "🌍 地區  (僅對 熱門/最新/高分/冷門 分類生效)", 
+          type: "enumeration",
+          description: "(僅對 熱門/最新/高分/冷門 分類生效)",
+          enumOptions: [ 
+            { title: "全部", value: "全部" }, 
+            { title: "華語", value: "華語" }, 
+            { title: "歐美", value: "歐美" }, 
+            { title: "韓國", value: "韓國" }, 
+            { title: "日本", value: "日本" } 
+          ],
+          value: "全部"
+        },
+        {
+          name: "tags", 
+          title: "🎭 型別  (僅當分類為'全部'時生效)", 
+          type: "enumeration",
+          description: "僅當分類為'全部'時生效", 
+          value: "",
+          enumOptions: [
+            { title: "全部", value: "" },
+            
+            { title: "動作", value: "動作" }, 
+            { title: "科幻", value: "科幻" }, 
+            { title: "愛情", value: "愛情" }, 
+            { title: "喜劇", value: "喜劇" }, 
+            { title: "懸疑", value: "懸疑" }, 
+            { title: "動畫", value: "動畫" }, 
+            { title: "劇情", value: "劇情" }, 
+            { title: "家庭", value: "家庭" }, 
+            { title: "犯罪", value: "犯罪" }, 
+            { title: "歌舞", value: "歌舞" }, 
+            { title: "傳記", value: "傳記" }, 
+            { title: "冒險", value: "冒險" }, 
+            { title: "武俠", value: "武俠" }, 
+            { title: "運動", value: "運動" }, 
+            { title: "古裝", value: "古裝" },
+            
+            { title: "紀錄片", value: "紀錄片" }
+          ]
+        },
+        { name: "page", title: "頁碼", type: "page" },
+        { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
+      ]
+    },
+    {
+      title: "豆瓣劇集推薦",
+      description: "按分類、型別瀏覽豆瓣推薦劇集",
+      requiresWebView: false,
+      functionName: "loadDoubanRecommendShows",
+      params: [
+        {
+          name: "type", 
+          title: "🎭 型別 (劇集)", 
+          type: "enumeration",
+            enumOptions: [
+            { title: "綜合", value: "tv" }, 
+            { title: "國產劇", value: "tv_domestic" }, 
+            { title: "歐美劇", value: "tv_american" }, 
+            { title: "日劇", value: "tv_japanese" }, 
+            { title: "韓劇", value: "tv_korean" }, 
+            { title: "動畫", value: "tv_animation" }, 
+            { title: "紀錄片", value: "tv_documentary" } 
+          ],
+          value: "tv"
+        },
+        { name: "page", title: "頁碼", type: "page" },
+        { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
+      ]
+    },
+
     // =============TMDB模組=============
     // --- 目前與趨勢模組 ---
     {
@@ -308,160 +462,6 @@ WidgetMetadata = {
     }
   ]
 };
-
-    // =============豆瓣模組=============
-    // --- 🔥 實時熱點 ---
-    {
-      title: "豆瓣電影實時熱榜",
-      description: "來自豆瓣的目前熱門電影榜單",
-      requiresWebView: false,
-      functionName: "loadDoubanItemsFromApi",
-      params: [
-        { name: "url", title: "🔗 列表網址", type: "constant", value: "https://m.douban.com/rexxar/api/v2/subject_collection/movie_real_time_hotest/items" },
-        { name: "type", title: "🎭 型別", type: "constant", value: "movie" },
-        { name: "page", title: "頁碼", type: "page" },
-        { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
-      ]
-    },
-    {
-      title: "豆瓣劇集實時熱榜",
-      description: "來自豆瓣的目前熱門劇集榜單",
-      requiresWebView: false,
-      functionName: "loadDoubanItemsFromApi",
-      params: [
-        { name: "url", title: "🔗 列表網址", type: "constant", value: "https://m.douban.com/rexxar/api/v2/subject_collection/tv_real_time_hotest/items" },
-        { name: "type", title: "🎭 型別", type: "constant", value: "tv" },
-        { name: "page", title: "頁碼", type: "page" },
-        { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
-      ]
-    },
-
-    // --- 🏆 精選榜單 ---
-    {
-      title: "豆瓣 Top 250 電影",
-      description: "豆瓣評分最高的 250 部電影",
-      requiresWebView: false,
-      functionName: "loadDoubanCardItems",
-      params: [
-        { name: "url", title: "🔗 列表網址", type: "constant", value: "https://m.douban.com/subject_collection/movie_top250" },
-        { name: "page", title: "頁碼", type: "page" },
-        { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
-      ]
-    },
-    {
-      title: "豆瓣自訂片單",
-      description: "載入豆瓣官方榜單或使用者豆列 (需輸入 URL)",
-      requiresWebView: false,
-      functionName: "loadDoubanCardItems",
-      params: [
-        {
-          name: "url", 
-          title: "🔗 列表網址", 
-          type: "input", 
-          description: "輸入豆瓣片單或榜單網址 (subject_collection 或 doulist)",
-          placeholders: [
-            { title: "一週電影口碑榜", value: "https://m.douban.com/subject_collection/movie_weekly_best" },
-            { title: "一週華語口碑劇集榜", value: "https://m.douban.com/subject_collection/tv_chinese_best_weekly" },
-            { title: "一週全球口碑劇集榜", value: "https://m.douban.com/subject_collection/tv_global_best_weekly" },
-            { title: "第97屆奧斯卡 (2025)", value: "https://m.douban.com/subject_collection/EC7I7ZDRA?type=rank" }
-          ]
-        },
-        { name: "page", title: "頁碼", type: "page" },
-        { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
-      ]
-    },
-
-    // --- 🎬 探索探索 ---
-    {
-      title: "豆瓣電影推薦",
-      description: "按分類、地區、型別標籤瀏覽豆瓣推薦電影",
-      requiresWebView: false,
-      functionName: "loadDoubanRecommendMovies",
-      params: [
-        {
-          name: "category", 
-          title: "🏷️ 分類", 
-          type: "enumeration",
-          enumOptions: [ 
-            { title: "全部", value: "全部" }, 
-            { title: "熱門電影", value: "熱門" }, 
-            { title: "最新電影", value: "最新" }, 
-            { title: "豆瓣高分", value: "豆瓣高分" }, 
-            { title: "冷門佳片", value: "冷門佳片" } 
-          ],
-          value: "全部"
-        },
-        {
-          name: "type", 
-          title: "🌍 地區  (僅對 熱門/最新/高分/冷門 分類生效)", 
-          type: "enumeration",
-          description: "(僅對 熱門/最新/高分/冷門 分類生效)",
-          enumOptions: [ 
-            { title: "全部", value: "全部" }, 
-            { title: "華語", value: "華語" }, 
-            { title: "歐美", value: "歐美" }, 
-            { title: "韓國", value: "韓國" }, 
-            { title: "日本", value: "日本" } 
-          ],
-          value: "全部"
-        },
-        {
-          name: "tags", 
-          title: "🎭 型別  (僅當分類為'全部'時生效)", 
-          type: "enumeration",
-          description: "僅當分類為'全部'時生效", 
-          value: "",
-          enumOptions: [
-            { title: "全部", value: "" },
-            
-            { title: "動作", value: "動作" }, 
-            { title: "科幻", value: "科幻" }, 
-            { title: "愛情", value: "愛情" }, 
-            { title: "喜劇", value: "喜劇" }, 
-            { title: "懸疑", value: "懸疑" }, 
-            { title: "動畫", value: "動畫" }, 
-            { title: "劇情", value: "劇情" }, 
-            { title: "家庭", value: "家庭" }, 
-            { title: "犯罪", value: "犯罪" }, 
-            { title: "歌舞", value: "歌舞" }, 
-            { title: "傳記", value: "傳記" }, 
-            { title: "冒險", value: "冒險" }, 
-            { title: "武俠", value: "武俠" }, 
-            { title: "運動", value: "運動" }, 
-            { title: "古裝", value: "古裝" },
-            
-            { title: "紀錄片", value: "紀錄片" }
-          ]
-        },
-        { name: "page", title: "頁碼", type: "page" },
-        { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
-      ]
-    },
-    {
-      title: "豆瓣劇集推薦",
-      description: "按分類、型別瀏覽豆瓣推薦劇集",
-      requiresWebView: false,
-      functionName: "loadDoubanRecommendShows",
-      params: [
-        {
-          name: "type", 
-          title: "🎭 型別 (劇集)", 
-          type: "enumeration",
-            enumOptions: [
-            { title: "綜合", value: "tv" }, 
-            { title: "國產劇", value: "tv_domestic" }, 
-            { title: "歐美劇", value: "tv_american" }, 
-            { title: "日劇", value: "tv_japanese" }, 
-            { title: "韓劇", value: "tv_korean" }, 
-            { title: "動畫", value: "tv_animation" }, 
-            { title: "紀錄片", value: "tv_documentary" } 
-          ],
-          value: "tv"
-        },
-        { name: "page", title: "頁碼", type: "page" },
-        { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
-      ]
-    },
 
 // ===============輔助函式===============
 function formatItemDescription(item) {
