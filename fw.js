@@ -1,6 +1,6 @@
 // =============UserScript=============
 // @name         影視聚合查詢元件
-// @version      1.2.3.1
+// @version      1.2.3.222
 // @description  聚合查詢豆瓣/TMDB/IMDB影視資料
 // @author       阿米諾斯
 // =============UserScript=============
@@ -35,7 +35,30 @@ WidgetMetadata = {
             { name: "language", title: "語言", type: "language", value: "zh-TW" }
         ]
     },
-    // --- 高分內容 ---
+    {
+        title: "TMDB 本日熱門",
+        description: "今日熱門電影與劇集",
+        requiresWebView: false,
+        functionName: "tmdbTrending",
+        params: [
+            { name: "time_window", title: "時間", type: "constant", value: "day" },
+            { name: "language", title: "語言", type: "constant", value: "zh-TW" },
+            { name: "page", title: "頁碼", type: "page" }
+        ]
+    },
+    {
+        title: "TMDB 本週熱門",
+        description: "本週熱門電影與劇集",
+        requiresWebView: false,
+        functionName: "tmdbTrending",
+        params: [
+            { name: "time_window", title: "時間", type: "constant", value: "week" },
+            { name: "language", title: "語言", type: "constant", value: "zh-TW" },
+            { name: "page", title: "頁碼", type: "page" }
+        ]
+    },
+
+    // --- 常規探索模組 ---
     {
         title: "TMDB 高分內容",
         description: "高分電影或劇集 (按使用者評分排序)",
@@ -53,6 +76,189 @@ WidgetMetadata = {
                 value: "movie" 
             },
             { name: "language", title: "語言", type: "language", value: "zh-TW" },
+            { name: "page", title: "頁碼", type: "page" }
+        ]
+    },
+
+    // --- 平臺篩選模組---
+    {
+        title: "TMDB 播出平臺",
+        description: "按播出平臺和內容型別篩選劇集內容",
+        requiresWebView: false,
+        functionName: "tmdbDiscoverByNetwork",
+        params: [
+            {
+                name: "with_networks",
+                title: "播出平臺",
+                type: "enumeration",
+                description: "選擇一個平臺以檢視其劇集內容",
+                value: "",
+                enumOptions: [
+                    { title: "全部", value: "" },
+                    { title: "Tencent", value: "2007" },
+                    { title: "iQiyi", value: "1330" },
+                    { title: "Youku", value: "1419" },
+                    { title: "Bilibili", value: "1605" },
+                    { title: "MGTV", value: "1631" },
+                    { title: "Netflix", value: "213" },
+                    { title: "Disney+", value: "2739" },
+                    { title: "HBO", value: "49" },
+                    { title: "HBO Max", value: "3186" },
+                    { title: "Apple TV+", value: "2552" },
+                    { title: "Hulu", value: "453" },
+                    { title: "Amazon Prime Video", value: "1024" },
+                    { title: "FOX", value: "19" },
+                    { title: "Paramount", value: "576" },
+                    { title: "Paramount+", value: "4330" },
+                    { title: "TV Tokyo", value: "94" },
+                    { title: "BBC One", value: "332" },
+                    { title: "BBC Two", value: "295" },
+                    { title: "NBC", value: "6" },
+                    
+                    { title: "AMC+", value: "174" }
+                ]
+            },
+            {
+                name: "sort_by",
+                title: "排序方式",
+                type: "enumeration",
+                description: "選擇內容排序方式,預設上映時間↓",
+                value: "first_air_date.desc",
+                enumOptions: [
+                    { title: "上映時間↓", value: "first_air_date.desc" },
+                    { title: "上映時間↑", value: "first_air_date.asc" },
+                    { title: "人氣最高", value: "popularity.desc" },
+
+                    { title: "評分最高", value: "vote_average.desc" },
+                    { title: "最多投票", value: "vote_count.desc" }
+                ]
+            },
+            {
+                name: "air_status",
+                title: "上映狀態",
+                type: "enumeration",
+                description: "預設已上映",
+                value: "released",
+                enumOptions: [
+                    { title: "已上映", value: "released" },
+                    { title: "未上映", value: "upcoming" }
+                ]
+            },
+            {
+                name: "with_genres",
+                title: "內容型別",
+                type: "enumeration",
+                description: "選擇要篩選的內容型別",
+                value: "",
+                enumOptions: [
+                    { title: "全部型別", value: "" },
+                    { title: "犯罪", value: "80" },
+                    { title: "動畫", value: "16" },
+                    { title: "喜劇", value: "35" },
+                    { title: "劇情", value: "18" },
+                    { title: "家庭", value: "10751" },
+                    { title: "兒童", value: "10762" },
+                    { title: "懸疑", value: "9648" },
+                    { title: "真人秀", value: "10764" },
+                    { title: "脫口秀", value: "10767" },
+                    { title: "肥皂劇", value: "10766" },
+                    { title: "紀錄片", value: "99" },
+                    { title: "動作與冒險", value: "10759" },
+                    { title: "科幻與奇幻", value: "10765" },
+                    { title: "戰爭與政治", value: "10768" }
+                ]
+            },
+            { name: "page", title: "頁碼", type: "page" },
+            { name: "language", title: "語言", type: "language", value: "zh-TW" }
+        ]
+    },
+
+    // --- 高階篩選模組 ---
+    {
+        title: "TMDB 即將上映",
+        description: "即將上映的電影 (可篩選)",
+        requiresWebView: false,
+        functionName: "tmdbUpcomingMovies",
+        params: [
+            { name: "language", title: "語言", type: "language", value: "zh-TW" },
+            { 
+                name: "primary_release_date.gte", 
+                title: "起始日期 (含)", 
+                type: "input", 
+                description: "格式：YYYY-MM-DD（預設今天）", 
+                value: "",
+                placeholder: "例：2023-12-31"
+            },
+            { 
+                name: "primary_release_date.lte", 
+                title: "結束日期 (含)", 
+                type: "input", 
+                description: "格式：YYYY-MM-DD（可選）", 
+                value: "",
+                placeholder: "例：2024-05-01"
+            },
+            { 
+                name: "with_release_type", 
+                title: "發行渠道", 
+                type: "enumeration", 
+                description: "選擇發行渠道（多選用逗號分隔）", 
+                value: "2,3",
+                enumOptions: [ 
+                    { title: "影院上映 (優先)", value: "2,3" },
+                    { title: "全部渠道", value: "" }, 
+                    { title: "數字發行", value: "4" }, 
+                    { title: "實體發行", value: "5" }, 
+                    { title: "電視播出", value: "6" }
+                ] 
+            },
+            { 
+                name: "with_genres", 
+                title: "型別篩選", 
+                type: "enumeration", 
+                description: "選擇電影型別", 
+                value: "",
+                enumOptions: [ 
+                    { title: "任意型別", value: "" }, 
+                    { title: "動作", value: "28" }, 
+                    { title: "冒險", value: "12" },
+                    { title: "動畫", value: "16" }, 
+                    { title: "喜劇", value: "35" }, 
+                    { title: "犯罪", value: "80" },
+                    { title: "紀錄", value: "99" }, 
+                    { title: "劇情", value: "18" }, 
+                    { title: "家庭", value: "10751" },
+                    { title: "懸疑", value: "9648" }, 
+                    { title: "愛情", value: "10749" },
+                    { title: "科幻", value: "878" }, 
+                    { title: "戰爭", value: "10752" },
+                    { title: "西部", value: "37" }, 
+                    { title: "電視電影", value: "10770" }
+                ] 
+            },
+            { 
+                name: "vote_average.gte", 
+                title: "最低評分", 
+                type: "input", 
+                description: "輸入0-10之間的數字（如7）", 
+                value: "",
+                placeholder: "0-10"
+            },
+            { 
+                name: "vote_count.gte", 
+                title: "最少評價數", 
+                type: "input", 
+                description: "輸入最小評價數量", 
+                value: "",
+                placeholder: "如：100"
+            },
+            { 
+                name: "with_keywords", 
+                title: "關鍵詞", 
+                type: "input", 
+                description: "英文關鍵詞（如'superhero'）", 
+                value: "",
+                placeholder: "多個用逗號分隔"
+            },
             { name: "page", title: "頁碼", type: "page" }
         ]
     },
@@ -100,7 +306,8 @@ WidgetMetadata = {
         { name: "limit", title: "🔢 每頁數量", type: "constant", value: "20" }
       ]
     },
- // =============豆瓣模組=============
+
+        // =============豆瓣模組=============
     // --- 🔥 實時熱點 ---
     {
       title: "豆瓣電影實時熱榜",
@@ -255,7 +462,7 @@ WidgetMetadata = {
     },
   ]
 };
-   
+
 // ===============輔助函式===============
 function formatItemDescription(item) {
     let description = item.description || '';
