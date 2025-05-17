@@ -4,13 +4,31 @@
   "icon": "https://raw.githubusercontent.com/quantumultxx/FW-Widgets/refs/heads/main/icon.png",
   "widgets": [
 	 {
-      "id": "douban",
-      "title": "豆瓣個人化推薦",
-      "description": "解析豆瓣想看、在看、已看以及根據個人資料產生的個人化推薦",
+      "id": "forward.combined.media.lists",
+      "title": "🔍聚合影視榜單",
+      "description": "取得豆瓣、TMDB和IMDB的影視動畫清單",
       "requiredVersion": "0.0.1",
-      "version": "1.0.2",
-      "author": "huangxd",
-      "url": "https://raw.githubusercontent.com/huangxd-/ForwardWidgets/refs/heads/main/widgets/douban.js"
+      "version": "1.2.3",
+      "author": "阿米諾斯",
+      "url": "https://raw.githubusercontent.com/KristenYT/Surge/refs/heads/main/ForwardWidgets.js"
+    },
+    {
+      "id": "hot_picks",
+      "title": "熱門精選",
+      "description": "獲取最新熱播劇和熱門影片推薦",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.7",
+      "author": "兩塊",
+      "url": "https://raw.githubusercontent.com/2kuai/ForwardWidgets/refs/heads/main/Widgets/HotPicks.js"
+    },
+    {
+      "id": "imdb",
+      "title": "IMDB",
+      "description": "IMDB",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.0",
+      "author": "pack1r",
+      "url": "https://raw.githubusercontent.com/pack1r/ForwardWidgets/refs/heads/main/widgets/imdb.js"
     },
     {
       "id": "trakt",
@@ -23,39 +41,21 @@
     },
     {
       "id": "douban",
+      "title": "豆瓣個人化推薦",
+      "description": "解析豆瓣想看、在看、已看以及根據個人資料產生的個人化推薦",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.2",
+      "author": "huangxd",
+      "url": "https://raw.githubusercontent.com/huangxd-/ForwardWidgets/refs/heads/main/widgets/douban.js"
+    },
+    {      
+      "id": "douban",
       "title": "豆瓣",
       "description": "解析豆瓣片單，取得視訊資訊",
       "requiredVersion": "0.0.1",
       "version": "1.0.0",
       "author": "pack1r",
       "url": "https://raw.githubusercontent.com/pack1r/ForwardWidgets/refs/heads/main/widgets/douban.js"
-    },
-    {
-      "id": "imdb",
-      "title": "IMDB",
-      "description": "IMDB",
-      "requiredVersion": "0.0.1",
-      "version": "1.0.0",
-      "author": "pack1r",
-      "url": "https://raw.githubusercontent.com/pack1r/ForwardWidgets/refs/heads/main/widgets/imdb.js"
-    },
-    {
-      "id": "hot_picks",
-      "title": "熱門精選",
-      "description": "獲取最新熱播劇和熱門影片推薦",
-      "requiredVersion": "0.0.1",
-      "version": "1.0.7",
-      "author": "兩塊",
-      "url": "https://raw.githubusercontent.com/2kuai/ForwardWidgets/refs/heads/main/Widgets/HotPicks.js"
-    },
-    {
-      "id": "forward.combined.media.lists",
-      "title": "聚合影視榜單",
-      "description": "取得豆瓣、TMDB和IMDB的影視動畫清單",
-      "requiredVersion": "0.0.1",
-      "version": "1.2.3",
-      "author": "阿米諾斯",
-      "url": "https://raw.githubusercontent.com/KristenYT/Surge/refs/heads/main/ForwardWidgets.js"
     }
   ]
 }
