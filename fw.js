@@ -1,6 +1,6 @@
 // =============UserScript=============
 // @name         影視聚合查詢元件
-// @version      1.2.3
+// @version      1.2.3.1
 // @description  聚合查詢豆瓣/TMDB/IMDB影視資料
 // @author       阿米諾斯
 // =============UserScript=============
