@@ -1,7 +1,7 @@
 {
     "name":"icons", 
-	"description":"",  
-	"icons": [
+    "description":"",  
+    "icons": [
      { "name": "Surge_G", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Surge.png"},
      { "name": "SurgePro", "url": "https://raw.githubusercontent.com/Yu9191/-/main/icon/surgepro.png"},
      { "name": "SurgeProqiyeban", "url": "https://raw.githubusercontent.com/githubdulong/Script/master/Images/Surge.png"},
@@ -45,7 +45,7 @@
      { "name": "Feiyue", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Feiyue.PNG"},
      { "name": "Tdck", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Tdck.PNG"},
      { "name": "Plus", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Plus.PNG"},
-     { "name": "Lubo", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Lubo.PNG"},
+     { "name": "Luob", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Luob.PNG"},
      { "name": "DPX", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/DPX.PNG"},
      { "name": "Nya", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Nya.PNG"},
      { "name": "Dpeak", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Dpeak.PNG"},
