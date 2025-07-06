@@ -54,6 +54,15 @@
      { "name": "Disney", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Disney.PNG"},
      { "name": "Netflix", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Netflix.PNG"},
      { "name": "Hulu", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Hulu.PNG"},
-     {"name":"NBC", "url":"https://raw.githubusercontent.com/KristenYT/icon/main/NBC.PNG.png"},
+     { "name": "NBC", "url":"https://raw.githubusercontent.com/KristenYT/icon/main/NBC.PNG.png"},
+     { "name": "105", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/105.PNG"},
+     { "name": "A24", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/A24.PNG"},  
+     { "name": "BlumHouse", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/BlumHouse.PNG"}, 
+     { "name": "China_Film_Group", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/China_Film_Group.PNG"}, 
+     { "name": "MSKY", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/MSKY.PNG"}, 
+     { "name": "PlayZ", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/PlayZ.PNG"}, 
+     { "name": "Saturday.Lite", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Saturday.Lite.PNG"}, 
+     { "name": "Walking_Title", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/Walking_Title.PNG"}, 
+     { "name": "ZOX", "url": "https://raw.githubusercontent.com/KristenYT/icon/main/ZOX.PNG"}, 
     ]
 }
