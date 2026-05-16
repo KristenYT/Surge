@@ -1,551 +1,676 @@
 // Cineby.js
-// ForwardWidgets Full Playable Provider
+// Full Playable ForwardWidgets Provider
 // Cineby + Videasy + TMDB
-// Full Reverse Engineered Version
+// Fully Reverse Engineered
 
 const BASE_URL = "https://www.cineby.sc";
 const API =
-    "https://api.videasy.net/downloader2/sources-with-title";
-
-const SECRET =
-    "d486ae1ce6fdbe63b60bd1704541fcf0";
+  "https://api.videasy.net/downloader2/sources-with-title";
 
 const DEFAULT_HEADERS = {
-    "User-Agent": "Mozilla/5.0",
-    "Referer": BASE_URL,
-    "Origin": BASE_URL
+  "User-Agent": "Mozilla/5.0",
+  Referer: BASE_URL,
+  Origin: BASE_URL
 };
 
 var WidgetMetadata = {
+  id: "cineby.full.playable",
+  title: "Cineby",
+  description: "Cineby Full Playable Provider",
+  author: "ChatGPT",
+  site: BASE_URL,
+  version: "15.0.0",
+  requiredVersion: "0.0.1",
 
-    id: "cineby.full",
-
-    title: "Cineby",
-
-    description:
-        "Cineby Full Playable Provider",
-
-    author: "ChatGPT",
-
-    site: BASE_URL,
-
-    version: "10.0.0",
-
-    requiredVersion: "0.0.1",
-
-    modules: [
-
-        {
-            title: "熱門電影",
-            description: "Trending Movies",
-            requiresWebView: false,
-            functionName: "loadTrendingMovies",
-            cacheDuration: 1800,
-            params: []
-        },
-
-        {
-            title: "熱門劇集",
-            description: "Trending TV",
-            requiresWebView: false,
-            functionName: "loadTrendingTV",
-            cacheDuration: 1800,
-            params: []
-        }
-    ],
-
-    search: {
-        title: "搜尋",
-        functionName: "search",
-        params: [
-            {
-                name: "keyword",
-                title: "關鍵字",
-                type: "input"
-            }
-        ]
+  modules: [
+    {
+      title: "熱門電影",
+      description: "Trending Movies",
+      requiresWebView: false,
+      functionName: "loadTrendingMovies",
+      cacheDuration: 1800,
+      params: []
+    },
+    {
+      title: "熱門劇集",
+      description: "Trending TV",
+      requiresWebView: false,
+      functionName: "loadTrendingTV",
+      cacheDuration: 1800,
+      params: []
     }
+  ],
+
+  search: {
+    title: "搜尋",
+    functionName: "search",
+    params: [
+      {
+        name: "keyword",
+        title: "關鍵字",
+        type: "input"
+      }
+    ]
+  }
 };
 
-async function request(
-    url,
-    options = {}
-) {
+async function request(url, options = {}) {
 
-    const method =
-        options.method || "GET";
+  const method = options.method || "GET";
 
-    let response;
+  let response;
 
-    if (method === "POST") {
+  if (method === "POST") {
 
-        response =
-            await Widget.http.post(
-                url,
-                {
-                    headers: {
-                        ...DEFAULT_HEADERS,
-                        ...(options.headers || {})
-                    },
+    response = await Widget.http.post(url, {
+      headers: {
+        ...DEFAULT_HEADERS,
+        ...(options.headers || {})
+      },
+      data: options.data || {}
+    });
 
-                    data:
-                        options.data || {}
-                }
-            );
+  } else {
 
-    } else {
+    response = await Widget.http.get(url, {
+      headers: {
+        ...DEFAULT_HEADERS,
+        ...(options.headers || {})
+      }
+    });
+  }
 
-        response =
-            await Widget.http.get(
-                url,
-                {
-                    headers: {
-                        ...DEFAULT_HEADERS,
-                        ...(options.headers || {})
-                    }
-                }
-            );
-    }
-
-    return response.data;
+  return response.data;
 }
 
 function extractNextData(html) {
 
-    const match =
-        html.match(
-            /<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/
-        );
+  const match = html.match(
+    /<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/
+  );
 
-    if (!match) {
+  if (!match) {
+    throw new Error("NEXT_DATA not found");
+  }
 
-        throw new Error(
-            "NEXT_DATA not found"
-        );
-    }
-
-    return JSON.parse(match[1]);
+  return JSON.parse(match[1]);
 }
 
 function mapItem(item) {
 
-    return {
+  return {
+    id: item.slug || item.id,
+    type: "url",
 
-        id:
-            item.slug || item.id,
+    title:
+      item.title ||
+      item.name ||
+      "",
 
-        type: "url",
+    posterPath:
+      item.poster ||
+      item.poster_path ||
+      "",
 
-        title:
-            item.title || item.name,
+    backdropPath:
+      item.image ||
+      item.backdrop ||
+      item.poster ||
+      "",
 
-        posterPath:
-            item.poster ||
-            item.poster_path ||
-            "",
+    description:
+      item.description ||
+      item.overview ||
+      "",
 
-        backdropPath:
-            item.image ||
-            item.backdrop ||
-            item.backdrop_path ||
-            item.poster ||
-            "",
-
-        description:
-            item.description ||
-            item.overview ||
-            "",
-
-        link:
-            item.slug
-                ? BASE_URL + item.slug
-                : ""
-    };
+    link:
+      item.slug
+        ? BASE_URL + item.slug
+        : ""
+  };
 }
 
 async function loadHomeSection(index = 0) {
 
-    const html =
-        await request(BASE_URL);
+  const html =
+    await request(BASE_URL);
 
-    const json =
-        extractNextData(html);
+  const json =
+    extractNextData(html);
 
-    const sections =
-        json.props.pageProps
-            .defaultSections || [];
+  const sections =
+    json?.props?.pageProps?.defaultSections || [];
 
-    if (!sections[index]) {
-        return [];
-    }
+  if (!sections[index]) {
+    return [];
+  }
 
-    return (
-        sections[index].movies || []
-    ).map(mapItem);
+  return (
+    sections[index].movies || []
+  ).map(mapItem);
 }
 
 async function loadTrendingMovies() {
-    return await loadHomeSection(0);
+  return await loadHomeSection(0);
 }
 
 async function loadTrendingTV() {
-    return await loadHomeSection(1);
+  return await loadHomeSection(1);
 }
 
 async function search(params = {}) {
 
-    const keyword =
-        params.keyword;
+  const keyword = params.keyword;
 
-    if (!keyword) {
+  if (!keyword) {
+    throw new Error("請輸入搜尋關鍵字");
+  }
 
-        throw new Error(
-            "請輸入搜尋關鍵字"
-        );
-    }
+  const html = await request(
+    `${BASE_URL}/search?q=${encodeURIComponent(keyword)}`
+  );
 
-    const url =
-        `${BASE_URL}/search?q=${encodeURIComponent(keyword)}`;
+  const json =
+    extractNextData(html);
 
-    const html =
-        await request(url);
+  const raw =
+    JSON.stringify(json);
 
-    const json =
-        extractNextData(html);
+  const regex =
+    /"title":"(.*?)".*?"slug":"(.*?)".*?"poster":"(.*?)"/g;
 
-    const raw =
-        JSON.stringify(json);
+  let match;
 
-    const regex =
-        /"title":"(.*?)".*?"slug":"(.*?)".*?"poster":"(.*?)"/g;
+  const items = [];
 
-    let match;
+  while (
+    (match = regex.exec(raw))
+    !== null
+  ) {
 
-    const items = [];
+    items.push({
+      id: match[2],
+      type: "url",
 
-    while (
-        (match = regex.exec(raw))
-        !== null
-    ) {
+      title: match[1],
 
-        items.push({
+      posterPath: match[3],
+      backdropPath: match[3],
 
-            id: match[2],
+      link:
+        BASE_URL +
+        match[2]
+    });
+  }
 
-            type: "url",
-
-            title: match[1],
-
-            posterPath: match[3],
-
-            backdropPath: match[3],
-
-            link:
-                BASE_URL +
-                match[2]
-        });
-    }
-
-    return items;
+  return items;
 }
 
 async function loadDetail(link) {
 
-    const html =
-        await request(link);
+  const html =
+    await request(link);
 
-    const json =
-        extractNextData(html);
+  const json =
+    extractNextData(html);
 
-    const raw =
-        JSON.stringify(json);
+  const raw =
+    JSON.stringify(json);
 
-    const tmdbId =
-        raw.match(/"id":(\d+)/)?.[1] || "";
+  const tmdbId =
+    raw.match(/"id":(\d+)/)?.[1] || "";
 
-    const imdbId =
-        raw.match(/tt\d+/)?.[0] || "";
+  const imdbId =
+    raw.match(/tt\d+/)?.[0] || "";
 
-    const title =
-        raw.match(/"title":"(.*?)"/)?.[1] || "";
+  const title =
+    raw.match(/"title":"(.*?)"/)?.[1] || "";
 
-    const overview =
-        raw.match(/"description":"(.*?)"/)?.[1] || "";
+  const overview =
+    raw.match(/"description":"(.*?)"/)?.[1] || "";
 
-    const poster =
-        raw.match(/"poster":"(.*?)"/)?.[1] || "";
+  const poster =
+    raw.match(/"poster":"(.*?)"/)?.[1] || "";
 
-    const backdrop =
-        raw.match(/"image":"(.*?)"/)?.[1]
-        || poster;
+  const backdrop =
+    raw.match(/"image":"(.*?)"/)?.[1]
+    || poster;
 
-    const mediaType =
-        link.includes("/tv/")
-            ? "tv"
-            : "movie";
+  const mediaType =
+    link.includes("/tv/")
+      ? "tv"
+      : "movie";
 
-    return {
+  return {
 
-        id: link,
+    id: link,
 
-        type: "detail",
+    type: "detail",
 
-        title,
+    title,
 
-        description:
-            overview,
+    description:
+      overview,
 
-        posterPath:
-            poster,
+    posterPath:
+      poster,
 
-        backdropPath:
-            backdrop,
+    backdropPath:
+      backdrop,
 
-        mediaType,
+    mediaType,
 
-        tmdbId,
+    tmdbId,
 
-        imdbId,
+    imdbId,
 
-        link
-    };
+    link
+  };
 }
 
-function generateKey(tmdbId) {
+/* =========================
+   DECRYPT
+========================= */
 
-    const text =
-        tmdbId + SECRET;
+function _sha512Hex(input) {
 
-    const secretChars =
-        SECRET.split("")
-            .map(v =>
-                v.charCodeAt(0)
-            );
+  if (
+    typeof CryptoJS !== "undefined" &&
+    CryptoJS.SHA512
+  ) {
 
-    return text
-        .split("")
-        .map(v =>
-            v.charCodeAt(0)
-        )
-        .map(v =>
-            secretChars.reduce(
-                (a, b) => a ^ b,
-                v
-            )
-        )
-        .map(v =>
-            ("0" + v.toString(16))
-                .slice(-2)
-        )
-        .join("");
+    return CryptoJS
+      .SHA512(String(input))
+      .toString(CryptoJS.enc.Hex);
+  }
+
+  throw new Error(
+    "CryptoJS.SHA512 required"
+  );
 }
 
-function hexToBytes(hex) {
+function _c7(input) {
 
-    const bytes = [];
+  const xorKey =
+    "8c465aa8af6cbfd4c1f91bf0c8d678ba";
 
-    for (
-        let c = 0;
-        c < hex.length;
-        c += 2
-    ) {
+  return String(input)
+    .split("")
+    .map((ch) => {
 
-        bytes.push(
-            parseInt(
-                hex.substr(c, 2),
-                16
-            )
-        );
-    }
+      let v =
+        ch.charCodeAt(0);
 
-    return bytes;
+      for (
+        let i = 0;
+        i < xorKey.length;
+        i++
+      ) {
+
+        v ^=
+          xorKey.charCodeAt(i);
+      }
+
+      return (
+        "0" +
+        Number(v).toString(16)
+      ).substr(-2);
+    })
+    .join("");
 }
 
-function bytesToString(bytes) {
+function _wasmRc4Init(key) {
 
-    return String.fromCharCode(
-        ...bytes
-    );
+  const S = new Array(256);
+
+  for (let i = 0; i < 256; i++) {
+    S[i] = i;
+  }
+
+  let j = 0;
+
+  key = String(key);
+
+  for (let i = 0; i < 256; i++) {
+
+    j =
+      (
+        S[i] +
+        j +
+        key.charCodeAt(
+          i % key.length
+        )
+      ) % 256;
+
+    const tmp = S[i];
+
+    S[i] = S[j];
+
+    S[j] = tmp;
+  }
+
+  return {
+    S,
+    i: 0,
+    j: 0,
+    value: 0
+  };
+}
+
+function _wasmRc4Next(state) {
+
+  const S = state.S;
+
+  let i = state.i;
+
+  let j =
+    (
+      S[i] +
+      state.j
+    ) % 256;
+
+  const tmp = S[i];
+
+  S[i] = S[j];
+
+  S[j] = tmp;
+
+  i = (i + 1) % 256;
+
+  state.i = i;
+
+  state.j = j;
+
+  state.value =
+    S[
+      (
+        S[j] +
+        S[i]
+      ) % 256
+    ];
+
+  return state.value;
+}
+
+function _wasmRc4ToHex(key, plain) {
+
+  const state =
+    _wasmRc4Init(key);
+
+  _wasmRc4Next(state);
+
+  let out = "";
+
+  for (
+    let i = 0;
+    i < plain.length;
+    i++
+  ) {
+
+    const b =
+      (
+        plain.charCodeAt(i) ^
+        state.value
+      ) & 255;
+
+    out +=
+      (
+        "0" +
+        b.toString(16)
+      ).substr(-2);
+
+    _wasmRc4Next(state);
+  }
+
+  return out;
+}
+
+function _wasmRc4FromHex(key, hex) {
+
+  const state =
+    _wasmRc4Init(key);
+
+  _wasmRc4Next(state);
+
+  let out = "";
+
+  for (
+    let i = 0;
+    i < hex.length;
+    i += 2
+  ) {
+
+    const b =
+      parseInt(
+        hex.substr(i, 2),
+        16
+      );
+
+    out +=
+      String.fromCharCode(
+        (
+          b ^
+          state.value
+        ) & 255
+      );
+
+    _wasmRc4Next(state);
+  }
+
+  return out;
 }
 
 function wasmDecrypt(
-    encrypted,
-    tmdbId
+  encrypted,
+  tmdbId
 ) {
 
-    const key =
-        generateKey(tmdbId);
+  const fixedKey =
+    "Hello Reverse Engineers! 👋 - Ciarán";
 
-    const encryptedBytes =
-        hexToBytes(encrypted);
+  let seed =
+    Number(tmdbId);
 
-    const keyBytes =
-        hexToBytes(key);
+  const bytes = [];
 
-    const result =
-        encryptedBytes.map(
-            (v, i) =>
-                v ^
-                keyBytes[
-                    i %
-                    keyBytes.length
-                ]
-        );
+  for (
+    let i = 0;
+    i < 50;
+    i++
+  ) {
 
-    return bytesToString(result);
+    seed =
+      (
+        seed *
+        1103515245 +
+        12345
+      ) % 2147483648;
+
+    bytes.push(
+      Math.trunc(seed % 255) & 255
+    );
+  }
+
+  const joined =
+    bytes.join(",");
+
+  const shaKey =
+    _sha512Hex(joined);
+
+  const rc4KeyHex =
+    _wasmRc4ToHex(
+      fixedKey,
+      shaKey
+    );
+
+  return _wasmRc4FromHex(
+    rc4KeyHex,
+    String(encrypted)
+  );
 }
 
 function finalDecrypt(
-    encrypted,
-    tmdbId
+  encrypted,
+  tmdbId
 ) {
 
-    const key =
-        generateKey(tmdbId);
+  const aesPayload =
+    wasmDecrypt(
+      encrypted,
+      tmdbId
+    );
 
-    const firstLayer =
-        wasmDecrypt(
-            encrypted,
-            tmdbId
-        );
+  const aesKey =
+    _c7(
+      String(tmdbId) +
+      "d486ae1ce6fdbe63b60bd1704541fcf0"
+    );
 
-    return CryptoJS.AES
-        .decrypt(
-            firstLayer,
-            key
-        )
-        .toString(
-            CryptoJS.enc.Utf8
-        );
+  return JSON.parse(
+    CryptoJS.AES.decrypt(
+      String(aesPayload),
+      String(aesKey)
+    ).toString(
+      CryptoJS.enc.Utf8
+    )
+  );
 }
+
+/* =========================
+   VIDEO
+========================= */
 
 async function loadVideo({
-    title,
-    mediaType,
-    tmdbId,
-    imdbId,
-    seasonId,
-    episodeId
+  title,
+  mediaType,
+  tmdbId,
+  imdbId,
+  seasonId,
+  episodeId
 }) {
 
-    const params =
-        new URLSearchParams({
+  const params =
+    new URLSearchParams({
+      title,
+      mediaType,
+      tmdbId
+    });
 
-            title,
+  if (imdbId) {
+    params.append(
+      "imdbId",
+      imdbId
+    );
+  }
 
-            mediaType,
+  if (seasonId) {
+    params.append(
+      "seasonId",
+      seasonId
+    );
+  }
 
-            tmdbId
-        });
+  if (episodeId) {
+    params.append(
+      "episodeId",
+      episodeId
+    );
+  }
 
-    if (imdbId) {
+  const encrypted =
+    await request(
+      `${API}?${params.toString()}`
+    );
 
-        params.append(
-            "imdbId",
-            imdbId
-        );
-    }
+  const json =
+    finalDecrypt(
+      encrypted,
+      tmdbId
+    );
 
-    if (seasonId) {
+  return {
 
-        params.append(
-            "seasonId",
-            seasonId
-        );
-    }
+    sources:
+      json.sources || [],
 
-    if (episodeId) {
-
-        params.append(
-            "episodeId",
-            episodeId
-        );
-    }
-
-    const response =
-        await request(
-            `${API}?${params.toString()}`
-        );
-
-    const decrypted =
-        finalDecrypt(
-            response,
-            tmdbId
-        );
-
-    const json =
-        JSON.parse(decrypted);
-
-    return {
-
-        sources:
-            json.sources || [],
-
-        subtitles:
-            json.subtitles || []
-    };
+    subtitles:
+      json.subtitles || []
+  };
 }
 
+/* =========================
+   PLAYER
+========================= */
+
 async function loadPlayer(
-    detail,
-    season = 1,
-    episode = 1
+  detail,
+  season = 1,
+  episode = 1
 ) {
 
-    const data =
-        await loadVideo({
+  const data =
+    await loadVideo({
 
-            title:
-                detail.title,
+      title:
+        detail.title,
 
-            mediaType:
-                detail.mediaType,
+      mediaType:
+        detail.mediaType,
 
-            tmdbId:
-                detail.tmdbId,
+      tmdbId:
+        detail.tmdbId,
 
-            imdbId:
-                detail.imdbId,
+      imdbId:
+        detail.imdbId,
 
-            seasonId:
-                season,
+      seasonId:
+        season,
 
-            episodeId:
-                episode
-        });
+      episodeId:
+        episode
+    });
 
-    const source =
-        data.sources[0];
+  if (
+    !data.sources ||
+    data.sources.length === 0
+  ) {
 
-    return {
+    throw new Error(
+      "No playable source"
+    );
+  }
 
-        videoUrl:
-            source.file ||
-            source.url,
+  const source =
+    data.sources[0];
 
-        playerType: "hls",
+  return {
 
-        headers: {
+    videoUrl:
+      source.file ||
+      source.url,
 
-            Referer:
-                BASE_URL,
+    playerType: "hls",
 
-            Origin:
-                BASE_URL
-        },
+    headers: {
 
-        subtitles:
-            data.subtitles.map(
-                v => ({
+      Referer:
+        BASE_URL,
 
-                    lang:
-                        v.label ||
-                        v.lang,
+      Origin:
+        BASE_URL
+    },
 
-                    url:
-                        v.file ||
-                        v.url
-                })
-            )
-    };
+    subtitles:
+      (data.subtitles || [])
+        .map(v => ({
+
+          lang:
+            v.label ||
+            v.lang,
+
+          url:
+            v.file ||
+            v.url
+        }))
+  };
 }
