@@ -1,195 +1,298 @@
-// =============UserScript=============
-// @name         TMDB泰國電視公司聚合
-// @version      1.1.1
-// @description  聚合 TMDB 泰國電視公司
-// @author       Kristen
-// =============UserScript=============
+const BASE_URL = "https://www.cineby.sc";
+const TMDB_API = "YOUR_TMDB_API_KEY";
 
-// 補充缺失的函數
-function getBeijingDate() {
-    const now = new Date();
-    const beijingTime = now.getTime() + (8 * 60 * 60 * 1000);
-    const beijingDate = new Date(beijingTime);
-    const year = beijingDate.getUTCFullYear();
-    const month = String(beijingDate.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(beijingDate.getUTCDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
+var WidgetMetadata = {
+    id: "cineby.tmdb",
+    title: "Cineby",
+    description: "Cineby + TMDB Metadata",
+    author: "ChatGPT",
+    site: BASE_URL,
+    version: "2.0.0",
+    requiredVersion: "0.0.1",
 
-WidgetMetadata = {
-  id: "forward.combined.media.thai.tvnetworks",
-  title: "TMDB泰國電視台",
-  description: "聚合TMDB泰國電視台",
-  author: "Kristen",
-  site: "https://github.com/quantumultxx/FW-Widgets",
-  version: "1.1.1",
-  requiredVersion: "0.0.1",
-  detailCacheDuration: 60,
-  modules: [
-    {
-      id: "thai_companies",
-      title: "TMDB 泰國出品公司",
-      functionName: "tmdbDiscoverByNetwork",
-      cacheDuration: 3600,
-      params: [
+    modules: [
         {
-          name: "with_networks",
-          title: "電視台",
-          type: "enumeration",
-          value: "",
-          description: "選擇一個泰國電視台以查看其劇集內容",
-          enumOptions: [
-            { title: "全部", value: "" },
-            { title: "One31", value: "1784" },
-            { title: "Amarin TV", value: "3281" },
-            { title: "Channel 3", value: "344" },
-            { title: "GMM 25", value: "1974" },
+            title: "Trending",
+            description: "熱門影片",
+            requiresWebView: false,
+            functionName: "loadTrending",
+            cacheDuration: 1800,
+            params: []
+        },
+        {
+            title: "Latest",
+            description: "最新影片",
+            requiresWebView: false,
+            functionName: "loadLatest",
+            cacheDuration: 1800,
+            params: []
+        }
+    ],
 
-            // ✅ 新增（公司類型）
-            { title: "GMMTV", value: "company:139247" }
-          ]
-        },
-        {
-          name: "with_genres",
-          title: "🎭內容類型",
-          type: "enumeration",
-          description: "選擇要篩選的內容類型",
-          value: "",
-          enumOptions: [
-            { title: "全部類型", value: "" },
-            { title: "犯罪", value: "80" },
-            { title: "動畫", value: "16" },
-            { title: "喜劇", value: "35" },
-            { title: "劇情", value: "18" },
-            { title: "家庭", value: "10751" },
-            { title: "兒童", value: "10762" },
-            { title: "懸疑", value: "9648" },
-            { title: "真人秀", value: "10764" },
-            { title: "脫口秀", value: "10767" },
-            { title: "肥皂劇", value: "10766" },
-            { title: "紀錄片", value: "99" },
-            { title: "動作與冒險", value: "10759" },
-            { title: "科幻與奇幻", value: "10765" },
-            { title: "戰爭與政治", value: "10768" }
-          ]
-        },
-        {
-          name: "air_status",
-          title: "上映狀態",
-          type: "enumeration",
-          description: "默認已上映",
-          value: "released",
-          enumOptions: [
-            { title: "已上映", value: "released" },
-            { title: "未上映", value: "upcoming" }
-          ]
-        },
-        {
-          name: "sort_by",
-          title: "🔢 排序方式",
-          type: "enumeration",
-          description: "選擇內容排序方式, 默認上映時間↓",
-          value: "first_air_date.desc",
-          enumOptions: [
-            { title: "上映時間↓", value: "first_air_date.desc" },
-            { title: "上映時間↑", value: "first_air_date.asc" },
-            { title: "人氣最高", value: "popularity.desc" },
-            { title: "評分最高", value: "vote_average.desc" },
-            { title: "最多投票", value: "vote_count.desc" }
-          ]
-        },
-        { name: "page", title: "頁碼", type: "page" },
-        { name: "language", title: "語言", type: "language", value: "zh-TW" }
-      ]
+    search: {
+        title: "搜尋",
+        functionName: "search",
+        params: [
+            {
+                name: "keyword",
+                title: "關鍵字",
+                type: "input"
+            }
+        ]
     }
-  ]
 };
 
-// ===============TMDB功能函數===============
-async function fetchTmdbData(api, params) {
-    try {
-        const response = await Widget.tmdb.get(api, { params: params });
+const headers = {
+    "User-Agent": "Mozilla/5.0",
+    "Referer": BASE_URL,
+    "Origin": BASE_URL
+};
 
-        if (!response) {
-            throw new Error("獲取數據失敗");
+async function request(url, options = {}) {
+    const res = await Widget.http.get(url, {
+        headers: {
+            ...headers,
+            ...(options.headers || {})
         }
+    });
 
-        const data = response.results;
-        
-        return data
-            .filter(item => {
-                const hasPoster = item.poster_path;
-                const hasTitle = item.title || item.name;
-                const hasValidId = Number.isInteger(item.id);
-                
-                return hasPoster && hasTitle && hasValidId;
-            })
-            .map((item) => {
-                let mediaType = item.media_type;
-                
-                if (!mediaType) {
-                    if (item.title) mediaType = "movie";
-                    else if (item.name) mediaType = "tv";
-                }
-                
-                return {
-                    id: item.id,
-                    type: "tmdb",
-                    title: item.title || item.name,
-                    description: item.overview,
-                    releaseDate: item.release_date || item.first_air_date,
-                    backdropPath: item.backdrop_path,
-                    posterPath: item.poster_path,
-                    rating: item.vote_average,
-                    mediaType: mediaType || "unknown",
-                };
-            });
-    } catch (error) {
-        console.error("調用 TMDB API 失敗:", error);
-        return [createErrorItem("tmdb-api", "API調用失敗", error)];
-    }
+    return res.data;
 }
 
-async function tmdbDiscoverByNetwork(params = {}) {
-    const api = "discover/tv";
-    const beijingDate = getBeijingDate();
-
-    const discoverParams = {
-        language: params.language || 'zh-TW',
-        page: params.page || 1,
-        sort_by: params.sort_by || "first_air_date.desc",
-    };
-
-    // ✅ 核心修正（不混用 network / company）
-    if (params.with_networks) {
-        if (params.with_networks.startsWith("company:")) {
-            discoverParams.with_companies = params.with_networks.replace("company:", "");
-        } else {
-            discoverParams.with_networks = params.with_networks;
-        }
-    }
-
-    if (params.air_status === 'released') {
-        discoverParams['first_air_date.lte'] = beijingDate;
-    } else if (params.air_status === 'upcoming') {
-        discoverParams['first_air_date.gte'] = beijingDate;
-    }
-
-    if (params.with_genres) {
-        discoverParams.with_genres = params.with_genres;
-    }
-
-    return await fetchTmdbData(api, discoverParams);
+function absolute(url) {
+    if (!url) return "";
+    if (url.startsWith("http")) return url;
+    return BASE_URL + url;
 }
 
-// ===============錯誤輔助函數===============
-function createErrorItem(id, title, error) {
-    const errorMessage = String(error?.message || error || '未知錯誤');
-    const uniqueId = `error-${id.replace(/[^a-zA-Z0-9]/g, '-')}-${Date.now()}`;
+function buildMediaItem(item) {
     return {
-        id: uniqueId,
-        type: "error",
-        title: title || "載入失敗",
-        description: `錯誤詳情：${errorMessage}`
+        id: item.id || item.slug || item.url,
+        type: "url",
+        title: item.title,
+        posterPath: absolute(item.poster),
+        backdropPath: absolute(item.backdrop || item.poster),
+        description: item.overview || "",
+        link: absolute(item.url)
     };
+}
+
+async function search(params = {}) {
+    const keyword = params.keyword;
+
+    if (!keyword) {
+        throw new Error("請輸入搜尋關鍵字");
+    }
+
+    const api =
+        `${BASE_URL}/api/search?q=${encodeURIComponent(keyword)}`;
+
+    const json = await request(api);
+
+    const items = [];
+
+    for (const item of json.results || []) {
+        items.push(buildMediaItem({
+            id: item.id,
+            title: item.title,
+            poster: item.poster_path,
+            backdrop: item.backdrop_path,
+            overview: item.overview,
+            url: `/movie/${item.slug}`
+        }));
+    }
+
+    return items;
+}
+
+async function loadTrending() {
+    const api = `${BASE_URL}/api/trending`;
+
+    const json = await request(api);
+
+    return (json.results || []).map(item =>
+        buildMediaItem({
+            id: item.id,
+            title: item.title,
+            poster: item.poster_path,
+            backdrop: item.backdrop_path,
+            overview: item.overview,
+            url: `/movie/${item.slug}`
+        })
+    );
+}
+
+async function loadLatest() {
+    const api = `${BASE_URL}/api/latest`;
+
+    const json = await request(api);
+
+    return (json.results || []).map(item =>
+        buildMediaItem({
+            id: item.id,
+            title: item.title,
+            poster: item.poster_path,
+            backdrop: item.backdrop_path,
+            overview: item.overview,
+            url: `/movie/${item.slug}`
+        })
+    );
+}
+
+async function loadDetail(link) {
+
+    const html = await request(link);
+
+    const $ = Widget.html.load(html);
+
+    const title =
+        $("meta[property='og:title']").attr("content") ||
+        $("title").text();
+
+    const poster =
+        $("meta[property='og:image']").attr("content");
+
+    const description =
+        $("meta[property='og:description']").attr("content");
+
+    let tmdbId = "";
+
+    $("script").each((i, el) => {
+
+        const text = $(el).html() || "";
+
+        const match = text.match(/tmdb["']?\s*:\s*["']?(\d+)/i);
+
+        if (match) {
+            tmdbId = match[1];
+        }
+    });
+
+    let metadata = {};
+
+    if (tmdbId) {
+
+        try {
+
+            metadata = await loadTMDB(tmdbId);
+
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    const videoUrl = await extractVideoUrl($);
+
+    return {
+        id: link,
+        type: "url",
+
+        title: metadata.title || title,
+
+        description:
+            metadata.overview ||
+            description,
+
+        releaseDate:
+            metadata.release_date || "",
+
+        genres:
+            (metadata.genres || [])
+                .map(g => g.name)
+                .join(", "),
+
+        rating:
+            metadata.vote_average || 0,
+
+        posterPath:
+            metadata.poster ||
+            poster,
+
+        backdropPath:
+            metadata.backdrop ||
+            poster,
+
+        videoUrl,
+
+        playerType: "hls",
+
+        headers: {
+            Referer: BASE_URL,
+            Origin: BASE_URL
+        },
+
+        subtitles: metadata.subtitles || []
+    };
+}
+
+async function loadTMDB(id) {
+
+    const api =
+        `https://api.themoviedb.org/3/movie/${id}?api_key=${TMDB_API}&language=zh-TW`;
+
+    const json = await request(api);
+
+    return {
+        title: json.title,
+        overview: json.overview,
+        release_date: json.release_date,
+        vote_average: json.vote_average,
+
+        genres: json.genres,
+
+        poster:
+            "https://image.tmdb.org/t/p/w500" +
+            json.poster_path,
+
+        backdrop:
+            "https://image.tmdb.org/t/p/original" +
+            json.backdrop_path
+    };
+}
+
+async function extractVideoUrl($) {
+
+    let iframe = "";
+
+    $("iframe").each((i, el) => {
+
+        const src = $(el).attr("src");
+
+        if (src && !iframe) {
+            iframe = src;
+        }
+    });
+
+    if (!iframe) {
+        throw new Error("找不到播放器");
+    }
+
+    iframe = absolute(iframe);
+
+    const embedHtml = await request(iframe);
+
+    const m3u8 =
+        embedHtml.match(/https?:\/\/.*?\.m3u8[^"' ]*/i);
+
+    if (m3u8) {
+        return m3u8[0];
+    }
+
+    const sources =
+        embedHtml.match(/sources\s*:\s*(\[[\s\S]*?\])/i);
+
+    if (sources) {
+
+        try {
+
+            const arr = JSON.parse(sources[1]);
+
+            if (arr.length > 0) {
+                return arr[0].file;
+            }
+
+        } catch (e) {}
+    }
+
+    throw new Error("無法解析影片");
 }
