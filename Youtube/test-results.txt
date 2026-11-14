@@ -1,4 +1,10 @@
 Player caption schema: [{"name":"captions","no":10,"type":"youtube.response.player.Captions"}]
+[YouTube TC] status=200 chars=82 converted=true processing_ms=1193
+[YouTube TC] status=200 chars=65 converted=true processing_ms=1218
+[YouTube TC] status=200 chars=82 converted=false processing_ms=0
+[YouTube TC] status=403 chars=82 converted=false processing_ms=0
+[YouTube TC] status=200 chars=0 converted=false processing_ms=0
+[YouTube TC] status=200 chars=82 converted=true processing_ms=1103
 PASS TC request rewrite, marker, original URL fallback, JSON3, XML, timing, OpenCC twp, plain Hans/native/error/empty passthrough.
 Captions fields: [
   {
@@ -7,6 +13,7 @@ Captions fields: [
     type: 'youtube.response.player.PlayerCaptionsTrackListRenderer'
   }
 ]
+[YouTube TC] status=200 chars=77 converted=true processing_ms=1175
 PASS Unicode-escaped JSON3 and metadata preservation.
 PASS caption selection, existing TC, off, no captions, Aioneas Player protobuf roundtrip.
 PASS actual protobuf captions roundtrip + Player integration.

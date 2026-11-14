@@ -1,5 +1,5 @@
 from pathlib import Path
-p=Path('/var/minis/workspace/youtube-integrated')
+p=Path(__file__).resolve().parent
 a=(p/'source/aioneas.response.js').read_text()
 m=(p/'source/maasea.response.js').read_text()
 # Extract only the caption function. No Maasea ad removal/initplayback/log_event code.
